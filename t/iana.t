@@ -25,19 +25,19 @@ ok(iana_charset_name("windows-1252") eq "windows-1252", 'windows-1252 eq');
 ok(iana_charset_name("win-latin-1") eq "windows-1252", 'win-latin-1');
 ok(iana_charset_name("windows-1252") ne "windows-1253", 'windows-1252 ne');
 ok(iana_charset_name("windows-1253") eq "windows-1253", 'windows-1253');
-ok(iana_charset_name("Shift_JIS") eq "Shift_JIS", '');
-ok(iana_charset_name("sjis") eq "Shift_JIS", '');
-ok(iana_charset_name("x-sjis") eq "Shift_JIS", '');
-ok(iana_charset_name("x-x-sjis") eq "Shift_JIS", '');
-ok(iana_charset_name("Unicode-2-0-utf-8") eq "UTF-8", '');
+ok(iana_charset_name("Shift_JIS") eq "Shift_JIS", 'Shift_JIS');
+ok(iana_charset_name("sjis") eq "Shift_JIS", 'sjis');
+ok(iana_charset_name("x-sjis") eq "Shift_JIS", 'x-sjis');
+ok(iana_charset_name("x-x-sjis") eq "Shift_JIS", 'x-x-sjis');
+ok(iana_charset_name("Unicode-2-0-utf-8") eq "UTF-8", 'Unicode-2-0-utf-8');
 
  #---- some aliasing examples -----------------------------------------
-ok(!defined(I18N::Charset::add_iana_alias("alias1" => "junk")), 'add alias to junk');
-ok(!defined iana_charset_name("alias1"), '');
-ok(!defined iana_charset_name("junk"), '');
+ok(!defined(I18N::Charset::add_iana_alias("alias1" => "junk")), 'add alias1');
+ok(!defined iana_charset_name("alias1"), 'alias1');
+ok(!defined iana_charset_name("junk"), 'junk');
 
-ok(I18N::Charset::add_iana_alias("alias2" => "Shift_JIS") eq "Shift_JIS", '');
-ok(iana_charset_name("alias2") eq "Shift_JIS", '');
+ok(I18N::Charset::add_iana_alias("alias2" => "Shift_JIS") eq "Shift_JIS", 'add alias2');
+ok(iana_charset_name("alias2") eq "Shift_JIS", 'alias2');
 
 ok(I18N::Charset::add_iana_alias("alias3" => "sjis") eq "Shift_JIS", '');
 ok(iana_charset_name("alias3") eq "Shift_JIS", '');

@@ -5,18 +5,16 @@ This distribution contains a module I18N::Charset which maps Character
 Set names to the names officially registered with IANA.  For example,
 'Shift_JIS' is the official name of 'x-sjis'.
 
-It also maps character set names to Unicode::Map8 and Unicode::Map
-conversion scheme names (if Unicode::Map8 is installed).  For example,
-the Unicode::Map8 scheme name for 'windows-1251' is 'cp1251'.
+It also maps character set names to Unicode::Map, Unicode::Map8, and
+Unicode::MapUTF8 conversion scheme names (if those modules are
+installed).  For example, the Unicode::Map8 scheme name for
+'windows-1251' is 'cp1251'.
 
 To install these modules, you should just have to run the following:
 
 	% perl Makefile.PL
 	% make test
 	% make install
-
-During "make test", all the maputf8 tests are skipped.  These tests
-are for the developer's information only.
 
 The module is documented using pod. When you "make install", you will
 get a man page I18N::Charset which can be displayed by "perldoc
@@ -26,4 +24,4 @@ Please let me know if you experience any problems with this module, or
 have any ideas for additions, or if you have some new character set
 names or abbreviations you'd like to be included.
 
-Martin Thurn <MartinThurn@iname.com>
+Martin Thurn <mthurn@cpan.org>

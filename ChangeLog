@@ -1,3 +1,8 @@
+2002-05-01  Kingpin  <mthurn@copper.dulles.tasc.com>
+
+	* lib/I18N/Charset.pm: added support for Unicode::MapUTF8
+	* updated several of the tests
+
 2002-04-15  Kingpin  <mthurn@copper.dulles.tasc.com>
 
 	* lib/I18N/Charset.pm: new IANA charset list
