@@ -52,12 +52,13 @@ umap_ functions.
 
 require Exporter;
 use Carp;
+use IO::String;
 
 #-----------------------------------------------------------------------
 #	Public Global Variables
 #-----------------------------------------------------------------------
 use vars qw( $VERSION @ISA @EXPORT @EXPORT_OK );
-$VERSION = '1.17';
+$VERSION = '1.18';
 @ISA       = qw( Exporter );
 @EXPORT    = qw( iana_charset_name map8_charset_name umap_charset_name umu8_charset_name mib_charset_name mib_to_charset_name charset_name_to_mib);
 @EXPORT_OK = qw( add_iana_alias add_map8_alias add_umap_alias );
@@ -559,10 +560,13 @@ sub strip
 INFINITE:
 while (1)
   {
-  my @asEqualLines;
   my ($sName, $iMIB, $sAlias);
+  # I used to use the __DATA__ mechanism to initialize the data, but
+  # that is not compatible with perlapp
+  my $io = new IO::String(_init_data());
+  local $/ = "\n";
  DATA:
-  while (my $sLine = <DATA>)
+  while (my $sLine = <$io>)
     {
     unless ($sLine =~ m!\S!)
       {
@@ -572,11 +576,7 @@ while (1)
       next DATA;
       } # unless
     # print STDERR " + read DATA $_";
-    if ($sLine =~ m/\ ===\ /)
-      {
-      push @asEqualLines, $sLine;
-      } # if
-    elsif ($sLine =~ m/^Name:\s*(\S+)/)
+    if ($sLine =~ m/^Name:\s*(\S+)/)
       {
       $sName = $1;
       # $debug = ($sName =~ m!1252!i);
@@ -600,18 +600,23 @@ while (1)
         $SHORTtoMIB{&strip($sAlias)} = $iMIB;
         } # if not "None"
       } # if Alias
-    } # while <DATA>
+    } # while <$io>
 
   # last INFINITE;
 
   # Not that we have all the standard definitions, process the special
   # === directives:
+  my @asEqualLines = split(/\n/, _init_data_extra());
   chomp @asEqualLines;
  EQUAL_LINE:
   foreach my $sLine (@asEqualLines)
     {
     # print STDERR " +   equal-sign line $sLine...\n";
     my @as = split(/\ ===\ /, $sLine);
+    next unless defined $as[0];
+    next unless $as[0] ne '';
+    next unless defined $as[1];
+    next unless $as[1] ne '';
     my $iMIB = $SHORTtoMIB{&strip($as[0])} || '';
     unless ($iMIB ne '')
       {
@@ -775,7 +780,7 @@ while (1)
   # Make sure to do U::MapUTF8 last, because it (in turn) depends on
   # the others.
   # $debug = 1;
-  if (1.0 <= eval q{ require Unicode::MapUTF8; ($Unicode::MapUTF8::VERSION || 0) })
+  if (1.0 <= (eval q{ require Unicode::MapUTF8; $Unicode::MapUTF8::VERSION } || 0))
     {
     print STDERR " + found Unicode::MapUTF8 $Unicode::MapUTF8::VERSION installed, will build tables...\n" if $debug;
     my @as;
@@ -868,15 +873,14 @@ sub dumpHash
     } # foreach
   } # dumpHash
 
-1;
-
-__DATA__
-
-The first part of the data is a hand-made list of IANA names and
-aliases, in the form AAA \=\=\= BBB \=\=\= CCC, where AAA is the
-canonical IANA name and BBB and CCC are aliases.  Note that
-capitalization and punctuation of aliases are meaningless (but
-whitespace is not allowed).
+sub _init_data_extra
+  {
+  # This little piece of data is a hand-made list of IANA names and
+  # aliases, in the form AAA === BBB === CCC, where AAA is the
+  # canonical IANA name and BBB and CCC are aliases.  Note that
+  # capitalization and punctuation of aliases are meaningless (but
+  # whitespace is not allowed).
+  return <<'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
 
 Shift_JIS === sjis
 windows-1250 === winlatin2
@@ -902,15 +906,18 @@ Extended_UNIX_Code_Packed_Format_for_Japanese === euc === euc-jp
 # These were added for Unicode::MapUTF8:
 ISO-10646-UCS-2 === ucs2
 ISO-10646-UCS-4 === ucs4
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+  } # _init_data_extra
 
-The rest of the DATA is the original document from
-http://www.iana.org/assignments/character-sets
-
----------------------------------------------------------------
+sub _init_data
+  {
+  # This big piece of data is the original document from
+  # http://www.iana.org/assignments/character-sets
+  return <<'EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE';
 
 CHARACTER SETS
 
-(last updated 12 April 2002)
+(last updated 2002-06-14)
 
 These are the official names for character sets that may be used in
 the Internet and may be referred to in Internet documentation.  These
@@ -933,7 +940,7 @@ that have been standardized by some standard setting organization.
 This region is intended for standards that do not have subset
 implementations. The second region (1000-1999) is for the Unicode and
 ISO/IEC 10646 coded character sets together with a specification of a
-(set of) sub-repetoires that may occur.  The third region (>1999) is
+(set of) sub-repertoires that may occur.  The third region (>1999) is
 intended for vendor specific coded character sets.
 
 	Assigned MIB enum Numbers
@@ -2102,35 +2109,35 @@ Source: RFC 2319
 
 Name: IBM00858
 MIBenum: 2089
-Source: IBM See (.../assignments/character-set-info/IBM00858)    [Mahdi]
+Source: IBM See (http://www.iana.org/assignments/charset-reg/IBM00858)    [Mahdi]
 Alias: CCSID00858
 Alias: CP00858
 Alias: PC-Multilingual-850+euro
 
 Name: IBM00924
 MIBenum: 2090
-Source: IBM See (.../assignments/character-set-info/IBM00924)    [Mahdi]
+Source: IBM See (http://www.iana.org/assignments/charset-reg/IBM00924)    [Mahdi]
 Alias: CCSID00924
 Alias: CP00924
 Alias: ebcdic-Latin9--euro
 
 Name: IBM01140
 MIBenum: 2091
-Source: IBM See (.../assignments/character-set-info/IBM01140)    [Mahdi]
+Source: IBM See (http://www.iana.org/assignments/charset-reg/IBM01140)    [Mahdi]
 Alias: CCSID01140
 Alias: CP01140
 Alias: ebcdic-us-37+euro
 
 Name: IBM01141
 MIBenum: 2092
-Source: IBM See (.../assignments/character-set-info/IBM01141)    [Mahdi]
+Source: IBM See (http://www.iana.org/assignments/charset-reg/IBM01141)    [Mahdi]
 Alias: CCSID01141
 Alias: CP01141
 Alias: ebcdic-de-273+euro
 
 Name: IBM01142
 MIBenum: 2093
-Source: IBM See (.../assignments/character-set-info/IBM01142)    [Mahdi]
+Source: IBM See (http://www.iana.org/assignments/charset-reg/IBM01142)    [Mahdi]
 Alias: CCSID01142
 Alias: CP01142
 Alias: ebcdic-dk-277+euro
@@ -2138,7 +2145,7 @@ Alias: ebcdic-no-277+euro
 
 Name: IBM01143
 MIBenum: 2094
-Source: IBM See (.../assignments/character-set-info/IBM01143)    [Mahdi]
+Source: IBM See (http://www.iana.org/assignments/charset-reg/IBM01143)    [Mahdi]
 Alias: CCSID01143
 Alias: CP01143
 Alias: ebcdic-fi-278+euro
@@ -2146,49 +2153,49 @@ Alias: ebcdic-se-278+euro
 
 Name: IBM01144
 MIBenum: 2095
-Source: IBM See (.../assignments/character-set-info/IBM01144)    [Mahdi]
+Source: IBM See (http://www.iana.org/assignments/charset-reg/IBM01144)    [Mahdi]
 Alias: CCSID01144
 Alias: CP01144
 Alias: ebcdic-it-280+euro
 
 Name: IBM01145
 MIBenum: 2096
-Source: IBM See (.../assignments/character-set-info/IBM01145)    [Mahdi]
+Source: IBM See (http://www.iana.org/assignments/charset-reg/IBM01145)    [Mahdi]
 Alias: CCSID01145
 Alias: CP01145
 Alias: ebcdic-es-284+euro
 
 Name: IBM01146
 MIBenum: 2097
-Source: IBM See (.../assignments/character-set-info/IBM01146)    [Mahdi]
+Source: IBM See (http://www.iana.org/assignments/charset-reg/IBM01146)    [Mahdi]
 Alias: CCSID01146
 Alias: CP01146
 Alias: ebcdic-gb-285+euro
 
 Name: IBM01147
 MIBenum: 2098
-Source: IBM See (.../assignments/character-set-info/IBM01147)    [Mahdi]
+Source: IBM See (http://www.iana.org/assignments/charset-reg/IBM01147)    [Mahdi]
 Alias: CCSID01147
 Alias: CP01147
 Alias: ebcdic-fr-297+euro
 
 Name: IBM01148
 MIBenum: 2099
-Source: IBM See (.../assignments/character-set-info/IBM01148)    [Mahdi]
+Source: IBM See (http://www.iana.org/assignments/charset-reg/IBM01148)    [Mahdi]
 Alias: CCSID01148
 Alias: CP01148
 Alias: ebcdic-international-500+euro
 
 Name: IBM01149
 MIBenum: 2100
-Source: IBM See (.../assignments/character-set-info/IBM01149)    [Mahdi]
+Source: IBM See (http://www.iana.org/assignments/charset-reg/IBM01149)    [Mahdi]
 Alias: CCSID01149
 Alias: CP01149
 Alias: ebcdic-is-871+euro
 
 Name: Big5-HKSCS
 MIBenum: 2101
-Source:   See (.../assignments/character-set-info/Big5-HKSCS)     [Yick]
+Source:   See (http://www.iana.org/assignments/charset-reg/Big5-HKSCS)     [Yick]
 Alias: None
 
 Name: UNICODE-1-1                                              [RFC1641]
@@ -2198,7 +2205,7 @@ Alias: csUnicode11
 
 Name: SCSU
 MIBenum: 1011
-Source: SCSU See (.../assignments/character-set-info/SCSU)     [Scherer]
+Source: SCSU See (http://www.iana.org/assignments/charset-reg/SCSU)     [Scherer]
 Alias: None 
 
 Name: UTF-7                                                    [RFC2152]
@@ -2253,12 +2260,12 @@ Alias: None
 
 Name: ISO-8859-13
 MIBenum: 109
-Source: ISO See (...assignments/character-set-info/iso-8859-13)[Tumasonis] 
+Source: ISO See (http://www.iana.org/assignments/charset-reg/iso-8859-13)[Tumasonis] 
 Alias: None
 
 Name: ISO-8859-14
 MIBenum: 110
-Source: ISO See (...assignments/character-set-info/iso-8859-14) [Simonsen]
+Source: ISO See (http://www.iana.org/assignments/charset-reg/iso-8859-14) [Simonsen]
 Alias: iso-ir-199
 Alias: ISO_8859-14:1998
 Alias: ISO_8859-14
@@ -2275,6 +2282,20 @@ Name: ISO-8859-16
 MIBenum: 112
 Source: ISO
 Alias: 
+
+Name: GBK                                                 
+MIBenum: 113
+Source: Chinese IT Standardization Technical Committee  
+        Please see: <http://www.iana.org/assignments/charset-reg/GBK>
+Alias: CP936
+Alias: MS936
+Alias: windows-936
+
+Name: GB18030
+MIBenum: 114
+Source: Chinese IT Standardization Technical Committee
+        Please see: <http://www.iana.org/assignments/charset-reg/GB18030>
+Alias: None
 
 Name: JIS_Encoding
 MIBenum: 16
@@ -2350,7 +2371,7 @@ Alias: csUnicodeIBM1261
 Name: ISO-Unicode-IBM-1268
 MIBenum: 1006
 Source: IBM Latin-4 Extended Presentation Set, GCSGID: 1268
-Alias: csUnidoceIBM1268
+Alias: csUnicodeIBM1268
 
 Name: ISO-Unicode-IBM-1276
 MIBenum: 1007
@@ -2513,47 +2534,47 @@ Alias: csBig5
 
 Name: windows-1250
 MIBenum: 2250
-Source: Microsoft  (see ../character-set-info/windows-1250) [Lazhintseva]
+Source: Microsoft  (http://www.iana.org/assignments/charset-reg/windows-1250) [Lazhintseva]
 Alias: None
 
 Name: windows-1251
 MIBenum: 2251
-Source: Microsoft  (see ../character-set-info/windows-1251) [Lazhintseva]
+Source: Microsoft  (http://www.iana.org/assignments/charset-reg/windows-1251) [Lazhintseva]
 Alias: None
 
 Name: windows-1252
 MIBenum: 2252
-Source: Microsoft  (see ../character-set-info/windows-1252)       [Wendt]
+Source: Microsoft  (http://www.iana.org/assignments/charset-reg/windows-1252)       [Wendt]
 Alias: None
 
 Name: windows-1253
 MIBenum: 2253
-Source: Microsoft  (see ../character-set-info/windows-1253) [Lazhintseva]
+Source: Microsoft  (http://www.iana.org/assignments/charset-reg/windows-1253) [Lazhintseva]
 Alias: None
 
 Name: windows-1254
 MIBenum: 2254
-Source: Microsoft  (see ../character-set-info/windows-1254) [Lazhintseva]
+Source: Microsoft  (http://www.iana.org/assignments/charset-reg/windows-1254) [Lazhintseva]
 Alias: None
 
 Name: windows-1255
 MIBenum: 2255
-Source: Microsoft  (see ../character-set-info/windows-1255) [Lazhintseva]
+Source: Microsoft  (http://www.iana.org/assignments/charset-reg/windows-1255) [Lazhintseva]
 Alias: None
 
 Name: windows-1256
 MIBenum: 2256
-Source: Microsoft  (see ../character-set-info/windows-1256) [Lazhintseva]
+Source: Microsoft  (http://www.iana.org/assignments/charset-reg/windows-1256) [Lazhintseva]
 Alias: None 
 
 Name: windows-1257
 MIBenum: 2257
-Source: Microsoft  (see ../character-set-info/windows-1257) [Lazhintseva]
+Source: Microsoft  (http://www.iana.org/assignments/charset-reg/windows-1257) [Lazhintseva]
 Alias: None
 
 Name: windows-1258
 MIBenum: 2258
-Source: Microsoft  (see ../character-set-info/windows-1258) [Lazhintseva]
+Source: Microsoft  (http://www.iana.org/assignments/charset-reg/windows-1258) [Lazhintseva]
 Alias: None
 
 Name: TIS-620
@@ -2675,4 +2696,17 @@ PEOPLE
 [Yick] Nicky Yick, <cliac@itsd.gcn.gov.hk>, October 2000.
 
 []
+
+
+
+
+
+
+
+
+
+EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+  } # _init_data
+
+1;
 

@@ -16,6 +16,8 @@ To install these modules, you should just have to run the following:
 	% make test
 	% make install
 
+(If you're on a Windows system, you probably have Nmake instead of make.)
+
 The module is documented using pod. When you "make install", you will
 get a man page I18N::Charset which can be displayed by "perldoc
 I18N::Charset".
