@@ -1,3 +1,11 @@
+2002-01-10  Kingpin  <mthurn@copper.dulles.tasc.com>
+
+	* lib/I18N/Charset.pm (mib_charset_name): new method
+
+2001-11-30  Kingpin  <mthurn@copper.dulles.tasc.com>
+
+	* lib/I18N/Charset.pm (strip): localize $/
+
 2001-09-04  Kingpin  <mthurn@copper.dulles.tasc.com>
 
 	* lib/I18N/Charset.pm (strip): handle whitespace in blank lines of Unicode::Map/REGISTRY

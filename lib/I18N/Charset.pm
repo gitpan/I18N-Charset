@@ -55,9 +55,9 @@ use Carp;
 #	Public Global Variables
 #-----------------------------------------------------------------------
 use vars qw( $VERSION @ISA @EXPORT @EXPORT_OK );
-$VERSION = '1.12';
+$VERSION = '1.13';
 @ISA       = qw( Exporter );
-@EXPORT    = qw( iana_charset_name map8_charset_name umap_charset_name );
+@EXPORT    = qw( iana_charset_name map8_charset_name umap_charset_name mib_charset_name );
 @EXPORT_OK = qw( add_iana_alias add_map8_alias add_umap_alias );
 
 #-----------------------------------------------------------------------
@@ -138,6 +138,27 @@ sub short_to_long
   local $^W = 0;
   return $MIBtoLONG{&short_to_mib(shift)};
   } # short_to_long
+
+
+=item mib_charset_name()
+
+This function takes a string containing the MIBenum of a character set
+and returns a string which contains a name for the character set.
+If no valid character set name can be identified,
+then C<undef> will be returned.
+
+    $sCharset = mib_charset_name('3');
+
+=cut
+
+sub mib_charset_name
+  {
+  my $code = shift;
+  return undef unless defined $code;
+  return undef unless $code ne '';
+  local $^W = 0;
+  return $MIBtoLONG{$code};
+  } # mib_charset_name 
 
 
 =item map8_charset_name()
@@ -589,6 +610,7 @@ while (1)
     my $sMapFile = "$MAP_Path/REGISTRY";
     if (open MAPS, $sMapFile)
       {
+      local $/;
       undef $/;
       my @asMAPS = split(/\n\s*\n/, <MAPS>);
       foreach my $sEntry (@asMAPS)
