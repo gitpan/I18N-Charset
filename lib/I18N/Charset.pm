@@ -58,9 +58,11 @@ use IO::String;
 #	Public Global Variables
 #-----------------------------------------------------------------------
 use vars qw( $VERSION @ISA @EXPORT @EXPORT_OK );
-$VERSION = '1.18';
+$VERSION = '1.19';
 @ISA       = qw( Exporter );
-@EXPORT    = qw( iana_charset_name map8_charset_name umap_charset_name umu8_charset_name mib_charset_name mib_to_charset_name charset_name_to_mib);
+@EXPORT    = qw( iana_charset_name map8_charset_name umap_charset_name
+umu8_charset_name mib_charset_name mime_charset_name
+mib_to_charset_name charset_name_to_mib );
 @EXPORT_OK = qw( add_iana_alias add_map8_alias add_umap_alias );
 
 #-----------------------------------------------------------------------
@@ -73,6 +75,8 @@ my %SHORTtoMIB;
 my %MIBtoLONG;
 # %LONGtoMIB is a hash of long name to mib.
 my %LONGtoMIB;
+# %MIBtoMIME is a hash of mib to preferred MIME names.
+my %MIBtoMIME;
 # %MIBtoMAP8 is a hash of mib to Unicode::Map8 names.  (Only valid for
 # those U::Map8 names that we can find in the IANA registry)
 my %MIBtoMAP8;
@@ -165,6 +169,34 @@ sub short_to_long
   return $MIBtoLONG{&short_to_mib($s)};
   } # short_to_long
 
+
+=item mime_charset_name()
+
+This function takes a string containing the name of a character set
+and returns a string which contains the preferred MIME name of the
+character set identified. If no valid character set name can be
+identified, then C<undef> will be returned.  The case and punctuation
+within the string are not important.
+
+    $sCharset = iana_charset_mime_name('Extended_UNIX_Code_Packed_Format_for_Japanese');
+
+=cut
+
+sub mime_charset_name
+  {
+  # This function contributed by Masafumi "Max" Nakane.  Thank you!
+  my $code = shift;
+  return undef unless defined $code;
+  return undef unless $code ne '';
+  # print STDERR " + mime_charset_name($code)..." if $debug;
+  my $mib = &short_to_mib($code);
+  return undef unless defined $mib;
+  # print STDERR " + mib is ($mib)..." if $debug;
+  # Make sure this is really an IANA mib:
+  return undef if ($mib =~ m!\Adummymib!);
+  # print STDERR " + is really iana..." if $debug;
+  return $MIBtoMIME{$mib};
+  } # mime_charset_name
 
 =item mib_to_charset_name
 
@@ -560,7 +592,7 @@ sub strip
 INFINITE:
 while (1)
   {
-  my ($sName, $iMIB, $sAlias);
+  my ($sName, $iMIB, $sAlias, $mimename);
   # I used to use the __DATA__ mechanism to initialize the data, but
   # that is not compatible with perlapp
   my $io = new IO::String(_init_data());
@@ -571,11 +603,12 @@ while (1)
     unless ($sLine =~ m!\S!)
       {
       # Blank line separates entries.
-      ($sName, $iMIB, $sAlias) = ('', '', '');
+      ($sName, $iMIB, $sAlias, $mimename) = ('', '', '', 0);
       $debug = 0;
       next DATA;
       } # unless
     # print STDERR " + read DATA $_";
+    $mimename = ($sLine =~ m/\(preferred\s*MIME\s*name\)/);
     if ($sLine =~ m/^Name:\s*(\S+)/)
       {
       $sName = $1;
@@ -590,6 +623,11 @@ while (1)
       $MIBtoLONG{$iMIB} = $sName;
       $LONGtoMIB{$sName} = $iMIB;
       $SHORTtoMIB{&strip($sName)} = $iMIB;
+      if ($mimename)
+        {
+        print STDERR " +   found mime: mib=$iMIB, mime=$sName\n" if $debug;
+	$MIBtoMIME{$iMIB} = $sName;
+        } # preferred MIME name
       } # MIBenum line
     elsif ($sLine =~ m/^Alias:\s*(\S+)/)
       {
@@ -598,6 +636,11 @@ while (1)
         {
         print STDERR " +   map Alias ($sAlias) to mib $iMIB\n" if $debug;
         $SHORTtoMIB{&strip($sAlias)} = $iMIB;
+	if ($mimename)
+	  {
+          print STDERR " +   found mime: mib=$iMIB, mime=$sAlias\n" if $debug;
+	  $MIBtoMIME{$iMIB} = $sAlias;
+	  } # preferred MIME name
         } # if not "None"
       } # if Alias
     } # while <$io>

@@ -3,12 +3,16 @@
 
 This distribution contains a module I18N::Charset which maps Character
 Set names to the names officially registered with IANA.  For example,
-'Shift_JIS' is the official name of 'x-sjis'.
+'Shift_JIS' is the official name of what is often referred to in HTML
+headers as 'x-sjis'.
 
 It also maps character set names to Unicode::Map, Unicode::Map8, and
 Unicode::MapUTF8 conversion scheme names (if those modules are
 installed).  For example, the Unicode::Map8 scheme name for
 'windows-1251' is 'cp1251'.
+
+It also maps character set names to their preferred MIME names.  For
+example, the preferred MIME name for 'ISO_646.irv:1991' is 'US-ASCII'.
 
 To install these modules, you should just have to run the following:
 
@@ -16,7 +20,7 @@ To install these modules, you should just have to run the following:
 	% make test
 	% make install
 
-(If you're on a Windows system, you probably have Nmake instead of make.)
+(If you're on a Windows system, you probably use Nmake instead of make.)
 
 The module is documented using pod. When you "make install", you will
 get a man page I18N::Charset which can be displayed by "perldoc
