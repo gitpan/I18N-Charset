@@ -1,3 +1,7 @@
+2002-04-15  Kingpin  <mthurn@copper.dulles.tasc.com>
+
+	* lib/I18N/Charset.pm: new IANA charset list
+
 2002-02-07  Kingpin  <mthurn@copper.dulles.tasc.com>
 
 	* lib/I18N/Charset.pm (short_to_mib): short-circuit on positive answer

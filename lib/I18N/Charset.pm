@@ -55,7 +55,7 @@ use Carp;
 #	Public Global Variables
 #-----------------------------------------------------------------------
 use vars qw( $VERSION @ISA @EXPORT @EXPORT_OK );
-$VERSION = '1.15';
+$VERSION = '1.16';
 @ISA       = qw( Exporter );
 @EXPORT    = qw( iana_charset_name map8_charset_name umap_charset_name mib_charset_name mib_to_charset_name charset_name_to_mib);
 @EXPORT_OK = qw( add_iana_alias add_map8_alias add_umap_alias );
@@ -477,7 +477,7 @@ A wrapper around all three of these character set conversion distributions.
 
 =head1 AUTHOR
 
-Martin Thurn E<lt>MartinThurn@iname.comE<gt>
+Martin Thurn E<lt>mthurn@cpan.orgE<gt>
 
 =head1 COPYRIGHT
 
@@ -796,10 +796,9 @@ http://www.iana.org/assignments/character-sets
 
 ---------------------------------------------------------------
 
-===================================================================
 CHARACTER SETS
 
-(last updated 2001 August 23)
+(last updated 12 April 2002)
 
 These are the official names for character sets that may be used in
 the Internet and may be referred to in Internet documentation.  These
@@ -2110,6 +2109,26 @@ MIBenum: 1015
 Source: RFC 2781
 Alias: None
 
+Name: CESU-8                                                    [Phipps]
+MIBenum: 1016
+Source: <http://www.unicode.org/unicode/reports/tr26>
+Alias: csCESU-8
+
+Name: UTF-32                                                     [Davis] 
+MIBenum: 1017
+Source: <http://www.unicode.org/unicode/reports/tr19/>
+Alias: None
+
+Name: UTF-32BE                                                   [Davis]
+MIBenum: 1018
+Source: <http://www.unicode.org/unicode/reports/tr19/>
+Alias: None
+
+Name: UTF-32LE                                                   [Davis]
+MIBenum: 1019
+Source: <http://www.unicode.org/unicode/reports/tr19/>
+Alias: None
+
 Name: UNICODE-1-1-UTF-7                                        [RFC1642]
 MIBenum: 103
 Source: RFC 1642
@@ -2120,12 +2139,12 @@ MIBenum: 106
 Source: RFC 2279
 Alias: None 
 
-Name: iso-8859-13
+Name: ISO-8859-13
 MIBenum: 109
 Source: ISO See (...assignments/character-set-info/iso-8859-13)[Tumasonis] 
 Alias: None
 
-Name: iso-8859-14
+Name: ISO-8859-14
 MIBenum: 110
 Source: ISO See (...assignments/character-set-info/iso-8859-14) [Simonsen]
 Alias: iso-ir-199
@@ -2515,15 +2534,19 @@ PEOPLE
 
 [Choi] Woohyong Choi <whchoi@cosmos.kaist.ac.kr>
 
+[Davis] Mark Davis, <mark@unicode.org>, April 2002.
+
 [Lazhintseva] Katya Lazhintseva, <katyal@MICROSOFT.com>, May 1996.
 
 [Mahdi] Tamer Mahdi, <tamer@ca.ibm.com>, August 2000.
 
 [Murai] Jun Murai <jun@wide.ad.jp>
 
+[Nussbacher] Hank Nussbacher, <hank@vm.tau.ac.il>
+
 [Ohta] Masataka Ohta, <mohta@cc.titech.ac.jp>, July 1995.
 
-[Nussbacher] Hank Nussbacher, <hank@vm.tau.ac.il>
+[Phipps] Toby Phipps, <tphipps@peoplesoft.com>, March 2002.
 
 [Pond] Rick Pond, <rickpond@vnet.ibm.com> March 1997.
 
@@ -2540,10 +2563,4 @@ PEOPLE
 [Yick] Nicky Yick, <cliac@itsd.gcn.gov.hk>, October 2000.
 
 []
-
-
-
-
-
-
 
