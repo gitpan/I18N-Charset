@@ -14,6 +14,10 @@ installed).  For example, the Unicode::Map8 scheme name for
 It also maps character set names to their preferred MIME names.  For
 example, the preferred MIME name for 'ISO_646.irv:1991' is 'US-ASCII'.
 
+It also maps character set names to conversion scheme names as defined
+by the iconv library.  For example, the iconv conversion scheme for
+'Shift_JIS' is 'MS_KANJI'.
+
 To install these modules, you should just have to run the following:
 
 	% perl Makefile.PL

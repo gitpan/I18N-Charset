@@ -1,3 +1,15 @@
+2002-10-10  Kingpin  <mthurn@copper.dulles.tasc.com>
+
+	* lib/I18N/Charset.pm: make sure iconv exists before executing it
+
+	* t/libi.t: new test file
+
+	* lib/I18N/Charset.pm (libi_charset_name): added support for iconv names
+
+2002-10-07  Kingpin  <mthurn@copper.dulles.tasc.com>
+
+	* t/utf8.t: typo, and require Unicode::MapUTF8 version 1.09
+
 2002-10-02  Kingpin  <mthurn@copper.dulles.tasc.com>
 
 	* lib/I18N/Charset.pm (_init_data): new charset list from IANA

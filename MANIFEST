@@ -4,7 +4,9 @@ Makefile.PL
 README
 lib/I18N/Charset.pm
 t/iana.t
+t/libi.t
 t/map8.t
 t/mib.t
+t/mime.t
 t/umap.t
 t/utf8.t

@@ -1,12 +1,12 @@
-#!perl
-#
-# maputf8.t - tests for Unicode::MapUTF8 functionality of I18N::Charset
-#
+#!perl -w
+
+# utf8.t - tests for Unicode::MapUTF8 functionality of I18N::Charset
+
 
 use I18N::Charset;
-use Test::More; # skip_all => 'not implemented (patches welcome!)';
+use Test::More;
 
-unless (eval "require Unicode::Map")
+unless (eval "require Unicode::MapUTF8")
   {
   plan skip_all => 'Unicode::MapUTF8 is not installed';
   } # unless
@@ -23,7 +23,7 @@ ok(!defined umu8_charset_name(\@aa), '');     # illegal argument
 
 SKIP:
   {
-  skip 'Unicode::MapUTF8 version is too old (1.09 is good)', 16 unless eval '(0.99 < ($Unicode::MapUTF8::VERSION || 0))';
+  skip 'Unicode::MapUTF8 version is too old (1.09 is good)', 16 unless eval '(1.08 < ($Unicode::MapUTF8::VERSION || 0))';
 
   # Plain old IANA names:
   ok(umu8_charset_name("Unicode-2-0-utf-8") eq "utf8", 'Unicode-2-0-utf-8');
