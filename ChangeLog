@@ -1,3 +1,13 @@
+2004-10-25  Kingpin  <mthurn@verizon.net>
+
+	* lib/I18N/Charset.pm (_init_data_extra): added aliases for Encode;
+	fixed some typos in debug messages
+
+2004-02-10  Kingpin  <mthurn@verizon.net>
+
+	* lib/I18N/Charset.pm (_init_data): undo bug in IANA's document
+	(_init_data_extra): undo our workaround
+
 2004-02-07  Kingpin  <mthurn@verizon.net>
 
 	* t/bug1.t: skip if Encode is not installed

@@ -1,3 +1,4 @@
+# $Revision: 1.3 $
 # mime.t - tests for "preferred MIME name" functionality of I18N::Charset
 
 use Test::More tests => 14;

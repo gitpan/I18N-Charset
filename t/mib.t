@@ -1,3 +1,4 @@
+# $Revision: 1.4 $
 # mib.t - Tests for converting mib numbers back to charset names
 
 use Test::More tests => 25;

@@ -1,5 +1,5 @@
 
-# $rcs = ' $Id: Charset.pm,v 1.371 2004/02/07 15:26:15 Daddy Exp $ ' ;
+# $rcs = ' $Id: Charset.pm,v 1.375 2004/10/24 18:03:22 Daddy Exp $ ' ;
 
 =head1 NAME
 
@@ -76,7 +76,7 @@ use strict;
 #	Public Global Variables
 #-----------------------------------------------------------------------
 use vars qw( $VERSION @ISA @EXPORT @EXPORT_OK );
-$VERSION = do { my @r = (q$Revision: 1.371 $ =~ /\d+/g); sprintf "%d."."%03d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 1.375 $ =~ /\d+/g); sprintf "%d."."%03d" x $#r, @r };
 @ISA       = qw( Exporter );
 @EXPORT    = qw( iana_charset_name
 map8_charset_name
@@ -116,11 +116,12 @@ my %MIBtoUMU8;
 # %MIBtoLIBI is a hash of mib to libiconv names.  (Only valid for
 # those libiconv names that we can find in the IANA registry)
 my %MIBtoLIBI;
-# %MIBtoLIBI is a hash of mib to Encode names.  (Only valid for
+# %MIBtoENCO is a hash of mib to Encode names.  (Only valid for
 # those Encode names that we can find in the IANA registry)
 my %MIBtoENCO;
 
 use constant DEBUG => 0;
+use constant DEBUG_ENCO => 0;
 
 =head1 CONVERSION ROUTINES
 
@@ -158,7 +159,7 @@ sub iana_charset_name
   return undef unless $code ne '';
   # $iDebug = ($code =~ m!sjis!);
   # print STDERR " + iana_charset_name($code)..." if $iDebug;
-  my $mib = &short_to_mib($code);
+  my $mib = &_short_to_mib($code);
   return undef unless defined $mib;
   # print STDERR " + mib is ($mib)..." if $iDebug;
   # Make sure this is really a IANA mib:
@@ -168,22 +169,22 @@ sub iana_charset_name
   } # iana_charset_name
 
 
-sub try_list
+sub _try_list
   {
   my $code = shift;
-  my @asTry = ($code, &strip($code));
-  push @asTry, &strip($code) if $code =~ s!\A(x-)+!!;  # try without leading x-
+  my @asTry = ($code, &_strip($code));
+  push @asTry, &_strip($code) if $code =~ s!\A(x-)+!!;  # try without leading x-
   return @asTry;
-  } # try_list
+  } # _try_list
 
-sub short_to_mib
+sub _short_to_mib
   {
   my $code = shift;
   local $^W = 0;
-  # print STDERR " + short_to_mib($code)..." if DEBUG;
+  # print STDERR " + _short_to_mib($code)..." if DEBUG;
   my $answer = undef;
  TRY_SHORT:
-  foreach my $sTry (&try_list($code))
+  foreach my $sTry (&_try_list($code))
     {
     my $iMIB = $SHORTtoMIB{$sTry} || 'undef';
     # print STDERR "try($sTry)...$iMIB..." if DEBUG;
@@ -195,16 +196,16 @@ sub short_to_mib
     } # foreach
   # print STDERR "answer is $answer\n" if DEBUG;
   return $answer;
-  } # short_to_mib
+  } # _short_to_mib
 
 
-sub short_to_long
+sub _short_to_long
   {
   local $^W = 0;
   my $s = shift;
-  # print STDERR " + short_to_long($s)..." if DEBUG;
-  return $MIBtoLONG{&short_to_mib($s)};
-  } # short_to_long
+  # print STDERR " + _short_to_long($s)..." if DEBUG;
+  return $MIBtoLONG{&_short_to_mib($s)};
+  } # _short_to_long
 
 
 =item mime_charset_name()
@@ -226,7 +227,7 @@ sub mime_charset_name
   return undef unless defined $code;
   return undef unless $code ne '';
   # print STDERR " + mime_charset_name($code)..." if DEBUG;
-  my $mib = &short_to_mib($code);
+  my $mib = &_short_to_mib($code);
   return undef unless defined $mib;
   # print STDERR " + mib is ($mib)..." if DEBUG;
   # Make sure this is really an IANA mib:
@@ -257,7 +258,11 @@ sub _maybe_load_enco # PRIVATE
   # Get a list of aliases from Encode:
   if (eval q{require Encode})
     {
-    my @as = Encode->encodings(':all');
+    my @as;
+    @as = Encode->encodings(':all');
+    # push @as, Encode->encodings('EBCDIC');
+    my $iFake = 0;
+    my $iReal = 0;
  ENCODING:
     foreach my $s (@as)
       {
@@ -268,18 +273,28 @@ sub _maybe_load_enco # PRIVATE
         {
         # Create a dummy mib:
         $mib = $sFakeMIB++;
+        $iFake++;
         } # if
       else
         {
         $mib = &charset_name_to_mib($sIana);
+        $iReal++;
         }
       # At this point we have a mib for this Encode entry.
       $MIBtoENCO{$mib} = $s;
-      # print STDERR " +   mib for enco ==$s== is $mib\n";
-      $SHORTtoMIB{&strip($s)} = $mib;
-      # print STDERR " +   assign enco =$s==>$mib\n" if &_is_dummy($mib);
+      DEBUG_ENCO && print STDERR " +   mib for enco ==$s== is $mib\n";
+      $SHORTtoMIB{&_strip($s)} = $mib;
+      DEBUG_ENCO && print STDERR " +   assign enco =$s==>$mib\n" if &_is_dummy($mib);
+      } # foreach ENCODING
+    if (DEBUG_ENCO)
+      {
+      print STDERR " + Summary of Encode encodings:\n";
+      printf STDERR (" +   %d encodings found.\n", scalar(@as));
+      print STDERR " +   $iFake fake mibs created.\n";
+      print STDERR " +   $iReal real mibs re-used.\n";
       } # if
     $iEncoLoaded = 1;
+    &add_enco_alias('Windows-31J', 'cp932');
     } # if
   else
     {
@@ -300,12 +315,12 @@ sub enco_charset_name
   return undef unless $code ne '';
   &_maybe_load_enco();
   my $iDebug = 0; # ($code =~ m!johab!i);
-  print STDERR " + enco_charset_name($code)..." if $iDebug;
-  my $mib = &short_to_mib($code);
+  print STDERR " + enco_charset_name($code)..." if ($iDebug || DEBUG_ENCO);
+  my $mib = &_short_to_mib($code);
   return undef unless defined $mib;
-  print STDERR " + mib is ($mib)..." if $iDebug;
+  print STDERR " + mib is ($mib)..." if ($iDebug || DEBUG_ENCO);
   my $ret = &_mib_to_enco($mib);
-  print STDERR " + enco is ($ret)..." if $iDebug;
+  print STDERR " + enco is ($ret)..." if ($iDebug || DEBUG_ENCO);
   return $ret;
   } # enco_charset_name
 
@@ -366,7 +381,7 @@ sub _maybe_load_libi # PRIVATE
           {
           $MIBtoLIBI{$mib} = $sWord;
           # print STDERR " +   mib for libi ==$sWord== is $mib\n";
-          $SHORTtoMIB{&strip($sWord)} = $mib;
+          $SHORTtoMIB{&_strip($sWord)} = $mib;
           } # foreach ADD_LIBI
         } # foreach ICONV_LINE
       } # if
@@ -387,7 +402,7 @@ sub libi_charset_name
   return undef unless $code ne '';
   # my $iDebug = 1; # ($code =~ m!johab!i);
   # print STDERR " + libi_charset_name($code)..." if $iDebug;
-  my $mib = &short_to_mib($code);
+  my $mib = &_short_to_mib($code);
   return undef unless defined $mib;
   # print STDERR " + mib is ($mib)..." if $iDebug;
   my $ret = &_mib_to_libi($mib);
@@ -468,9 +483,9 @@ sub map8_charset_name
   return undef unless $code ne '';
   # $iDebug = 0 && ($code =~ m!037!);
   # print STDERR " + map8_charset_name($code)..." if $iDebug;
-  $code = &strip($code);
+  $code = &_strip($code);
   # print STDERR "$code..." if $iDebug;
-  my $iMIB = &short_to_mib($code) || 'undef';
+  my $iMIB = &_short_to_mib($code) || 'undef';
   # print STDERR "$iMIB..." if $iDebug;
   if ($iMIB ne 'undef')
     {
@@ -492,8 +507,6 @@ important.
 
     $sCharset = umap_charset_name('hebrew');
 
-=back
-
 =cut
 
 sub umap_charset_name
@@ -504,7 +517,7 @@ sub umap_charset_name
   # $iDebug = ($code =~ m!apple!i);
   # print STDERR "\n + MIBtoUMAP{dummymib029} == $MIBtoUMAP{$sDummy .'029'}\n\n" if $iDebug;
   # print STDERR " + umap_charset_name($code)..." if $iDebug;
-  my $iMIB = &short_to_mib(&strip($code)) || 'undef';
+  my $iMIB = &_short_to_mib(&_strip($code)) || 'undef';
   # print STDERR "$iMIB..." if $iDebug;
   if ($iMIB ne 'undef')
     {
@@ -536,7 +549,7 @@ sub umu8_charset_name
   return undef unless $code ne '';
   # $iDebug = ($code =~ m!u!);
   # print STDERR " + umu8_charset_name($code)..." if $iDebug;
-  my $iMIB = &short_to_mib($code) || 'undef';
+  my $iMIB = &_short_to_mib($code) || 'undef';
   # print STDERR "$iMIB..." if $iDebug;
   if ($iMIB ne 'undef')
     {
@@ -547,6 +560,7 @@ sub umu8_charset_name
   return undef;
   } # umu8_charset_name
 
+=back
 
 =head1 QUERY ROUTINES
 
@@ -609,12 +623,12 @@ sub add_iana_alias
   my $sName = &iana_charset_name($sReal);
   if (not defined($sName))
     {
-    carp "attempt to alias \"$sAlias\" to unknown IANA character set \"$sReal\"\n" if DEBUG;
+    carp qq{attempt to alias "$sAlias" to unknown IANA charset "$sReal"};
     return undef;
     } # if
-  my $mib = &short_to_mib(&strip($sName));
+  my $mib = &_short_to_mib(&_strip($sName));
   # print STDERR " --> $sName --> $mib\n";
-  $SHORTtoMIB{&strip($sAlias)} = $mib;
+  $SHORTtoMIB{&_strip($sAlias)} = $mib;
   return $sName;
   } # add_iana_alias
 
@@ -660,11 +674,11 @@ sub add_map8_alias
   {
   my ($sAlias, $sReal) = @_;
   my $sName = &map8_charset_name($sReal);
-  my $sShort = &strip($sAlias);
-  my $sShortName = &strip($sName);
+  my $sShort = &_strip($sAlias);
+  my $sShortName = &_strip($sName);
   if (not defined($sName))
     {
-    carp "attempt to alias \"$sAlias\" to unknown Map8 character set \"$sReal\"\n" if DEBUG;
+    carp qq{attempt to alias "$sAlias" to unknown Map8 charset "$sReal"};
     return undef;
     } # if
   if (exists $SHORTtoMIB{$sShortName})
@@ -687,11 +701,11 @@ sub add_umap_alias
   {
   my ($sAlias, $sReal) = @_;
   my $sName = &umap_charset_name($sReal);
-  my $sShort = &strip($sAlias);
-  my $sShortName = &strip($sName);
+  my $sShort = &_strip($sAlias);
+  my $sShortName = &_strip($sName);
   if (not defined($sName))
     {
-    carp "attempt to alias \"$sAlias\" to unknown U::Map character set \"$sReal\"\n" if DEBUG;
+    carp qq{attempt to alias "$sAlias" to unknown U::Map charset "$sReal"};
     return undef;
     } # if
   if (exists $SHORTtoMIB{$sShortName})
@@ -735,12 +749,12 @@ sub add_libi_alias
   my $sName = &libi_charset_name($sReal);
   if (not defined($sName))
     {
-    carp "attempt to alias \"$sAlias\" to unknown iconv conversion scheme \"$sReal\"\n" if DEBUG;
+    carp qq{attempt to alias "$sAlias" to unknown iconv charset "$sReal"};
     return undef;
     } # if
-  my $mib = &short_to_mib(&strip($sName));
+  my $mib = &_short_to_mib(&_strip($sName));
   # print STDERR "sName=$sName...mib=$mib\n";
-  $SHORTtoMIB{&strip($sAlias)} = $mib;
+  $SHORTtoMIB{&_strip($sAlias)} = $mib;
   return $sName;
   } # add_libi_alias
 
@@ -775,22 +789,22 @@ sub add_enco_alias
   {
   my ($sAlias, $sReal) = @_;
   my $iDebug = 0;
-  print STDERR " + add_enco_alias($sAlias,$sReal)..." if $iDebug;
+  print STDERR " + add_enco_alias($sAlias,$sReal)..." if ($iDebug || DEBUG_ENCO);
   my $sName = &enco_charset_name($sReal);
   if (not defined($sName))
     {
-    carp "attempt to alias \"$sAlias\" to unknown iconv conversion scheme \"$sReal\"\n" if DEBUG;
+    carp qq{attempt to alias "$sAlias" to unknown Encode charset "$sReal"};
     return undef;
     } # if
-  my $mib = &short_to_mib(&strip($sName));
-  print STDERR "sName=$sName...mib=$mib\n" if $iDebug;
-  $SHORTtoMIB{&strip($sAlias)} = $mib;
+  my $mib = &_short_to_mib(&_strip($sName));
+  print STDERR "sName=$sName...mib=$mib\n" if ($iDebug || DEBUG_ENCO);
+  $SHORTtoMIB{&_strip($sAlias)} = $mib;
   return $sName;
   } # add_enco_alias
 
 #-----------------------------------------------------------------------
 
-=head1 EXAMPLES
+=back
 
 =head1 KNOWN BUGS AND LIMITATIONS
 
@@ -860,12 +874,12 @@ modify it under the same terms as Perl itself.
 
 #-----------------------------------------------------------------------
 
-sub strip
+sub _strip
   {
   my $s = lc(shift);
   $s =~ tr/[0-9a-zA-Z]//dc;
   return $s;
-  } # strip
+  } # _strip
 
 # initialization code - stuff the DATA into some data structure
 
@@ -908,7 +922,7 @@ while (1)
       print STDERR " +   found mib: $iMIB, long = $sName\n" if $iDebug;
       $MIBtoLONG{$iMIB} = $sName;
       $LONGtoMIB{$sName} = $iMIB;
-      $SHORTtoMIB{&strip($sName)} = $iMIB;
+      $SHORTtoMIB{&_strip($sName)} = $iMIB;
       if ($mimename)
         {
         print STDERR " +   found mime: mib=$iMIB, mime=$sName\n" if $iDebug;
@@ -924,7 +938,7 @@ while (1)
       if ($sAlias !~ m!None!i)
         {
         print STDERR " +   map Alias ($sAlias) to mib $iMIB\n" if $iDebug;
-        $SHORTtoMIB{&strip($sAlias)} = $iMIB;
+        $SHORTtoMIB{&_strip($sAlias)} = $iMIB;
 	if ($mimename)
 	  {
           print STDERR " +   found mime: mib=$iMIB, mime=$sAlias\n" if $iDebug;
@@ -946,13 +960,14 @@ while (1)
  EQUAL_LINE:
   foreach my $sLine (@asEqualLines)
     {
+    next if ($sLine =~ m!\A#!);
     # print STDERR " +   equal-sign line $sLine...\n";
     my @as = split(/\ ===\ /, $sLine);
     next unless defined $as[0];
     next unless $as[0] ne '';
     next unless defined $as[1];
     next unless $as[1] ne '';
-    my $iMIB = $SHORTtoMIB{&strip($as[0])} || '';
+    my $iMIB = $SHORTtoMIB{&_strip($as[0])} || '';
     unless ($iMIB ne '')
       {
       print STDERR " --- can not find IANA entry for equal-sign directive $as[0]\n";
@@ -960,7 +975,7 @@ while (1)
       } # unless
     foreach my $s (@as)
       {
-      my $sStrip = &strip($s);
+      my $sStrip = &_strip($s);
       # print STDERR " +     $sStrip --> $iMIB\n";
       $SHORTtoMIB{$sStrip} = $iMIB;
       } # foreach
@@ -1013,7 +1028,7 @@ while (1)
         # Map ALL the Map8 aliases to this Map8 master name:
         foreach my $s ($sMap8, @as)
           {
-          $s = &strip($s);
+          $s = &_strip($s);
           print STDERR " +      map $s to $iMIB in SHORTtoMIB...\n" if $iDebug;
           $SHORTtoMIB{$s} = $iMIB;
           } # foreach
@@ -1069,7 +1084,7 @@ while (1)
           foreach my $sAlias ($sName, @asAlias)
             {
             print STDERR " +     try alias $sAlias\n" if $iDebug;
-            my $iMIBtry = &short_to_mib(&strip($sAlias));
+            my $iMIBtry = &_short_to_mib(&_strip($sAlias));
             if ($iMIBtry)
               {
               print STDERR " +       matched\n" if $iDebug;
@@ -1091,11 +1106,11 @@ while (1)
         # Set the long IANA name, IF it is empty so far:
         $MIBtoLONG{$iMIB} ||= $sName;
         $LONGtoMIB{$sName} ||= $iMIB;
-        $SHORTtoMIB{&strip($sName)} ||= $iMIB;
+        $SHORTtoMIB{&_strip($sName)} ||= $iMIB;
         foreach my $sAlias (@asAlias)
           {
           print STDERR " +   UMAP alias $sAlias\n" if $iDebug;
-          $SHORTtoMIB{&strip($sAlias)} = $iMIB;
+          $SHORTtoMIB{&_strip($sAlias)} = $iMIB;
           } # while
         } # foreach
       close MAPS;
@@ -1187,18 +1202,18 @@ UMU8_NAME:
   last INFINITE;
 
   # debugging: huge dump:
-  # &dumpHash('MIBtoLONG', \%MIBtoLONG);
-  # &dumpHash('LONGtoMIB', \%LONGtoMIB);
-  # &dumpHash('SHORTtoMIB', \%SHORTtoMIB);
+  # &_dump_hash('MIBtoLONG', \%MIBtoLONG);
+  # &_dump_hash('LONGtoMIB', \%LONGtoMIB);
+  # &_dump_hash('SHORTtoMIB', \%SHORTtoMIB);
   foreach (keys %SHORTtoMIB)
     {
-    print STDERR " + short_to_long($_) == ", &short_to_long($_) || 'undef', "\n";
+    print STDERR " + _short_to_long($_) == ", &_short_to_long($_) || 'undef', "\n";
     } # foreach
 
   last INFINITE;
   } # while
 
-sub dumpHash
+sub _dump_hash
   {
   my ($sName, $rh) = @_;
   print STDERR " + after initialization, $sName is:\n";
@@ -1206,7 +1221,7 @@ sub dumpHash
     {
     print STDERR " +   $key => $$rh{$key}\n";
     } # foreach
-  } # dumpHash
+  } # _dump_hash
 
 sub _init_data_extra
   {
@@ -1233,15 +1248,14 @@ EBCDIC-ES === ebcdic-cp-es
 EBCDIC-FR === ebcdic-cp-fr
 EBCDIC-IT === ebcdic-cp-it
 EBCDIC-UK === ebcdic-cp-gb
-EBCDIC-US === ebcdic-cp-us
 EBCDIC-FI-SE === ebcdic-cp-fi
 UTF-7 === Unicode-2-0-utf-7
 UTF-8 === Unicode-2-0-utf-8
 Extended_UNIX_Code_Packed_Format_for_Japanese === euc === euc-jp
-# These were added for Unicode::MapUTF8:
+# These are for Unicode::MapUTF8:
 ISO-10646-UCS-2 === ucs2
 ISO-10646-UCS-4 === ucs4
-# These were added for iconv:
+# These are for iconv:
 ISO-2022-JP === ISO-2022-JP-1
 # These are for Encode:
 IBM1047 === cp1047
@@ -1251,8 +1265,37 @@ JIS_X0201 === jis0201-raw
 JIS_C6226-1983 === jis0208-raw
 JIS_X0212-1990 === jis0212-raw
 KS_C_5601-1987 === ksc5601-raw
-# This is to workaround a bug in IANA's document:
-ECMA-cyrillic === KOI8-E
+CP037 === CP37
+cp863 === DOSCanadaF
+cp860 === DOSPortuguese
+cp869 === DOSGreek2
+koi8-r === cp878
+# These encodings are handled by Encode, but I don't know what they are:
+# ??? === AdobeZdingbats
+# ??? === MacArabic
+# ??? === MacCentralEurRoman
+# ??? === MacChineseSimp
+# ??? === MacChineseTrad
+# ??? === MacCroatian
+# ??? === MacCyrillic
+# ??? === MacDingbats
+# ??? === MacFarsi
+# ??? === MacGreek
+# ??? === MacHebrew
+# ??? === MacIcelandic
+# ??? === MacJapanese
+# ??? === MacKorean
+# ??? === MacRomanian
+# ??? === MacRumanian
+# ??? === MacSami
+# ??? === MacThai
+# ??? === MacTurkish
+# ??? === MacUkrainian
+# ??? === MacVietnamese
+# ??? === cp1006
+# ??? === dingbats
+# ??? === nextstep
+# ??? === posix-bc
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
   } # _init_data_extra
 
@@ -1776,7 +1819,7 @@ MIBenum: 77
 Source: ISO registry (formerly ECMA registry)
          http://www.itscj.ipsj.jp/ISO-IR/111.pdf
 Alias: iso-ir-111
-Alias: KO18-E
+Alias: KOI8-E
 Alias: csISO111ECMACyrillic
 
 Name: CSA_Z243.4-1985-1                                  [RFC1345,KXS2]

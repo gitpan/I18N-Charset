@@ -1,30 +1,13 @@
 # libi.t - tests for "preferred LIBI name" functionality of I18N::Charset
 
-use Test::More;
+use Test::More no_plan;
 
-unless (eval "require App::Info::Lib::Iconv")
-  {
-  plan skip_all => 'App::Info::Lib::Iconv is not installed';
-  } # unless
+use IO::Capture::ErrorMessages;
+my $oICE =  IO::Capture::ErrorMessages->new;
 
-my $oAILI = new App::Info::Lib::Iconv;
-unless (ref $oAILI)
-  {
-  plan skip_all => 'can not determine iconv version (not installed?)';
-  } # unless
-if (! $oAILI->installed)
-  {
-  plan skip_all => 'iconv is not installed';
-  } # if
-my $iLibiVersion = $oAILI->version || 0.0;
-# print STDERR " + libiconv version is $iLibiVersion\n";
-if ($iLibiVersion < 1.8)
-  {
-  plan skip_all => 'iconv version is too old(?)';
-  } # if
-plan tests => 23;
+use strict;
 
-&use_ok('I18N::Charset');
+BEGIN { use_ok('I18N::Charset') };
 
 #================================================
 # TESTS FOR libi routines
@@ -38,26 +21,48 @@ ok(!defined libi_charset_name(""), 'empty argument');
 ok(!defined libi_charset_name("junk"), 'junk argument');
 ok(!defined libi_charset_name(999999), '999999 argument');
 ok(!defined libi_charset_name(\@aa), 'arrayref argument');
-
-#---- some successful examples -----------------------------------------
-is(libi_charset_name("x-x-sjis"), libi_charset_name("MS_KANJI"), 'x-x-sjis');
-is(libi_charset_name("x-x-sjis"), "MS_KANJI", 'normal literal -- x-x-sjis');
-is(libi_charset_name("G.B.K."), "CP936", 'normal -- G.B.K.');
-is(libi_charset_name("CP936"), "CP936", 'identity -- CP936');
-is(libi_charset_name("Johab"), "CP1361", 'normal -- Johab');
-is(libi_charset_name("johab"), libi_charset_name("cp 1361"), 'equivalent -- johab');
-
-#---- some aliasing examples -----------------------------------------
+$oICE->start;
 ok(!defined I18N::Charset::add_libi_alias("my-junk" => 'junk argument'));
-ok(I18N::Charset::add_libi_alias('my-chinese1' => 'CN-GB'));
-is(libi_charset_name("my-chinese1"), 'CN-GB', 'alias literal -- my-chinese1');
-is(libi_charset_name("my-chinese1"), libi_charset_name('EUC-CN'), 'alias equal -- my-chinese1');
-ok(I18N::Charset::add_libi_alias('my-chinese2' => 'EUC-CN'));
-is(libi_charset_name("my-chinese2"), 'CN-GB', 'alias literal -- my-chinese2');
-is(libi_charset_name("my-chinese2"), libi_charset_name('G.B.2312'), 'alias equal -- my-chinese2');
-ok(I18N::Charset::add_libi_alias('my-japanese' => 'x-x-sjis'));
-is(libi_charset_name("my-japanese"), 'MS_KANJI', 'alias literal -- my-japanese');
-is(libi_charset_name("my-japanese"), libi_charset_name('Shift_JIS'), 'alias equal -- my-japanese');
+$oICE->stop;
+
+SKIP:
+  {
+  skip 'App::Info::Lib::Iconv is not installed', 16 unless eval "require App::Info::Lib::Iconv";
+  my $oAILI = new App::Info::Lib::Iconv;
+ SKIP:
+    {
+    skip 'can not determine iconv version (not installed?)', 16 unless ref $oAILI;
+ SKIP:
+      {
+      skip 'iconv is not installed', 16 unless $oAILI->installed;
+      my $iLibiVersion = $oAILI->version || 0.0;
+      # print STDERR " + libiconv version is $iLibiVersion\n";
+ SKIP:
+        {
+        skip 'iconv version is too old(?)', 16 if ($iLibiVersion < 1.8);
+
+        #---- some successful examples -----------------------------------------
+        is(libi_charset_name("x-x-sjis"), libi_charset_name("MS_KANJI"), 'x-x-sjis');
+        is(libi_charset_name("x-x-sjis"), "MS_KANJI", 'normal literal -- x-x-sjis');
+        is(libi_charset_name("G.B.K."), "CP936", 'normal -- G.B.K.');
+        is(libi_charset_name("CP936"), "CP936", 'identity -- CP936');
+        is(libi_charset_name("Johab"), "CP1361", 'normal -- Johab');
+        is(libi_charset_name("johab"), libi_charset_name("cp 1361"), 'equivalent -- johab');
+
+        #---- some aliasing examples -----------------------------------------
+        ok(I18N::Charset::add_libi_alias('my-chinese1' => 'CN-GB'));
+        is(libi_charset_name("my-chinese1"), 'CN-GB', 'alias literal -- my-chinese1');
+        is(libi_charset_name("my-chinese1"), libi_charset_name('EUC-CN'), 'alias equal -- my-chinese1');
+        ok(I18N::Charset::add_libi_alias('my-chinese2' => 'EUC-CN'));
+        is(libi_charset_name("my-chinese2"), 'CN-GB', 'alias literal -- my-chinese2');
+        is(libi_charset_name("my-chinese2"), libi_charset_name('G.B.2312'), 'alias equal -- my-chinese2');
+        ok(I18N::Charset::add_libi_alias('my-japanese' => 'x-x-sjis'));
+        is(libi_charset_name("my-japanese"), 'MS_KANJI', 'alias literal -- my-japanese');
+        is(libi_charset_name("my-japanese"), libi_charset_name('Shift_JIS'), 'alias equal -- my-japanese');
+        }
+      }
+    }
+  }
 
 exit 0;
 
