@@ -1,9 +1,20 @@
-&1
+blibdirs
 ChangeLog
-MANIFEST			This list of files
-Makefile.PL
-README
+inc/Module/Install.pm
+inc/Module/Install/Base.pm
+inc/Module/Install/Can.pm
+inc/Module/Install/Fetch.pm
+inc/Module/Install/Include.pm
+inc/Module/Install/Makefile.pm
+inc/Module/Install/Metadata.pm
+inc/Module/Install/Win32.pm
+inc/Test/Builder.pm
+inc/Test/More.pm
 lib/I18N/Charset.pm
+Makefile.PL
+MANIFEST			This list of files
+README
+t/bug1.t
 t/enco.t
 t/iana.t
 t/libi.t

@@ -1,20 +1,22 @@
-# Makefile.PL for I18N-Charset distribution
-#
-# Filename:	Makefile.PL
-# Author:	Martin Thurn
-# Created:	1998-07-14
+use inc::Module::Install;
 
-use ExtUtils::MakeMaker;
+name('I18N-Charset');
+version_from('lib/I18N/Charset.pm');
 
-&WriteMakefile(
-               NAME         => 'I18N::Charset',
-               VERSION_FROM => 'lib/I18N/Charset.pm',
-               PREREQ_PM => {
-                             App::Info::Lib::Iconv => 0,
-                             IO::String => 0,
-                             Test::Simple => 0,
-                             Test::More => 0,
-                            },
-              );
+author('Martin Thurn <mthurn@cpan.org>');
+license('perl');
 
-# Th-th-th-that's all, folks!
+requires( perl => '5.004' );
+requires('IO::String');
+recommends('App::Info::Lib::Iconv');
+recommends('Encode');
+recommends('Unicode::Map');
+recommends('Unicode::Map8');
+recommends('Unicode::MapUTF8');
+
+# Test::More is needed for `make test`:
+include_deps('Test::More', 5.004);
+build_requires('Test::More');
+
+check_nmake();      # check and download nmake.exe for Win32
+&Makefile->write;

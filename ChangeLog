@@ -1,3 +1,7 @@
+2004-01-15  Kingpin  <mthurn@verizon.net>
+
+	* lib/I18N/Charset.pm (enco_charset_name): encoding names were not initialized sometimes
+
 2003-03-28  Kingpin  <mthurn@megapipe.net>
 
 	* t/enco.t: new file
