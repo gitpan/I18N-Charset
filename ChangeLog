@@ -1,3 +1,9 @@
+2002-10-02  Kingpin  <mthurn@copper.dulles.tasc.com>
+
+	* lib/I18N/Charset.pm (_init_data): new charset list from IANA
+
+	* t/iana.t: two new tests for new data
+
 2002-09-05  Kingpin  <mthurn@copper.dulles.tasc.com>
 
 	* lib/I18N/Charset.pm: new function mime_charset_name()
