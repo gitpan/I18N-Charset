@@ -55,7 +55,7 @@ use Carp;
 #	Public Global Variables
 #-----------------------------------------------------------------------
 use vars qw( $VERSION @ISA @EXPORT @EXPORT_OK );
-$VERSION = '1.06';
+$VERSION = '1.07';
 @ISA       = qw( Exporter );
 @EXPORT    = qw( iana_charset_name map8_charset_name umap_charset_name );
 @EXPORT_OK = qw( add_iana_alias add_map8_alias add_umap_alias );
@@ -107,34 +107,36 @@ sub iana_charset_name
   return undef unless defined $code;
   return undef unless $code ne '';
   # print STDERR " + iana_charset_name($code)...";
-  my @asTry = ($code);
-  push @asTry, &strip($code);
-  push @asTry, &strip($1) if $code =~ m/^x-(.+)$/;  # try without leading x-
-  push @asTry, &strip($1) if $code =~ m/^x-x-(.+)$/;  # try without leading x-x-
-  foreach my $sTry (@asTry)
-    {
-    # print STDERR "try($sTry)...";
-    my $sTemp = &short_to_long($sTry) || '';
-    if ($sTemp ne '')
-      {
-      # print STDERR " --> $sTemp\n";
-      return $sTemp;
-      } # if
-    } # while
-  # print STDERR " --> undef\n";
-  return undef;
+  return &short_to_long($code);
   } # iana_charset_name
 
 
+sub try_list
+  {
+  my $code = shift;
+  my @asTry = ($code, &strip($code));
+  push @asTry, &strip($1) if $code =~ m/^x-(.+)$/;  # try without leading x-
+  push @asTry, &strip($1) if $code =~ m/^x-x-(.+)$/;  # try without leading x-x-
+  return @asTry;
+  } # try_list
+
 sub short_to_mib
   {
-  return $SHORTtoMIB{shift()};
+  my $code = shift;
+  local $^W = 0;
+  foreach my $sTry (&try_list($code))
+    {
+    my $iMIB = $SHORTtoMIB{$sTry} || 'undef';
+    # print STDERR "try($sTry)...$iMIB...";
+    return $iMIB if ($iMIB ne 'undef');
+    } # foreach
+  return undef;
   } # short_to_mib
 
 sub short_to_long
   {
   local $^W = 0;
-  return $MIBtoLONG{$SHORTtoMIB{shift()}};
+  return $MIBtoLONG{&short_to_mib(shift)};
   } # short_to_long
 
 
@@ -160,7 +162,7 @@ sub map8_charset_name
   print STDERR " + map8_charset_name($code)..." if $debug;
   $code = &strip($code);
   print STDERR "$code..." if $debug;
-  my $iMIB = $SHORTtoMIB{$code} || 'undef';
+  my $iMIB = &short_to_mib($code) || 'undef';
   print STDERR "$iMIB..." if $debug;
   if ($iMIB ne 'undef')
     {
@@ -194,9 +196,7 @@ sub umap_charset_name
   my $debug = 0 && ($code =~ m!apple!i);
   # print STDERR "\n + MIBtoUMAP{dummymib029} == $MIBtoUMAP{'dummymib029'}\n\n" if $debug;
   print STDERR " + umap_charset_name($code)..." if $debug;
-  $code = &strip($code);
-  print STDERR "$code..." if $debug;
-  my $iMIB = $SHORTtoMIB{$code} || 'undef';
+  my $iMIB = &short_to_mib($code) || 'undef';
   print STDERR "$iMIB..." if $debug;
   # First, see if there is a special UMap alias (independent of the
   # IANA registry) for the desired code:
@@ -706,7 +706,7 @@ ISO-8859-1-Windows-3.0-Latin-1 === iso-8859-1
 ISO-8859-1-Windows-3.1-Latin-1 === iso-8859-1
 ISO-8859-2-Windows-Latin-2 === iso-8859-2
 ISO-8859-9-Windows-Latin-5 === iso-8859-9
-Extended_UNIX_Code_Packed_Format_for_Japanese === euc
+Extended_UNIX_Code_Packed_Format_for_Japanese === euc === euc-jp
 
 The rest of the DATA is the original document from
 ftp://ftp.isi.edu/in-notes/iana/assignments/character-sets

@@ -1,3 +1,13 @@
+2001-03-08  Kingpin  <mthurn@tasc.com>
+
+	* 1.07 released
+
+2001-03-07  Kingpin  <mthurn@tasc.com>
+
+	* README: mention maputf8 tests are skipped
+
+	* lib/I18N/Charset.pm (try_list): be more forgiving during ALL lookups
+
 2001-03-06  Kingpin  <mthurn@tasc.com>
 
 	* 1.06 released
