@@ -55,7 +55,7 @@ use Carp;
 #	Public Global Variables
 #-----------------------------------------------------------------------
 use vars qw( $VERSION @ISA @EXPORT @EXPORT_OK );
-$VERSION = '1.11';
+$VERSION = '1.12';
 @ISA       = qw( Exporter );
 @EXPORT    = qw( iana_charset_name map8_charset_name umap_charset_name );
 @EXPORT_OK = qw( add_iana_alias add_map8_alias add_umap_alias );
@@ -476,7 +476,7 @@ while (1)
     elsif ($sLine =~ m!^MIBenum:\s*(\d+)!)
       {
       $iMIB = $1;
-      # $debug = ($iMIB == 2028);
+      # $debug = ($iMIB =~ m!225[23]!);
       print STDERR " +   found mib: $iMIB, sName = $sName\n" if $debug;
       $MIBtoLONG{$iMIB} = $sName;
       $LONGtoMIB{$sName} = $iMIB;
@@ -497,10 +497,11 @@ while (1)
 
   # Not that we have all the standard definitions, process the special
   # === directives:
+  chomp @asEqualLines;
  EQUAL_LINE:
   foreach my $sLine (@asEqualLines)
     {
-    # print STDERR " +   equal-sign line $sLine...";
+    # print STDERR " +   equal-sign line $sLine...\n";
     my @as = split(/\ ===\ /, $sLine);
     my $iMIB = $SHORTtoMIB{&strip($as[0])} || '';
     unless ($iMIB ne '')
@@ -510,7 +511,9 @@ while (1)
       } # unless
     foreach my $s (@as)
       {
-      $SHORTtoMIB{&strip($s)} = $iMIB;
+      my $sStrip = &strip($s);
+      # print STDERR " +     $sStrip --> $iMIB\n";
+      $SHORTtoMIB{$sStrip} = $iMIB;
       } # foreach
     } # foreach
 
@@ -554,7 +557,7 @@ while (1)
           print STDERR " +   found IANA name $sFound for Map8 entry $sMap8\n" if $debug;
           $iMIB = $LONGtoMIB{$sFound};
           }
-        # $debug = ($iMIB eq 2028);
+        # $debug = ($iMIB =~ m!225[23]!);
         # Make this IANA mib map to this Map8 name:
         print STDERR " +      map $iMIB to $sMap8 in MIBtoMAP8...\n" if $debug;
         $MIBtoMAP8{$iMIB} = $sMap8;
@@ -586,8 +589,9 @@ while (1)
     my $sMapFile = "$MAP_Path/REGISTRY";
     if (open MAPS, $sMapFile)
       {
-      $/ = "\n\n";
-      while (defined (my $sEntry = <MAPS>))
+      undef $/;
+      my @asMAPS = split(/\n\s*\n/, <MAPS>);
+      foreach my $sEntry (@asMAPS)
         {
         $debug = 0;
         # print STDERR " + working on Umap entry >>>>>$sEntry<<<<<...\n";
@@ -599,6 +603,7 @@ while (1)
         $iMIB = $1 if $sEntry =~ m!^#mib:\s+(\d+)!mi;
         $iMIB ||= $SHORTtoMIB{&strip($sName)};
         $iMIB ||= $sFakeMIB++;
+        # $debug = ($iMIB =~ m!225[23]!);
         # $debug = ($iMIB eq '17');
         print STDERR " +   UMAP mib is $iMIB\n" if $debug;
         $MIBtoUMAP{$iMIB} = $sName;
@@ -610,7 +615,7 @@ while (1)
           print STDERR " +   UMAP alias $1\n" if $debug;
           $SHORTtoMIB{&strip($1)} = $iMIB;
           } # while
-        } # while
+        } # foreach
       close MAPS;
       # print STDERR "\n + MIBtoUMAP{dummymib029} == $MIBtoUMAP{'dummymib029'}\n\n";
       } # if open

@@ -30,6 +30,9 @@ $I18N::Charset::verbose = $I18N::Charset::verbose = 1;
 
  #---- some successful examples -----------------------------------------
  'iana_charset_name("Windows-1-2-5-1")   eq "windows-1251"',
+ 'iana_charset_name("windows-1252")   eq "windows-1252"',
+ 'iana_charset_name("windows-1252")   ne "windows-1253"',
+ 'iana_charset_name("windows-1253")   eq "windows-1253"',
  'iana_charset_name("Shift_JIS")         eq "Shift_JIS"',
  'iana_charset_name("sjis")         eq "Shift_JIS"',
  'iana_charset_name("x-sjis")         eq "Shift_JIS"',

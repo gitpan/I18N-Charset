@@ -1,3 +1,7 @@
+2001-09-04  Kingpin  <mthurn@copper.dulles.tasc.com>
+
+	* lib/I18N/Charset.pm (strip): handle whitespace in blank lines of Unicode::Map/REGISTRY
+
 2001-08-24  Kingpin  <mthurn@tasc.com>
 
 	* lib/I18N/Charset.pm: new IANA charset list
