@@ -49,7 +49,7 @@ use Carp;
 #	Public Global Variables
 #-----------------------------------------------------------------------
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK);
-$VERSION = sprintf("%d.%02d", q$Revision: 1.4 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.5 $ =~ /(\d+)\.(\d+)/);
 @ISA       = qw(Exporter);
 @EXPORT    = qw(iana_charset_name map8_charset_name);
 @EXPORT_OK = qw(add_iana_alias add_map8_alias);
@@ -61,7 +61,6 @@ my %NAMES  = ();
 my %NAMES8 = ();
 my ($debug, $verbose);
 
-#=======================================================================
 
 =head1 CONVERSION ROUTINES
 
@@ -80,8 +79,6 @@ within the string are not important.
     $sCharset = iana_charset_name('WinCyrillic');
 
 =cut
-
-#=======================================================================
 
 sub iana_charset_name
   {
@@ -142,7 +139,6 @@ sub map8_charset_name
   return undef;
   } # map8_charset_name
 
-#=======================================================================
 
 =head1 QUERY ROUTINES
 
@@ -159,8 +155,6 @@ The names are not in any particular order.
 =back
 
 =cut
-
-#=======================================================================
 
 sub all_iana_charset_names
   {
@@ -515,7 +509,6 @@ If that file gets updated after that date, paste it in here!
 
 ---------------------------------------------------------------
 
-===================================================================
 CHARACTER SETS
 
 These are the official names for character sets that may be used in
