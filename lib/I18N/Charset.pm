@@ -55,9 +55,9 @@ use Carp;
 #	Public Global Variables
 #-----------------------------------------------------------------------
 use vars qw( $VERSION @ISA @EXPORT @EXPORT_OK );
-$VERSION = '1.13';
+$VERSION = '1.15';
 @ISA       = qw( Exporter );
-@EXPORT    = qw( iana_charset_name map8_charset_name umap_charset_name mib_charset_name );
+@EXPORT    = qw( iana_charset_name map8_charset_name umap_charset_name mib_charset_name mib_to_charset_name charset_name_to_mib);
 @EXPORT_OK = qw( add_iana_alias add_map8_alias add_umap_alias );
 
 #-----------------------------------------------------------------------
@@ -124,14 +124,23 @@ sub short_to_mib
   {
   my $code = shift;
   local $^W = 0;
+  # print STDERR " + short_to_mib($code)...";
+  my $answer = undef;
+ TRY_SHORT:
   foreach my $sTry (&try_list($code))
     {
     my $iMIB = $SHORTtoMIB{$sTry} || 'undef';
     # print STDERR "try($sTry)...$iMIB...";
-    return $iMIB if ($iMIB ne 'undef');
+    if ($iMIB ne 'undef')
+      {
+      $answer = $iMIB;
+      last TRY_SHORT;
+      } # if
     } # foreach
-  return undef;
+  # print STDERR "answer is $answer\n";
+  return $answer;
   } # short_to_mib
+
 
 sub short_to_long
   {
@@ -140,25 +149,47 @@ sub short_to_long
   } # short_to_long
 
 
-=item mib_charset_name()
+=item mib_to_charset_name
 
 This function takes a string containing the MIBenum of a character set
 and returns a string which contains a name for the character set.
 If no valid character set name can be identified,
 then C<undef> will be returned.
 
-    $sCharset = mib_charset_name('3');
+    $sCharset = mib_to_charset_name('3');
 
 =cut
 
 sub mib_charset_name
+  {
+  mib_to_charset_name(@_);
+  } # mib_charset_name
+
+sub mib_to_charset_name
   {
   my $code = shift;
   return undef unless defined $code;
   return undef unless $code ne '';
   local $^W = 0;
   return $MIBtoLONG{$code};
-  } # mib_charset_name 
+  } # mib_to_charset_name
+
+
+=item charset_name_to_mib
+
+This function takes a string containing the name of a character set
+and returns a MIBenum the character set.
+If no valid character set name can be identified,
+then C<undef> will be returned.
+
+    $iMIB = charset_name_mib('US-ASCII');
+
+=cut
+
+sub charset_name_to_mib
+  {
+  return $LONGtoMIB{&iana_charset_name(shift) || ''};
+  } # charset_name_to_mib
 
 
 =item map8_charset_name()
@@ -385,7 +416,7 @@ sub add_umap_alias
     $SHORTtoMIB{$sShort} = $SHORTtoMIB{$sShortName};
     } # if
   return $sName;
-  } # add_map8_alias
+  } # add_umap_alias
 
 #-----------------------------------------------------------------------
 
@@ -491,14 +522,14 @@ while (1)
     elsif ($sLine =~ m/^Name:\s*(\S+)/)
       {
       $sName = $1;
-      # $debug = $sName =~ m!jis!i;
+      # $debug = ($sName =~ m!1252!i);
       print STDERR " +   read Name: $sName\n" if $debug;
       } # if Name
     elsif ($sLine =~ m!^MIBenum:\s*(\d+)!)
       {
       $iMIB = $1;
       # $debug = ($iMIB =~ m!225[23]!);
-      print STDERR " +   found mib: $iMIB, sName = $sName\n" if $debug;
+      print STDERR " +   found mib: $iMIB, long = $sName\n" if $debug;
       $MIBtoLONG{$iMIB} = $sName;
       $LONGtoMIB{$sName} = $iMIB;
       $SHORTtoMIB{&strip($sName)} = $iMIB;
@@ -544,21 +575,22 @@ while (1)
 
   if (eval "require Unicode::Map8")
     {
+    # $debug = 1;
     print STDERR " + found Unicode::Map8 installed, will build map8 tables..." if $debug;
     my $sMapFile = "$Unicode::Map8::MAPS_DIR/aliases";
     if (open MAPS, $sMapFile)
       {
       while (defined (my $sLine = <MAPS>))
         {
-        # $debug = ($sLine =~ m!IBM037!);
+        # $debug = ($sLine =~ m!1252!);
         my @as = split(/\s/, $sLine);
         my $sFound = '';
         my $iMIB = '';
         # The "master" Map8 name is in $as[0].  Try to find the
         # official IANA name for this encoding:
-        my $sMap8 = $as[$[];
+        my $sMap8 = shift @as;
  MAP8ITEM:
-        foreach my $s (@as)
+        foreach my $s ($sMap8, @as)
           {
           print STDERR " +      looking for $s in iana table...\n" if $debug;
           if (defined (my $sTemp = &iana_charset_name($s)))
@@ -569,21 +601,22 @@ while (1)
           } # foreach
         if ($sFound eq '')
           {
-          print STDERR " --- did not find IANA name for Map8 entry $sMap8\n" if $debug;
+          # $debug = 1;
           $iMIB = $sFakeMIB++;
+          print STDERR " --- did not find IANA name ($iMIB) for Map8 entry $sMap8\n" if $debug;
           $LONGtoMIB{$sMap8} = $iMIB;
           } # unless
         else
           {
-          print STDERR " +   found IANA name $sFound for Map8 entry $sMap8\n" if $debug;
           $iMIB = $LONGtoMIB{$sFound};
+          print STDERR " +   found IANA name $sFound ($iMIB) for Map8 entry $sMap8\n" if $debug;
           }
         # $debug = ($iMIB =~ m!225[23]!);
         # Make this IANA mib map to this Map8 name:
         print STDERR " +      map $iMIB to $sMap8 in MIBtoMAP8...\n" if $debug;
         $MIBtoMAP8{$iMIB} = $sMap8;
         # Map ALL the Map8 aliases to this Map8 master name:
-        foreach my $s (@as)
+        foreach my $s ($sMap8, @as)
           {
           $s = &strip($s);
           print STDERR " +      map $s to $iMIB in SHORTtoMIB...\n" if $debug;
@@ -618,13 +651,37 @@ while (1)
         $debug = 0;
         # print STDERR " + working on Umap entry >>>>>$sEntry<<<<<...\n";
         my ($sName, $iMIB) = ('', '');
+        # Get the value of the name field, and skip entries with no name:
         next unless $sEntry =~ m!^name:\s+(\S+)!mi;
         $sName = $1;
-        # $debug = ($sName =~ m!apple!i);
+        # $debug = ($sName =~ m!1252!);
         print STDERR " +   UMAP sName is $sName\n" if $debug;
-        $iMIB = $1 if $sEntry =~ m!^#mib:\s+(\d+)!mi;
-        $iMIB ||= $SHORTtoMIB{&strip($sName)};
-        $iMIB ||= $sFakeMIB++;
+        my @asAlias = split /\n/, $sEntry;
+        @asAlias = map { /alias:\s+(.*)/; $1 } (grep /alias/, @asAlias);
+        # See if this entry already has the MIB identified:
+        if ($sEntry =~ m!^#mib:\s+(\d+)!mi)
+          {
+          $iMIB = $1;
+          } # if
+        else
+          {
+          # This entry does not have the MIB listed.  See if the name
+          # of any of the aliases are known to our iana tables:
+ ALIAS:
+          foreach my $sAlias ($sName, @asAlias)
+            {
+            print STDERR " +     try alias $sAlias\n" if $debug;
+            my $iMIBtry = &short_to_mib(&strip($sAlias));
+            if ($iMIBtry)
+              {
+              print STDERR " +       matched\n" if $debug;
+              $iMIB = $iMIBtry;
+              last ALIAS;
+              } # if
+            } # foreach
+          # If nothing matched, create a dummy mib:
+          $iMIB ||= $sFakeMIB++;
+          } # else
         # $debug = ($iMIB =~ m!225[23]!);
         # $debug = ($iMIB eq '17');
         print STDERR " +   UMAP mib is $iMIB\n" if $debug;
@@ -632,10 +689,10 @@ while (1)
         # Set the long IANA name, IF it is empty so far:
         $MIBtoLONG{$iMIB} ||= $sName;
         $SHORTtoMIB{&strip($sName)} ||= $iMIB;
-        while ($sEntry =~ m!^alias:\s+(.+)$!mgi)
+        foreach my $sAlias (@asAlias)
           {
-          print STDERR " +   UMAP alias $1\n" if $debug;
-          $SHORTtoMIB{&strip($1)} = $iMIB;
+          print STDERR " +   UMAP alias $sAlias\n" if $debug;
+          $SHORTtoMIB{&strip($sAlias)} = $iMIB;
           } # while
         } # foreach
       close MAPS;

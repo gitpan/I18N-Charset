@@ -1,6 +1,23 @@
+2002-02-07  Kingpin  <mthurn@copper.dulles.tasc.com>
+
+	* lib/I18N/Charset.pm (short_to_mib): short-circuit on positive answer
+	(body): BUGFIX for processing Unicode::Map's REGISTRY
+
+2002-02-05  Kingpin  <mthurn@copper.dulles.tasc.com>
+
+	* t/utf8.t: new file
+
+	* t/umap.t: now uses Test::More
+
+	* t/map8.t: now uses Test::More
+
+	* t/mib.t: new file
+
+	* lib/I18N/Charset.pm (mib_to_charset_name): renamed function
+
 2002-01-10  Kingpin  <mthurn@copper.dulles.tasc.com>
 
-	* lib/I18N/Charset.pm (mib_charset_name): new method
+	* lib/I18N/Charset.pm (charset_name_to_mib): new function (thanks to François)
 
 2001-11-30  Kingpin  <mthurn@copper.dulles.tasc.com>
 

@@ -7,6 +7,10 @@
 use ExtUtils::MakeMaker;
 
 &WriteMakefile(
-               NAME          => 'I18N::Charset',
-               VERSION_FROM  => 'lib/I18N/Charset.pm',
+               NAME         => 'I18N::Charset',
+               VERSION_FROM => 'lib/I18N/Charset.pm',
+               PREREQ_PM => {
+                             Test::Simple => 0,
+                             Test::More => 0,
+                            },
               );

@@ -1,61 +1,47 @@
-#!./perl
 #
-# umap.t - tests for umap functionality of I18N::Charset
+# umap.t - tests for Unicode::Map functionality of I18N::Charset
 #
 
 use I18N::Charset;
+use Test::More;
 
-$I18N::Charset::verbose = $I18N::Charset::verbose = 1;
-
-unless (eval "require Unicode::Map")
+if (eval "require Unicode::Map")
   {
-  print STDOUT "1..0\nEND\n";
-  exit 0;
+  plan tests => 15;
+  }
+else
+  {
+  plan skip_all => 'Unicode::Map is not installed';
   } # unless
 
-#-----------------------------------------------------------------------
-# This is an array of tests. Each test is eval'd as an expression.
-# If it evaluates to FALSE, then "not ok N" is printed for the test,
-# otherwise "ok N".
-#-----------------------------------------------------------------------
-@TESTS =
-(
-	#================================================
-	# TESTS FOR umap routines
-	#================================================
+#================================================
+# TESTS FOR umap routines
+#================================================
 
- #---- selection of examples which should all result in undef -----------
- '!defined umap_charset_name()',         # no argument
- '!defined umap_charset_name(undef)',    # undef argument
- '!defined umap_charset_name("")',       # empty argument
- '!defined umap_charset_name("junk")',   # illegal code
- '!defined umap_charset_name(\@aa)',     # illegal argument
+my @aa;
+#---- selection of examples which should all result in undef -----------
+ok(!defined umap_charset_name(), 'no argument');
+ok(!defined umap_charset_name(undef), 'undef argument');
+ok(!defined umap_charset_name(""), 'empty argument');
+ok(!defined umap_charset_name("junk"), 'junk argument');
+ok(!defined umap_charset_name(999999), '999999 argument');
+ok(!defined umap_charset_name(\@aa), 'arrayref argument');
 
- #---- some successful examples -----------------------------------------
- 'umap_charset_name("apple symbol")          eq "APPLE-SYMBOL"',
- 'umap_charset_name("Adobe Ding Bats")          eq "ADOBE-DINGBATS"',
- 'umap_charset_name("cs IBM-037")          eq "CP037"',
+#---- some successful examples -----------------------------------------
+ok(umap_charset_name("apple symbol") eq "APPLE-SYMBOL", '');
+ok(umap_charset_name("Adobe Ding Bats") eq "ADOBE-DINGBATS", '');
+ok(umap_charset_name("cs IBM-037") eq "CP037", '');
 
- #---- some aliasing examples -------------------------------------------
- '!defined(I18N::Charset::add_umap_alias("alias1" => "junk"))',
- '!defined umap_charset_name("alias1")',
+#---- some aliasing examples -------------------------------------------
+ok(!defined(I18N::Charset::add_umap_alias("alias1" => "junk")), '');
+ok(!defined umap_charset_name("alias1"), '');
 
- 'I18N::Charset::add_umap_alias("alias2" => "IBM775")      eq "CP775"',
- 'umap_charset_name("alias2") eq "CP775"',
+ok(I18N::Charset::add_umap_alias("alias2" => "IBM775")      eq "CP775", '');
+ok(umap_charset_name("alias2") eq "CP775", '');
 
- 'I18N::Charset::add_umap_alias("alias3" => "alias2") eq "CP775"',
- 'umap_charset_name("alias3") eq "CP775"',
-
-);
-
-print "1..", int(@TESTS), "\n";
-
-$testid = 1;
-foreach $test (@TESTS)
-{
-    eval "print (($test) ? \"ok $testid\\n\" : \"not ok $testid\\n\" )";
-    print "not ok $testid\n" if $@;
-    ++$testid;
-}
+ok(I18N::Charset::add_umap_alias("alias3" => "alias2") eq "CP775", '');
+ok(umap_charset_name("alias3") eq "CP775", '');
 
 exit 0;
+
+__END__
