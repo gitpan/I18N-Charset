@@ -11,8 +11,8 @@ conversion scheme names
   $sCharset = iana_charset_name('WinCyrillic');     # $sCharset gets 'windows-1251'
   $sCharset = map8_charset_name('windows-1251');    # $sCharset gets 'cp1251'
   
-  I18N::Charset::add_iana_alias('my-japanese' => 'iso-2022-jp');  
-  I18N::Charset::add_map8_alias('my-arabic' => 'arabic7');  
+  I18N::Charset::add_iana_alias('my-japanese' => 'iso-2022-jp');
+  I18N::Charset::add_map8_alias('my-arabic' => 'arabic7');
 
 =cut
 
@@ -49,7 +49,7 @@ use Carp;
 #	Public Global Variables
 #-----------------------------------------------------------------------
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK);
-$VERSION = sprintf("%d.%02d", q$Revision: 1.3 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.4 $ =~ /(\d+)\.(\d+)/);
 @ISA       = qw(Exporter);
 @EXPORT    = qw(iana_charset_name map8_charset_name);
 @EXPORT_OK = qw(add_iana_alias add_map8_alias);
@@ -510,11 +510,12 @@ Extended_UNIX_Code_Packed_Format_for_Japanese === euc
 
 The rest of the DATA is the original document from
 ftp://ftp.isi.edu/in-notes/iana/assignments/character-sets
-Modification date of that file when included here was 1998-06-25.
+Modification date of that file when included here was 2000-08-28.
 If that file gets updated after that date, paste it in here!
 
 ---------------------------------------------------------------
 
+===================================================================
 CHARACTER SETS
 
 These are the official names for character sets that may be used in
@@ -543,12 +544,10 @@ intended for vendor specific coded character sets.
 
 	Assigned MIB enum Numbers
 	-------------------------
-	0		Reserved
-	1		Reserved
-	3-106		Set By Standards Organizations
-	1000-1010	Unicode / 10646
-	2000-2088	Vendor
-	2250-2258	Vendor
+	0-2		Reserved
+	3-999		Set By Standards Organizations
+	1000-1999	Unicode / 10646
+	2000-2999	Vendor
 
 The aliases that start with "cs" have been added for use with the
 Printer MIB (see RFC 1759) and contain the standard numbers along with
@@ -584,19 +583,6 @@ Alias: us
 Alias: IBM367
 Alias: cp367
 Alias: csASCII
-
-Name: ISO-10646-UCS-2
-MIBenum: 1000
-Source: the 2-octet Basic Multilingual Plane, aka Unicode
-        this needs to specify network byte order: the standard
-        does not specify (it is a 16-bit integer space)
-Alias: csUnicode
-
-Name: ISO-10646-UCS-4
-MIBenum: 1001
-Source: the full code space. (same comment about byte order,
-        these are 31-bit numbers.
-Alias: csUCS4
 
 Name: ISO-10646-UTF-1
 MIBenum: 27
@@ -1224,13 +1210,14 @@ Source: ECMA registry
 Alias: iso-ir-155
 Alias: csISO10367Box
 
-Name: latin6                                              [RFC1345,KXS2]
+Name: ISO-8859-10 (preferred MIME name)			  [RFC1345,KXS2]
 MIBenum: 13
 Source: ECMA registry
 Alias: iso-ir-157
 Alias: l6
 Alias: ISO_8859-10:1992
 Alias: csISOLatin6
+Alias: latin6
 
 Name: latin-lap                                           [RFC1345,KXS2]
 MIBenum: 97
@@ -1274,6 +1261,19 @@ Name: KSC5636                                             [RFC1345,KXS2]
 MIBenum: 102
 Alias: ISO646-KR
 Alias: csKSC5636
+
+Name: ISO-10646-UCS-2
+MIBenum: 1000
+Source: the 2-octet Basic Multilingual Plane, aka Unicode
+        this needs to specify network byte order: the standard
+        does not specify (it is a 16-bit integer space)
+Alias: csUnicode
+
+Name: ISO-10646-UCS-4
+MIBenum: 1001
+Source: the full code space. (same comment about byte order,
+        these are 31-bit numbers.
+Alias: csUCS4
 
 Name: DEC-MCS                                             [RFC1345,KXS2]
 MIBenum: 2008
@@ -1702,20 +1702,151 @@ Name: KOI8-U                                                   [RFC2319]
 MIBenum: 2088
 Source: RFC 2319
 
+Name: IBM00858
+MIBenum: 2089
+Source: IBM See (.../assignments/character-set-info/IBM00858)    [Mahdi]
+Alias: CCSID00858
+Alias: CP00858
+Alias: PC-Multilingual-850+euro
+
+Name: IBM00924
+MIBenum: 2090
+Source: IBM See (.../assignments/character-set-info/IBM00924)    [Mahdi]
+Alias: CCSID00924
+Alias: CP00924
+Alias: ebcdic-Latin9--euro
+
+Name: IBM01140
+MIBenum: 2091
+Source: IBM See (.../assignments/character-set-info/IBM01140)    [Mahdi]
+Alias: CCSID01140
+Alias: CP01140
+Alias: ebcdic-us-37+euro
+
+Name: IBM01141
+MIBenum: 2092
+Source: IBM See (.../assignments/character-set-info/IBM01141)    [Mahdi]
+Alias: CCSID01141
+Alias: CP01141
+Alias: ebcdic-de-273+euro
+
+Name: IBM01142
+MIBenum: 2093
+Source: IBM See (.../assignments/character-set-info/IBM01142)    [Mahdi]
+Alias: CCSID01142
+Alias: CP01142
+Alias: ebcdic-dk-277+euro
+Alias: ebcdic-no-277+euro
+
+Name: IBM01143
+MIBenum: 2094
+Source: IBM See (.../assignments/character-set-info/IBM01143)    [Mahdi]
+Alias: CCSID01143
+Alias: CP01143
+Alias: ebcdic-fi-278+euro
+Alias: ebcdic-se-278+euro
+
+Name: IBM01144
+MIBenum: 2095
+Source: IBM See (.../assignments/character-set-info/IBM01144)    [Mahdi]
+Alias: CCSID01144
+Alias: CP01144
+Alias: ebcdic-it-280+euro
+
+Name: IBM01145
+MIBenum: 2096
+Source: IBM See (.../assignments/character-set-info/IBM01145)    [Mahdi]
+Alias: CCSID01145
+Alias: CP01145
+Alias: ebcdic-es-284+euro
+
+Name: IBM01146
+MIBenum: 2097
+Source: IBM See (.../assignments/character-set-info/IBM01146)    [Mahdi]
+Alias: CCSID01146
+Alias: CP01146
+Alias: ebcdic-gb-285+euro
+
+Name: IBM01147
+MIBenum: 2098
+Source: IBM See (.../assignments/character-set-info/IBM01147)    [Mahdi]
+Alias: CCSID01147
+Alias: CP01147
+Alias: ebcdic-fr-297+euro
+
+Name: IBM01148
+MIBenum: 2099
+Source: IBM See (.../assignments/character-set-info/IBM01148)    [Mahdi]
+Alias: CCSID01148
+Alias: CP01148
+Alias: ebcdic-international-500+euro
+
+Name: IBM01149
+MIBenum: 2100
+Source: IBM See (.../assignments/character-set-info/IBM01149)    [Mahdi]
+Alias: CCSID01149
+Alias: CP01149
+Alias: ebcdic-is-871+euro
+
 Name: UNICODE-1-1                                              [RFC1641]
 MIBenum: 1010
 Source: RFC 1641
 Alias: csUnicode11
 
+Name: SCSU
+MIBenum: 1011
+Source: SCSU See (.../assignments/character-set-info/SCSU)     [Scherer]
+Alias: None 
+
 Name: UTF-7                                                    [RFC2152]
-MIBenum: 103
+MIBenum: 1012
 Source: RFC 2152
+Alias: None
+
+Name: UTF-16BE                                                 [RFC2781]
+MIBenum: 1013
+Source: RFC 2781
+Alias: None
+
+Name: UTF-16LE                                                 [RFC2781]
+MIBenum: 1014
+Source: RFC 2781
+Alias: None
+
+Name: UTF-16                                                   [RFC2781]
+MIBenum: 1015
+Source: RFC 2781
+Alias: None
+
+Name: UNICODE-1-1-UTF-7                                        [RFC1642]
+MIBenum: 103
+Source: RFC 1642
 Alias: csUnicode11UTF7
 
 Name: UTF-8                                                    [RFC2279]
 MIBenum: 106
 Source: RFC 2279
 Alias: 
+
+Name: iso-8859-13
+MIBenum: 109
+Source: ISO See (...assignments/character-set-info/iso-8859-13)[Tumasonis] 
+Alias:
+
+Name: iso-8859-14
+MIBenum: 110
+Source: ISO See (...assignments/character-set-info/iso-8859-14) [Simonsen]
+Alias: iso-ir-199
+Alias: ISO_8859-14:1998
+Alias: ISO_8859-14
+Alias: latin8
+Alias: iso-celtic
+Alias: l8
+
+Name: ISO-8859-15
+MIBenum: 111
+Source: ISO
+Alias: ISO_8859-15
 
 Name: JIS_Encoding
 MIBenum: 16    
@@ -1725,9 +1856,12 @@ Alias: csJISEncoding
 
 Name: Shift_JIS  (preferred MIME name)
 MIBenum: 17
-Source: A Microsoft code that extends csHalfWidthKatakana to include 
-        kanji by adding a second byte when the value of the first 
-        byte is in the ranges 81-9F or E0-EF.
+Source: This charset is an extension of csHalfWidthKatakana by
+        adding graphic characters in JIS X 0208.  The CCS's are
+        JIS X0201:1997 and JIS X0208:1997.  The
+        complete definition is shown in Appendix 1 of JIS
+        X0208:1997.
+        This charset can be used for the top-level media type "text".
 Alias: MS_Kanji 
 Alias: csShiftJIS
 
@@ -1779,12 +1913,6 @@ Alias: ISO-10646
 
 Name: ISO-10646-J-1
 Source: ISO 10646 Japanese, see RFC 1815.
-
-Name: ISO-8859-1
-MIBenum: 1004
-Source: IBM Latin-1 SAA Core Coded Character Set.
-        Extended ISO 8859-1 Presentation Set, GCSGID: 2039
-Alias: csUnicodeIBM2039
 
 Name: ISO-Unicode-IBM-1261
 MIBenum: 1005
@@ -1929,10 +2057,13 @@ Alias: csMicrosoftPublishing
 
 Name: Windows-31J
 MIBenum: 2024
-Source: Windows Japanese.  A further extension of csShiftJIS
-        to include several OEM-specific kanji extensions.  
-        Like csShiftJIS, it adds a second byte when the value 
-        of the first byte is in the ranges 81-9F or E0-EF.
+Source: Windows Japanese.  A further extension of Shift_JIS
+        to include NEC special characters (Row 13), NEC
+        selection of IBM extensions (Rows 89 to 92), and IBM
+        extensions (Rows 115 to 119).  The CCS's are
+        JIS X0201:1997, JIS X0208:1997, and these extensions.
+        This charset can be used for the top-level media type "text",
+        but it is of limited or specialized use (see RFC2278).
         PCL Symbol Set id: 19K
 Alias: csWindows31J
 
@@ -1945,10 +2076,6 @@ Source: Chinese for People's Republic of China (PRC) mixed one byte,
         See GB 2312-80 
         PCL Symbol Set Id: 18C
 Alias: csGB2312
-
-Name: HZ-GB-2312
-MIBenum: 2085
-Source: RFC 1842, RFC 1843                              [RFC1842, RFC1843]
 
 Name: Big5  (preferred MIME name)
 MIBenum: 2026
@@ -1966,10 +2093,14 @@ MIBenum: 2251
 Source: Microsoft  (see ../character-set-info/windows-1251) [Lazhintseva]
 Alias:
 
+Name: windows-1252
+MIBenum: 2252
+Source: Microsoft  (see ../character-set-info/windows-1252)       [Wendt]
+Alias:
+
 Name: windows-1253
 MIBenum: 2253
 Source: Microsoft  (see ../character-set-info/windows-1253) [Lazhintseva]
-
 Alias:
 
 Name: windows-1254
@@ -1996,6 +2127,15 @@ Name: windows-1258
 MIBenum: 2258
 Source: Microsoft  (see ../character-set-info/windows-1258) [Lazhintseva]
 Alias:
+
+Name: TIS-620
+MIBenum: 2259
+Source: Thai Industrial Standards Institute (TISI)	     [Tantsetthi]
+
+Name: HZ-GB-2312
+MIBenum: 2085
+Source: RFC 1842, RFC 1843                              [RFC1842, RFC1843]
+
 
 REFERENCES
 
@@ -2068,6 +2208,9 @@ REFERENCES
 [RFC2279]  Yergeau, F., "UTF-8, A Transformation Format of ISO 10646",
            RFC 2279, Alis Technologies, January, 1998.
 
+[RFC2781]  Hoffman, P., Yergeau, F., "UTF-16, an encoding of ISO 10646",
+           RFC 2781, February 2000.
+
 
 PEOPLE
 
@@ -2077,6 +2220,8 @@ PEOPLE
 
 [Lazhintseva] Katya Lazhintseva, <katyal@MICROSOFT.com>, May 1996.
 
+[Mahdi] Tamer Mahdi, <tamer@ca.ibm.com>, August 2000.
+
 [Murai] Jun Murai <jun@wide.ad.jp>
 
 [Ohta] Masataka Ohta, <mohta@cc.titech.ac.jp>, July 1995.
@@ -2084,5 +2229,15 @@ PEOPLE
 [Nussbacher] Hank Nussbacher <hank@vm.tau.ac.il>
 
 [Pond] Rick Pond <rickpond@vnet.ibm.com> March 1997.
+
+[Scherer] Markus Scherer, <markus.scherer@jtcsv.com>, August 2000.
+
+[Simonsen] Keld Simonsen, <Keld.Simonsen@rap.dk>, August 2000.
+
+[Tantsetthi] Trin Tantsetthi <trin@mozart.inet.co.th>, September 1998.
+
+[Tumasonis] Vladas Tumasonis, <vladas.tumasonis@maf.vu.lt>, August 2000.
+
+[Wendt] Chris Wendt <christw@microsoft.com>, December 1999.
 
 []
