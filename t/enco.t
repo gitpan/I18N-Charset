@@ -1,7 +1,7 @@
 # enco.t - tests for "preferred ENCO name" functionality of I18N::Charset
 
+use ExtUtils::testlib;
 use Test::More;
-
 unless (eval "require Encode")
   {
   plan skip_all => 'Encode is not installed';

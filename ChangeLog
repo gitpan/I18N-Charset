@@ -1,3 +1,9 @@
+2004-02-07  Kingpin  <mthurn@verizon.net>
+
+	* t/bug1.t: skip if Encode is not installed
+
+	* lib/I18N/Charset.pm: new IANA document (one alias added)
+
 2004-01-30  Kingpin  <mthurn@verizon.net>
 
 	* lib/I18N/Charset.pm (_init_data): new IANA document (typos fixed)

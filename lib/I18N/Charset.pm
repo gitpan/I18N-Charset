@@ -1,5 +1,5 @@
 
-# $rcs = ' $Id: Charset.pm,v 1.37 2004/01/31 01:34:47 Daddy Exp $ ' ;
+# $rcs = ' $Id: Charset.pm,v 1.371 2004/02/07 15:26:15 Daddy Exp $ ' ;
 
 =head1 NAME
 
@@ -76,7 +76,7 @@ use strict;
 #	Public Global Variables
 #-----------------------------------------------------------------------
 use vars qw( $VERSION @ISA @EXPORT @EXPORT_OK );
-$VERSION = sprintf("%d.%02d", q$Revision: 1.37 $ =~ /(\d+)\.(\d+)/o);
+$VERSION = do { my @r = (q$Revision: 1.371 $ =~ /\d+/g); sprintf "%d."."%03d" x $#r, @r };
 @ISA       = qw( Exporter );
 @EXPORT    = qw( iana_charset_name
 map8_charset_name
@@ -1251,6 +1251,8 @@ JIS_X0201 === jis0201-raw
 JIS_C6226-1983 === jis0208-raw
 JIS_X0212-1990 === jis0212-raw
 KS_C_5601-1987 === ksc5601-raw
+# This is to workaround a bug in IANA's document:
+ECMA-cyrillic === KOI8-E
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
   } # _init_data_extra
 
@@ -1263,7 +1265,7 @@ sub _init_data
 ===================================================================
 CHARACTER SETS
 
-(last updated 2004-01-26)
+(last updated 2004-02-06)
 
 These are the official names for character sets that may be used in
 the Internet and may be referred to in Internet documentation.  These
@@ -1769,10 +1771,12 @@ Alias: latin4
 Alias: l4
 Alias: csISOLatin4
 
-Name: ECMA-cyrillic                                      [RFC1345,KXS2]
+Name: ECMA-cyrillic                                     
 MIBenum: 77
-Source: ECMA registry
+Source: ISO registry (formerly ECMA registry)
+         http://www.itscj.ipsj.jp/ISO-IR/111.pdf
 Alias: iso-ir-111
+Alias: KO18-E
 Alias: csISO111ECMACyrillic
 
 Name: CSA_Z243.4-1985-1                                  [RFC1345,KXS2]
