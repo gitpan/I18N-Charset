@@ -1,0 +1,23 @@
+
+                      I18N-Charset Distribution
+
+This distribution contains a module which maps Character Set names to
+the names officially registered with IANA.
+
+    I18N::Charset
+	For example, 'Shift_JIS' is the official name of 'x-sjis'.
+
+To install these modules, you should just have to run the following:
+
+	% perl Makefile.PL
+	% make
+	% make test
+	% make install
+
+The module is documented using pod. When you "make install", you
+will get a man page I18N::Charset
+
+Please let me know if you experience any problems with this module,
+or have any ideas for additions.
+
+Martin Thurn <MartinThurn@iname.com>

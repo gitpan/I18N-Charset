@@ -1,0 +1,7 @@
+I18N/Charset.pm
+t/iana.t
+t/map8.t
+Makefile.PL
+MANIFEST
+README
+ChangeLog

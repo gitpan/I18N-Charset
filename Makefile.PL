@@ -1,0 +1,17 @@
+#
+# Makefile.PL for I18N-Charset distribution
+#
+# Filename:	Makefile.PL
+# Author:	Martin Thurn
+# Created:	1998-07-14
+#
+
+use ExtUtils::MakeMaker;
+
+&WriteMakefile(
+               NAME          => 'I18N',
+               DISTNAME      => 'I18N-Charset',
+               VERSION_FROM  => 'I18N/Charset.pm',
+               dist          => {COMPRESS => 'gzip', SUFFIX => 'gz'},
+              );
+ 
