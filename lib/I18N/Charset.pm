@@ -55,7 +55,7 @@ use Carp;
 #	Public Global Variables
 #-----------------------------------------------------------------------
 use vars qw( $VERSION @ISA @EXPORT @EXPORT_OK );
-$VERSION = '1.08';
+$VERSION = '1.09';
 @ISA       = qw( Exporter );
 @EXPORT    = qw( iana_charset_name map8_charset_name umap_charset_name );
 @EXPORT_OK = qw( add_iana_alias add_map8_alias add_umap_alias );
@@ -466,7 +466,7 @@ while (1)
     if ($sLine =~ m/\ ===\ /)
       {
       push @asEqualLines, $sLine;
-      }
+      } # if
     elsif ($sLine =~ m/^Name:\s*(\S+)/)
       {
       $sName = $1;
@@ -485,8 +485,11 @@ while (1)
     elsif ($sLine =~ m/^Alias:\s*(\S+)/)
       {
       $sAlias = $1;
-      print STDERR " +   map Alias ($sAlias) to mib $iMIB\n" if $debug;
-      $SHORTtoMIB{&strip($sAlias)} = $iMIB;
+      if ($sAlias !~ m!None!i)
+        {
+        print STDERR " +   map Alias ($sAlias) to mib $iMIB\n" if $debug;
+        $SHORTtoMIB{&strip($sAlias)} = $iMIB;
+        } # if not "None"
       } # if Alias
     } # while <DATA>
 
@@ -705,12 +708,14 @@ UTF-8 === Unicode-2-0-utf-8
 Extended_UNIX_Code_Packed_Format_for_Japanese === euc === euc-jp
 
 The rest of the DATA is the original document from
-ftp://ftp.isi.edu/in-notes/iana/assignments/character-sets
-Modification date of that file when included here was 2000-08-28.
+http://www.iana.org/assignments/character-sets
+Modification date of that file when included here was 2001-05-30.
 If that file gets updated after that date, paste it in here!
 
 ---------------------------------------------------------------
 
+
+===================================================================
 CHARACTER SETS
 
 These are the official names for character sets that may be used in
@@ -1836,7 +1841,7 @@ Alias: csEBCDICIT
 Name: EBCDIC-PT                                           [RFC1345,KXS2]
 MIBenum: 2073
 Source: IBM 3270 Char Set Ref Ch 10, GA27-2837-9, April 1987
-Alais: csEBCDICPT
+Alias: csEBCDICPT
 
 Name: EBCDIC-ES                                           [RFC1345,KXS2]
 MIBenum: 2074
@@ -1983,6 +1988,11 @@ Alias: CCSID01149
 Alias: CP01149
 Alias: ebcdic-is-871+euro
 
+Name: Big5-HKSCS
+MIBenum: 2101
+Source:   See (.../assignments/character-set-info/Big5-HKSCS)     [Yick]
+Alias: None
+
 Name: UNICODE-1-1                                              [RFC1641]
 MIBenum: 1010
 Source: RFC 1641
@@ -2021,12 +2031,12 @@ Alias: csUnicode11UTF7
 Name: UTF-8                                                    [RFC2279]
 MIBenum: 106
 Source: RFC 2279
-Alias: 
+Alias: None 
 
 Name: iso-8859-13
 MIBenum: 109
 Source: ISO See (...assignments/character-set-info/iso-8859-13)[Tumasonis] 
-Alias:
+Alias: None
 
 Name: iso-8859-14
 MIBenum: 110
@@ -2281,47 +2291,47 @@ Alias: csBig5
 Name: windows-1250
 MIBenum: 2250
 Source: Microsoft  (see ../character-set-info/windows-1250) [Lazhintseva]
-Alias:
+Alias: None
 
 Name: windows-1251
 MIBenum: 2251
 Source: Microsoft  (see ../character-set-info/windows-1251) [Lazhintseva]
-Alias:
+Alias: None
 
 Name: windows-1252
 MIBenum: 2252
 Source: Microsoft  (see ../character-set-info/windows-1252)       [Wendt]
-Alias:
+Alias: None
 
 Name: windows-1253
 MIBenum: 2253
 Source: Microsoft  (see ../character-set-info/windows-1253) [Lazhintseva]
-Alias:
+Alias: None
 
 Name: windows-1254
 MIBenum: 2254
 Source: Microsoft  (see ../character-set-info/windows-1254) [Lazhintseva]
-Alias:
+Alias: None
 
 Name: windows-1255
 MIBenum: 2255
 Source: Microsoft  (see ../character-set-info/windows-1255) [Lazhintseva]
-Alias:
+Alias: None
 
 Name: windows-1256
 MIBenum: 2256
 Source: Microsoft  (see ../character-set-info/windows-1256) [Lazhintseva]
-Alias:
+Alias: None 
 
 Name: windows-1257
 MIBenum: 2257
 Source: Microsoft  (see ../character-set-info/windows-1257) [Lazhintseva]
-Alias:
+Alias: None
 
 Name: windows-1258
 MIBenum: 2258
 Source: Microsoft  (see ../character-set-info/windows-1258) [Lazhintseva]
-Alias:
+Alias: None
 
 Name: TIS-620
 MIBenum: 2259
@@ -2421,18 +2431,29 @@ PEOPLE
 
 [Ohta] Masataka Ohta, <mohta@cc.titech.ac.jp>, July 1995.
 
-[Nussbacher] Hank Nussbacher <hank@vm.tau.ac.il>
+[Nussbacher] Hank Nussbacher, <hank@vm.tau.ac.il>
 
-[Pond] Rick Pond <rickpond@vnet.ibm.com> March 1997.
+[Pond] Rick Pond, <rickpond@vnet.ibm.com> March 1997.
 
 [Scherer] Markus Scherer, <markus.scherer@jtcsv.com>, August 2000.
 
 [Simonsen] Keld Simonsen, <Keld.Simonsen@rap.dk>, August 2000.
 
-[Tantsetthi] Trin Tantsetthi <trin@mozart.inet.co.th>, September 1998.
+[Tantsetthi] Trin Tantsetthi, <trin@mozart.inet.co.th>, September 1998.
 
 [Tumasonis] Vladas Tumasonis, <vladas.tumasonis@maf.vu.lt>, August 2000.
 
-[Wendt] Chris Wendt <christw@microsoft.com>, December 1999.
+[Wendt] Chris Wendt, <christw@microsoft.com>, December 1999.
+
+[Yick] Nicky Yick, <cliac@itsd.gcn.gov.hk>, October 2000.
+
+(last updated May 30 2001)
 
 []
+
+
+
+
+
+
+

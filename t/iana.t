@@ -21,6 +21,9 @@ use I18N::Charset;
  '!defined iana_charset_name(undef)',    # undef argument
  '!defined iana_charset_name("")',       # empty argument
  '!defined iana_charset_name("junk")',   # illegal code
+ '!defined iana_charset_name("None")',   # "None" appears as an Alias
+                                         # in the data but should be
+                                         # ignored
  '!defined iana_charset_name(\@aa)',     # illegal argument
 
  #---- some successful examples -----------------------------------------

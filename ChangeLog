@@ -1,3 +1,11 @@
+2001-06-05  Kingpin  <mthurn@tasc.com>
+
+	* 1.09 released
+
+2001-06-04  Kingpin  <mthurn@tasc.com>
+
+	* lib/I18N/Charset.pm: new IANA charset list in __DATA__; update code & tests to match
+
 2001-04-19  Kingpin  <mthurn@tasc.com>
 
 	* lib/I18N/Charset.pm: removed some incorrect aliases (thanks to Liam Quinn)
