@@ -5,6 +5,12 @@
 
 use I18N::Charset;
 
+unless (eval "require Unicode::Map8")
+  {
+  print STDOUT "1..0\nEND\n";
+  exit 0;
+  } # unless
+
 #-----------------------------------------------------------------------
 # This is an array of tests. Each test is eval'd as an expression.
 # If it evaluates to FALSE, then "not ok N" is printed for the test,
@@ -31,7 +37,10 @@ use I18N::Charset;
  'map8_charset_name("ISO-IR-89")          eq "ASMO_449"',
  'map8_charset_name("ISO - ir _ 89")          eq "ASMO_449"',
 
- #---- some aliasing examples -----------------------------------------
+ #---- an iana example that only works with Unicode::Map8 installed -----
+ 'iana_charset_name("cp1251")            eq "windows-1251"',
+
+ #---- some aliasing examples -------------------------------------------
  '!defined(I18N::Charset::add_map8_alias("alias1" => "junk"))',
  '!defined map8_charset_name("alias1")',
 

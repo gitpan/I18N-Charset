@@ -24,7 +24,6 @@ use I18N::Charset;
  '!defined iana_charset_name(\@aa)',     # illegal argument
 
  #---- some successful examples -----------------------------------------
- 'iana_charset_name("cp1251")            eq "windows-1251"',
  'iana_charset_name("Windows-1-2-5-1")   eq "windows-1251"',
  'iana_charset_name("Shift_JIS")         eq "Shift_JIS"',
  'iana_charset_name("x-x-big5")          eq "Big5"',

@@ -1,7 +1,8 @@
 
 =head1 NAME
 
-I18N::Charset - IANA Character Set Registry
+I18N::Charset - IANA Character Set Registry names and Unicode::Map8
+conversion scheme names
 
 =head1 SYNOPSIS
 
@@ -30,6 +31,13 @@ Registry names for identifying character encoding schemes.  It also
 provides a mapping to the character set names used by the
 Unicode::Map8 module.
 
+So, for example, if you get an HTML document with a META CHARSET="..."
+tag, you can quickly determine what Unicode::Map8 conversion to use on
+it.
+
+If you don't have the module Unicode::Map8 installed, the map8_
+functions will always return undef.
+
 =cut
 
 #-----------------------------------------------------------------------
@@ -41,7 +49,7 @@ use Carp;
 #	Public Global Variables
 #-----------------------------------------------------------------------
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK);
-$VERSION = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
 @ISA       = qw(Exporter);
 @EXPORT    = qw(iana_charset_name map8_charset_name);
 @EXPORT_OK = qw(add_iana_alias add_map8_alias);

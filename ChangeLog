@@ -1,3 +1,8 @@
+1998-07-29  Kingpin  <mthurn@tasc.com>
+
+	* 1.02 tests don't complain if Unicode::Map8 is not installed;
+		a few tiny documentation changes
+
 1998-07-16  Kingpin  <mthurn@tasc.com>
 
 	* 1.01 first released version
