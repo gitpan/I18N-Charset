@@ -1,3 +1,7 @@
+2001-08-24  Kingpin  <mthurn@tasc.com>
+
+	* lib/I18N/Charset.pm: new IANA charset list
+
 2001-06-05  Kingpin  <mthurn@tasc.com>
 
 	* 1.09 released

@@ -11,6 +11,8 @@ unless (eval "require Unicode::Map8")
   exit 0;
   } # unless
 
+$I18N::Charset::verbose = $I18N::Charset::verbose = 1;
+
 #-----------------------------------------------------------------------
 # This is an array of tests. Each test is eval'd as an expression.
 # If it evaluates to FALSE, then "not ok N" is printed for the test,
@@ -61,11 +63,11 @@ unless (eval "require Unicode::Map8")
 print "1..", int(@TESTS), "\n";
 
 $testid = 1;
-foreach $test (@TESTS)
-{
-    eval "print (($test) ? \"ok $testid\\n\" : \"not ok $testid\\n\" )";
-    print "not ok $testid\n" if $@;
-    ++$testid;
-}
+foreach my $test (@TESTS)
+  {
+  eval "print (($test) ? \"ok $testid\\n\" : \"not ok $testid\\n\" )";
+  print "not ok $testid\n" if $@;
+  ++$testid;
+  } # foreach
 
 exit 0;

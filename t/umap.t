@@ -5,6 +5,8 @@
 
 use I18N::Charset;
 
+$I18N::Charset::verbose = $I18N::Charset::verbose = 1;
+
 unless (eval "require Unicode::Map")
   {
   print STDOUT "1..0\nEND\n";

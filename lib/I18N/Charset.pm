@@ -55,7 +55,7 @@ use Carp;
 #	Public Global Variables
 #-----------------------------------------------------------------------
 use vars qw( $VERSION @ISA @EXPORT @EXPORT_OK );
-$VERSION = '1.09';
+$VERSION = '1.11';
 @ISA       = qw( Exporter );
 @EXPORT    = qw( iana_charset_name map8_charset_name umap_charset_name );
 @EXPORT_OK = qw( add_iana_alias add_map8_alias add_umap_alias );
@@ -709,14 +709,13 @@ Extended_UNIX_Code_Packed_Format_for_Japanese === euc === euc-jp
 
 The rest of the DATA is the original document from
 http://www.iana.org/assignments/character-sets
-Modification date of that file when included here was 2001-05-30.
-If that file gets updated after that date, paste it in here!
 
 ---------------------------------------------------------------
 
-
 ===================================================================
 CHARACTER SETS
+
+(last updated 2001 August 23)
 
 These are the official names for character sets that may be used in
 the Internet and may be referred to in Internet documentation.  These
@@ -1264,13 +1263,15 @@ Alias: csISOLatinArabic
 
 Name: ISO_8859-6-E                                       [RFC1556,IANA]
 MIBenum: 81
-Source: RFC-1556
+Source: RFC1556
 Alias: csISO88596E
+Alias: ISO-8859-6-E (preferred MIME name)
 
 Name: ISO_8859-6-I                                       [RFC1556,IANA]
 MIBenum: 82
-Source: RFC-1556
+Source: RFC1556
 Alias: csISO88596I
+Alias: ISO-8859-6-I (preferred MIME name)
 
 Name: ISO_8859-7:1987                            [RFC1947,RFC1345,KXS2]
 MIBenum: 10
@@ -1301,13 +1302,15 @@ Alias: csISOLatinHebrew
 
 Name: ISO_8859-8-E                                  [RFC1556,Nussbacher]
 MIBenum: 84
-Source: RFC-1556
+Source: RFC1556
 Alias: csISO88598E
+Alias: ISO-8859-8-E (preferred MIME name)
 
 Name: ISO_8859-8-I                                  [RFC1556,Nussbacher]
 MIBenum: 85
-Source: RFC-1556
+Source: RFC1556
 Alias: csISO88598I
+Alias: ISO-8859-8-I (preferred MIME name)
 
 Name: CSN_369103                                          [RFC1345,KXS2]
 MIBenum: 86
@@ -2053,8 +2056,13 @@ MIBenum: 111
 Source: ISO
 Alias: ISO_8859-15
 
+Name: ISO-8859-16
+MIBenum: 112
+Source: ISO
+Alias: 
+
 Name: JIS_Encoding
-MIBenum: 16    
+MIBenum: 16
 Source: JIS X 0202-1991.  Uses ISO 2022 escape sequences to
         shift code sets as documented in JIS X 0202-1991.
 Alias: csJISEncoding
@@ -2446,8 +2454,6 @@ PEOPLE
 [Wendt] Chris Wendt, <christw@microsoft.com>, December 1999.
 
 [Yick] Nicky Yick, <cliac@itsd.gcn.gov.hk>, October 2000.
-
-(last updated May 30 2001)
 
 []
 

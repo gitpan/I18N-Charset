@@ -5,6 +5,8 @@
 
 use I18N::Charset;
 
+$I18N::Charset::verbose = $I18N::Charset::verbose = 1;
+
 eval "use Unicode::MapUTF8";
 if (1 || $@ ne '')
   {
