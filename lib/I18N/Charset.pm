@@ -1,5 +1,5 @@
 
-# $rcs = ' $Id: Charset.pm,v 1.36 2004/01/25 02:43:24 Daddy Exp $ ' ;
+# $rcs = ' $Id: Charset.pm,v 1.37 2004/01/31 01:34:47 Daddy Exp $ ' ;
 
 =head1 NAME
 
@@ -76,7 +76,7 @@ use strict;
 #	Public Global Variables
 #-----------------------------------------------------------------------
 use vars qw( $VERSION @ISA @EXPORT @EXPORT_OK );
-$VERSION = sprintf("%d.%02d", q$Revision: 1.36 $ =~ /(\d+)\.(\d+)/o);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.37 $ =~ /(\d+)\.(\d+)/o);
 @ISA       = qw( Exporter );
 @EXPORT    = qw( iana_charset_name
 map8_charset_name
@@ -1263,7 +1263,7 @@ sub _init_data
 ===================================================================
 CHARACTER SETS
 
-(last updated 2004-01-23)
+(last updated 2004-01-26)
 
 These are the official names for character sets that may be used in
 the Internet and may be referred to in Internet documentation.  These
@@ -2567,9 +2567,9 @@ Alias:  Ami-1251
 (Aliases are provided for historical reasons and should not be used)
                                                               [Malyshev]
 															  
-Name:  KO17-Switched
+Name:  KOI7-switched
 MIBenum:  2105
-Source:  See <http://www.iana.org/assignments/charset-reg/KO17-switched>
+Source:  See <http://www.iana.org/assignments/charset-reg/KOI7-switched>
 Aliases:  None
 
 Name: UNICODE-1-1                                              [RFC1641]
@@ -2632,9 +2632,9 @@ MIBenum: 103
 Source: RFC 1642
 Alias: csUnicode11UTF7
 
-Name: UTF-8                                                    [RFC-draft-yergeau-rfc2279bis-05.txt]
+Name: UTF-8                                                    [RFC3629]
 MIBenum: 106
-Source: RFC draft-yergeau-rfc2279bis-05.txt
+Source: RFC 3629
 Alias: None 
 
 Name: ISO-8859-13
@@ -3068,6 +3068,8 @@ REFERENCES
 [RFC2781]  Hoffman, P., Yergeau, F., "UTF-16, an encoding of ISO 10646",
            RFC 2781, February 2000.
 
+[RFC3629]  Yergeau, F., "UTF-8, a transformation format of ISO 10646",
+           RFC3629, November 2003.
 
 PEOPLE
 ------
