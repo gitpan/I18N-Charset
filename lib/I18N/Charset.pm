@@ -18,11 +18,14 @@ I18N::Charset - IANA Character Set Registry names and Unicode::MapUTF8
   # $sCharset is now 'sjis' which can be passed to Unicode::MapUTF8->new()
   $sCharset = libi_charset_name('x-sjis');
   # $sCharset is now 'MS_KANJI' which can be passed to `iconv -f $sCharset ...`
+  $sCharset = enco_charset_name('Shift-JIS');
+  # $sCharset is now 'shiftjis' which can be passed to `Encode::from_to()`
 
   I18N::Charset::add_iana_alias('my-japanese' => 'iso-2022-jp');
   I18N::Charset::add_map8_alias('my-arabic' => 'arabic7');
   I18N::Charset::add_umap_alias('my-hebrew' => 'ISO-8859-8');
   I18N::Charset::add_libi_alias('my-sjis' => 'x-sjis');
+  I18N::Charset::add_enco_alias('my-japanese' => 'shiftjis');
 
 =cut
 
@@ -45,16 +48,22 @@ So, for example, if you get an HTML document with a META CHARSET="..."
 tag, you can fairly quickly determine what Unicode::MapXXX module can
 be used to convert it to Unicode.
 
+If you don't have the module Unicode::Map installed, the umap_
+functions will always return undef.
 If you don't have the module Unicode::Map8 installed, the map8_
-functions will always return undef; similarly for Unicode::Map and the
-umap_ functions.
+functions will always return undef.
+If you don't have the module Unicode::MapUTF8 installed, the umu8_
+functions will always return undef.
+If you don't have the iconv library installed, the libi_
+functions will always return undef.
+If you don't have the Encode module installed, the enco_
+functions will always return undef.
 
 =cut
 
 #-----------------------------------------------------------------------
 
 require Exporter;
-use File::Which;
 use Carp;
 use IO::String;
 
@@ -65,7 +74,7 @@ use strict;
 #	Public Global Variables
 #-----------------------------------------------------------------------
 use vars qw( $VERSION @ISA @EXPORT @EXPORT_OK );
-$VERSION = '1.23';
+$VERSION = '1.24';
 @ISA       = qw( Exporter );
 @EXPORT    = qw( iana_charset_name
 map8_charset_name
@@ -74,9 +83,10 @@ umu8_charset_name
 mib_charset_name
 mime_charset_name
 libi_charset_name
+enco_charset_name
 mib_to_charset_name charset_name_to_mib
  );
-@EXPORT_OK = qw( add_iana_alias add_map8_alias add_umap_alias add_libi_alias );
+@EXPORT_OK = qw( add_iana_alias add_map8_alias add_umap_alias add_libi_alias add_enco_alias );
 
 #-----------------------------------------------------------------------
 #	Private Global Variables
@@ -104,6 +114,9 @@ my %MIBtoUMU8;
 # %MIBtoLIBI is a hash of mib to libiconv names.  (Only valid for
 # those libiconv names that we can find in the IANA registry)
 my %MIBtoLIBI;
+# %MIBtoLIBI is a hash of mib to Encode names.  (Only valid for
+# those Encode names that we can find in the IANA registry)
+my %MIBtoENCO;
 
 my ($debug, $verbose);
 # $debug = 1;
@@ -129,6 +142,15 @@ within the string are not important.
 
 =cut
 
+my $sDummy = 'dummymib';
+my $sFakeMIB = $sDummy .'001';
+
+sub _is_dummy
+  {
+  my $s = shift;
+  return ($s =~ m!\A$sDummy!);
+  } # _is_dummy
+
 sub iana_charset_name
   {
   my $code = shift;
@@ -140,7 +162,7 @@ sub iana_charset_name
   return undef unless defined $mib;
   # print STDERR " + mib is ($mib)..." if $debug;
   # Make sure this is really a IANA mib:
-  return undef if ($mib =~ m!\Adummymib!);
+  return undef if &_is_dummy($mib);
   # print STDERR " + is really iana..." if $debug;
   return $MIBtoLONG{$mib};
   } # iana_charset_name
@@ -180,7 +202,7 @@ sub short_to_long
   {
   local $^W = 0;
   my $s = shift;
-  print STDERR " + short_to_long($s)..." if $debug;
+  # print STDERR " + short_to_long($s)..." if $debug;
   return $MIBtoLONG{&short_to_mib($s)};
   } # short_to_long
 
@@ -208,10 +230,83 @@ sub mime_charset_name
   return undef unless defined $mib;
   # print STDERR " + mib is ($mib)..." if $debug;
   # Make sure this is really an IANA mib:
-  return undef if ($mib =~ m!\Adummymib!);
+  return undef if &_is_dummy($mib);
   # print STDERR " + is really iana..." if $debug;
   return $MIBtoMIME{$mib};
   } # mime_charset_name
+
+
+=item enco_charset_name()
+
+This function takes a string containing the name of a character set
+and returns a string which contains a name of the character set
+suitable to be passed to the Encode module.  If no valid character set
+name can be identified, or if Encode is not installed, then C<undef>
+will be returned.  The case and punctuation within the string are not
+important.
+
+    $sCharset = enco_charset_name('Extended_UNIX_Code_Packed_Format_for_Japanese');
+
+=cut
+
+my $iEncoLoaded = 0;
+
+sub _maybe_load_enco # PRIVATE
+  {
+  return if $iEncoLoaded;
+  # Get a list of aliases from Encode:
+  if (eval q{require Encode})
+    {
+    my @as = Encode->encodings(':all');
+ ENCODING:
+    foreach my $s (@as)
+      {
+      # First, see if this already has an IANA mapping:
+      my $mib;
+      my $sIana = &iana_charset_name($s);
+      if (!defined $sIana)
+        {
+        # Create a dummy mib:
+        $mib = $sFakeMIB++;
+        } # if
+      else
+        {
+        $mib = &charset_name_to_mib($sIana);
+        }
+      # At this point we have a mib for this Encode entry.
+      $MIBtoENCO{$mib} = $s;
+      # print STDERR " +   mib for enco ==$s== is $mib\n";
+      $SHORTtoMIB{&strip($s)} = $mib;
+      # print STDERR " +   assign enco =$s==>$mib\n" if &_is_dummy($mib);
+      } # if
+    $iEncoLoaded = 1;
+    } # if
+  else
+    {
+    print STDERR " --- Encode is not installed\n";
+    }
+  } # _maybe_load_enco
+
+sub _mib_to_enco # PRIVATE
+  {
+  &_maybe_load_enco();
+  return $MIBtoENCO{shift()};
+  } # _mib_to_enco
+
+sub enco_charset_name
+  {
+  my $code = shift;
+  return undef unless defined $code;
+  return undef unless $code ne '';
+  # my $debug = 1; # ($code =~ m!johab!i);
+  # print STDERR " + enco_charset_name($code)..." if $debug;
+  my $mib = &short_to_mib($code);
+  return undef unless defined $mib;
+  # print STDERR " + mib is ($mib)..." if $debug;
+  my $ret = &_mib_to_enco($mib);
+  # print STDERR " + enco is ($ret)..." if $debug;
+  return $ret;
+  } # enco_charset_name
 
 
 =item libi_charset_name()
@@ -226,6 +321,64 @@ within the string are not important.
 
 =cut
 
+my $iLibiLoaded = 0;
+
+sub _maybe_load_libi # PRIVATE
+  {
+  return if $iLibiLoaded;
+  # Get a list of aliases from iconv:
+  return unless eval 'require App::Info::Lib::Iconv';
+  my $oAILI = new App::Info::Lib::Iconv;
+  if (ref $oAILI)
+    {
+    my $iLibiVersion = $oAILI->version;
+    # print STDERR " + libiconv version is $iLibiVersion\n";
+    if ($oAILI->installed && (1.8 <= $iLibiVersion))
+      {
+      my $sCmd = $oAILI->bin_dir . '/iconv -l';
+      # print STDERR " + iconv cmdline is $sCmd\n";
+      my @asIconv = split(/\n/, `$sCmd`);
+ ICONV_LINE:
+      foreach my $sLine (@asIconv)
+        {
+        my @asWord = split(/\s+/, $sLine);
+        # First, go through and find one of these that has an IANA mapping:
+        my $mib;
+        my $sIana = undef;
+ FIND_IANA:
+        foreach my $sWord (@asWord)
+          {
+          last FIND_IANA if ($sIana = &iana_charset_name($sWord));
+          } # foreach FIND_IANA
+        if (!defined $sIana)
+          {
+          # Create a dummy mib:
+          $mib = $sFakeMIB++;
+          } # if
+        else
+          {
+          $mib = &charset_name_to_mib($sIana);
+          }
+        # At this point we have a mib for this iconv entry.  Assign them all:
+ ADD_LIBI:
+        foreach my $sWord (reverse @asWord)
+          {
+          $MIBtoLIBI{$mib} = $sWord;
+          # print STDERR " +   mib for libi ==$sWord== is $mib\n";
+          $SHORTtoMIB{&strip($sWord)} = $mib;
+          } # foreach ADD_LIBI
+        } # foreach ICONV_LINE
+      } # if
+    } # if
+  $iLibiLoaded = 1;
+  } # _maybe_load_libi
+
+sub _mib_to_libi # PRIVATE
+  {
+  &_maybe_load_libi();
+  return $MIBtoLIBI{shift()};
+  } # _mib_to_libi
+
 sub libi_charset_name
   {
   my $code = shift;
@@ -236,7 +389,7 @@ sub libi_charset_name
   my $mib = &short_to_mib($code);
   return undef unless defined $mib;
   # print STDERR " + mib is ($mib)..." if $debug;
-  my $ret = $MIBtoLIBI{$mib};
+  my $ret = &_mib_to_libi($mib);
   # print STDERR " + libi is ($ret)..." if $debug;
   return $ret;
   } # libi_charset_name
@@ -277,7 +430,7 @@ non-IANA character sets, this is an unambiguous unique string whose
 only use is to pass to other functions in this module.  If no valid
 character set name can be identified, then C<undef> will be returned.
 
-    $iMIB = charset_name_mib('US-ASCII');
+    $iMIB = charset_name_to_mib('US-ASCII');
 
 =cut
 
@@ -312,18 +465,18 @@ sub map8_charset_name
   my $code = shift;
   return undef unless defined $code;
   return undef unless $code ne '';
-  $debug = 0 && ($code =~ m!037!);
-  print STDERR " + map8_charset_name($code)..." if $debug;
+  # $debug = 0 && ($code =~ m!037!);
+  # print STDERR " + map8_charset_name($code)..." if $debug;
   $code = &strip($code);
-  print STDERR "$code..." if $debug;
+  # print STDERR "$code..." if $debug;
   my $iMIB = &short_to_mib($code) || 'undef';
-  print STDERR "$iMIB..." if $debug;
+  # print STDERR "$iMIB..." if $debug;
   if ($iMIB ne 'undef')
     {
-    print STDERR "$MIBtoMAP8{$iMIB}\n" if $debug;
+    # print STDERR "$MIBtoMAP8{$iMIB}\n" if $debug;
     return $MIBtoMAP8{$iMIB};
     } # if
-  print STDERR "undef\n" if $debug;
+  # print STDERR "undef\n" if $debug;
   return undef;
   } # map8_charset_name
 
@@ -348,7 +501,7 @@ sub umap_charset_name
   return undef unless defined $code;
   return undef unless $code ne '';
   # $debug = ($code =~ m!apple!i);
-  # print STDERR "\n + MIBtoUMAP{dummymib029} == $MIBtoUMAP{'dummymib029'}\n\n" if $debug;
+  # print STDERR "\n + MIBtoUMAP{dummymib029} == $MIBtoUMAP{$sDummy .'029'}\n\n" if $debug;
   # print STDERR " + umap_charset_name($code)..." if $debug;
   my $iMIB = &short_to_mib(&strip($code)) || 'undef';
   # print STDERR "$iMIB..." if $debug;
@@ -369,7 +522,7 @@ This function takes a string containing the name of a character set
 the character set that can be passed to Unicode::MapUTF8::new(). If no
 valid character set name can be identified, then C<undef> will be
 returned.  The case and punctuation within the argument string are not
-important.  
+important.
 
     $sCharset = umu8_charset_name('windows-1251');
 
@@ -448,8 +601,6 @@ name referred to by the existing alias 'sjis' (which happens to be 'Shift_JIS').
 
 =cut
 
-#-----------------------------------------------------------------------
-
 sub add_iana_alias
   {
   my ($sAlias, $sReal) = @_;
@@ -503,8 +654,6 @@ aliases for 'EBCDIC-CA-FR'.
 
 =cut
 
-#-----------------------------------------------------------------------
-
 sub add_map8_alias
   {
   my ($sAlias, $sReal) = @_;
@@ -550,6 +699,8 @@ sub add_umap_alias
   return $sName;
   } # add_umap_alias
 
+#-----------------------------------------------------------------------
+
 =item  add_libi_alias()
 
 This function takes two strings: a new alias, and a target iconv
@@ -562,20 +713,18 @@ Returns 'undef' if there is no such target conversion scheme or alias.
 
 Examples:
 
-  I18N::Charset::add_libi_alias('my-chinese' => 'CN-GB');
+  I18N::Charset::add_libi_alias('my-chinese1' => 'CN-GB');
 
-With this code, "my-chinese" becomes an alias for the existing iconv
+With this code, "my-chinese1" becomes an alias for the existing iconv
 conversion scheme 'CN-GB'.
 
   I18N::Charset::add_libi_alias('my-chinese2' => 'EUC-CN');
 
-With this code, "my-chinese2" becomes an alias for the LIBI conversion
-scheme referred to by the existing alias 'EUC-CN' (which happens to be
-'CN-GB').
+With this code, "my-chinese2" becomes an alias for the iconv
+conversion scheme referred to by the existing alias 'EUC-CN' (which
+happens to be 'CN-GB').
 
 =cut
-
-#-----------------------------------------------------------------------
 
 sub add_libi_alias
   {
@@ -592,6 +741,49 @@ sub add_libi_alias
   $SHORTtoMIB{&strip($sAlias)} = $mib;
   return $sName;
   } # add_libi_alias
+
+#-----------------------------------------------------------------------
+
+=item  add_enco_alias()
+
+This function takes two strings: a new alias, and a target Encode
+encoding Name (or existing Encode alias).  It defines the new alias
+referring to that encoding name (or to the encoding to which the
+existing alias refers).
+
+Returns the target encoding name of the successfully installed alias.
+Returns 'undef' if there is no such encoding or alias.
+
+Examples:
+
+  I18N::Charset::add_enco_alias('my-japanese1' => 'jis0201-raw');
+
+With this code, "my-japanese1" becomes an alias for the existing
+encoding 'jis0201-raw'.
+
+  I18N::Charset::add_enco_alias('my-japanese2' => 'my-japanese1');
+
+With this code, "my-japanese2" becomes an alias for the encoding
+referred to by the existing alias 'my-japanese1' (which happens to be
+'jis0201-raw' after the previous call).
+
+=cut
+
+sub add_enco_alias
+  {
+  my ($sAlias, $sReal) = @_;
+  # print STDERR " + add_enco_alias($sAlias,$sReal)...";
+  my $sName = &enco_charset_name($sReal);
+  if (not defined($sName))
+    {
+    carp "attempt to alias \"$sAlias\" to unknown iconv conversion scheme \"$sReal\"\n" if $verbose;
+    return undef;
+    } # if
+  my $mib = &short_to_mib(&strip($sName));
+  # print STDERR "sName=$sName...mib=$mib\n";
+  $SHORTtoMIB{&strip($sAlias)} = $mib;
+  return $sName;
+  } # add_enco_alias
 
 #-----------------------------------------------------------------------
 
@@ -773,8 +965,6 @@ while (1)
 
   # last INFINITE;
 
-  my $sFakeMIB = 'dummymib001';
-
   if (eval "require Unicode::Map8")
     {
     # $debug = 1;
@@ -906,7 +1096,7 @@ while (1)
           } # while
         } # foreach
       close MAPS;
-      # print STDERR "\n + MIBtoUMAP{dummymib029} == $MIBtoUMAP{'dummymib029'}\n\n";
+      # print STDERR "\n + MIBtoUMAP{dummymib029} == $MIBtoUMAP{$sDummy .'029'}\n\n";
       } # if open
     else
       {
@@ -925,7 +1115,7 @@ while (1)
     print STDERR " + found Unicode::MapUTF8 $Unicode::MapUTF8::VERSION installed, will build tables...\n" if $debug;
     my @as;
     # Wrap this in an eval to avoid compiler warning(?):
-    eval q{ @as = &Unicode::MapUTF8::utf8_supported_charset };
+    eval { @as = &Unicode::MapUTF8::utf8_supported_charset() };
 UMU8_NAME:
     foreach my $sName (@as)
       {
@@ -960,43 +1150,6 @@ UMU8_NAME:
     # &add_umap_alias("new-name", "existing-name");
     print STDERR "done.\n" if $debug;
     } # if Unicode::MapUTF8 installed
-
-  # Get a list of aliases from iconv:
-  my $sIconv = File::Which::which('iconv') || '';
-  if ($sIconv ne '')
-    {
-    my @asIconv = split(/\n/, `$sIconv -l`);
- ICONV_LINE:
-    foreach my $sLine (@asIconv)
-      {
-      my @asWord = split(/\s+/, $sLine);
-      # First, go through and find one of these that has an IANA mapping:
-      my $mib;
-      my $sIana = undef;
- FIND_IANA:
-      foreach my $sWord (@asWord)
-        {
-        last FIND_IANA if ($sIana = &iana_charset_name($sWord));
-        } # foreach FIND_IANA
-      if (!defined $sIana)
-        {
-        # Create a dummy mib:
-        $mib = $sFakeMIB++;
-        } # if
-      else
-        {
-        $mib = &charset_name_to_mib($sIana);
-        }
-      # At this point we have a mib for this iconv entry.  Assign them all:
- ADD_LIBI:
-      foreach my $sWord (reverse @asWord)
-        {
-        $MIBtoLIBI{$mib} = $sWord;
-        $SHORTtoMIB{&strip($sWord)} = $mib;
-        # print STDERR " +   assign iconv =$sWord==>$mib\n" if ($mib =~ m!dummy!);
-        } # foreach ADD_LIBI
-      } # foreach ICONV_LINE
-    } # if
 
   last INFINITE;
 
@@ -1062,15 +1215,15 @@ sub _init_data_extra
   return <<'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
 
 Shift_JIS === sjis
-windows-1250 === winlatin2
-windows-1251 === wincyrillic
-windows-1252 === winlatin1
-windows-1253 === wingreek
-windows-1254 === winturkish
-windows-1255 === winhebrew
-windows-1256 === winarabic
-windows-1257 === winbaltic
-windows-1258 === winvietnamese
+windows-1250 === winlatin2 === cp1250
+windows-1251 === wincyrillic === cp1251
+windows-1252 === winlatin1 === cp1252
+windows-1253 === wingreek === cp1253
+windows-1254 === winturkish === cp1254
+windows-1255 === winhebrew === cp1255
+windows-1256 === winarabic === cp1256
+windows-1257 === winbaltic === cp1257
+windows-1258 === winvietnamese === cp1258
 Adobe-Standard-Encoding === adobe-standard
 Adobe-Symbol-Encoding === adobe-symbol
 EBCDIC-ES === ebcdic-cp-es
@@ -1087,6 +1240,14 @@ ISO-10646-UCS-2 === ucs2
 ISO-10646-UCS-4 === ucs4
 # These were added for iconv:
 ISO-2022-JP === ISO-2022-JP-1
+# These are for Encode:
+IBM1047 === cp1047
+GB2312 === gb2312-raw
+HZ-GB-2312 === hz
+JIS_X0201 === jis0201-raw
+JIS_C6226-1983 === jis0208-raw
+JIS_X0212-1990 === jis0212-raw
+KS_C_5601-1987 === ksc5601-raw
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
   } # _init_data_extra
 
@@ -2928,3 +3089,4 @@ EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 
 1;
 
+__END__

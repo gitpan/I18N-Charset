@@ -1,28 +1,30 @@
-#
 # libi.t - tests for "preferred LIBI name" functionality of I18N::Charset
-#
 
-use File::Which;
 use Test::More;
 
-BEGIN
+unless (eval "require App::Info::Lib::Iconv")
   {
-  my $sIconv = File::Which::which('iconv') || '';
-  if ($sIconv eq '')
-    {
-    plan skip_all => 'iconv is not installed';
-    } # if
-  my $sLibiVersion = `$sIconv --version` || '';
-  my $iLibiVersion = 0.1;
-  $iLibiVersion = $1 if ($sLibiVersion =~ m!libiconv (\d+\.\d+)!);
-  if ($iLibiVersion < 1.8)
-    {
-    plan skip_all => 'iconv version is too old(?)';
-    } # if
-  plan tests => 23;
+  plan skip_all => 'App::Info::Lib::Iconv is not installed';
+  } # unless
 
-  &use_ok('I18N::Charset');
-  } # BEGIN
+my $oAILI = new App::Info::Lib::Iconv;
+unless (ref $oAILI)
+  {
+  plan skip_all => 'can not determine iconv version (not installed?)';
+  } # unless
+if (! $oAILI->installed)
+  {
+  plan skip_all => 'iconv is not installed';
+  } # if
+my $iLibiVersion = $oAILI->version || 0.0;
+# print STDERR " + libiconv version is $iLibiVersion\n";
+if ($iLibiVersion < 1.8)
+  {
+  plan skip_all => 'iconv version is too old(?)';
+  } # if
+plan tests => 23;
+
+&use_ok('I18N::Charset');
 
 #================================================
 # TESTS FOR libi routines

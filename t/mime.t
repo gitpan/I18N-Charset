@@ -1,13 +1,8 @@
-#
 # mime.t - tests for "preferred MIME name" functionality of I18N::Charset
-#
 
 use Test::More tests => 14;
 
-BEGIN
-  {
-  &use_ok('I18N::Charset');
-  } # BEGIN
+BEGIN { use_ok('I18N::Charset') };
 
 #================================================
 # TESTS FOR mime routines

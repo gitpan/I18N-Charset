@@ -1,3 +1,16 @@
+2003-03-28  Kingpin  <mthurn@megapipe.net>
+
+	* t/enco.t: new file
+
+	* lib/I18N/Charset.pm (enco_charset_name): new methods for Encode encoding names
+
+2002-10-11  Kingpin  <mthurn@copper.dulles.tasc.com>
+
+	* t/libi.t: use App::Info::Lib::Iconv instead of File::Which
+
+	* lib/I18N/Charset.pm: check iconv version before running it
+	(libi_charset_name): load iconv tables not at startup, but only when needed
+
 2002-10-10  Kingpin  <mthurn@copper.dulles.tasc.com>
 
 	* lib/I18N/Charset.pm: make sure iconv exists before executing it

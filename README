@@ -15,8 +15,12 @@ It also maps character set names to their preferred MIME names.  For
 example, the preferred MIME name for 'ISO_646.irv:1991' is 'US-ASCII'.
 
 It also maps character set names to conversion scheme names as defined
-by the iconv library.  For example, the iconv conversion scheme for
-'Shift_JIS' is 'MS_KANJI'.
+by the iconv library.  For example, the iconv conversion scheme name
+for 'Shift_JIS' is 'MS_KANJI'.
+
+It also maps character set names to encoding names as defined
+by the Encode module.  For example, the Encode encoding name
+for 'Shift_JIS' is 'shiftjis'.
 
 To install these modules, you should just have to run the following:
 

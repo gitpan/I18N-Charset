@@ -1,17 +1,19 @@
-#!perl -w
-
 # utf8.t - tests for Unicode::MapUTF8 functionality of I18N::Charset
 
-
-use I18N::Charset;
 use Test::More;
 
-unless (eval "require Unicode::MapUTF8")
-  {
-  plan skip_all => 'Unicode::MapUTF8 is not installed';
-  } # unless
+use strict;
 
-plan tests => 21;
+BEGIN
+  {
+  unless (eval "require Unicode::MapUTF8")
+    {
+    plan skip_all => 'Unicode::MapUTF8 is not installed';
+    } # unless
+  plan tests => 22;
+  } # BEGIN
+
+BEGIN { use_ok('I18N::Charset') };
 
 # These should fail gracefully:
 my @aa;
@@ -63,7 +65,7 @@ SKIP:
 exit 0;
 
 my @as = &Unicode::MapUTF8::utf8_supported_charset();
-@TESTS = map { 'defined iana_charset_name("'. $_ .'")' } @as;
+my @TESTS = map { 'defined iana_charset_name("'. $_ .'")' } @as;
 
 plan tests => scalar(@TESTS);
 

@@ -10,7 +10,7 @@ use ExtUtils::MakeMaker;
                NAME         => 'I18N::Charset',
                VERSION_FROM => 'lib/I18N/Charset.pm',
                PREREQ_PM => {
-                             File::Which => 0,
+                             App::Info::Lib::Iconv => 0,
                              IO::String => 0,
                              Test::Simple => 0,
                              Test::More => 0,

@@ -1,10 +1,7 @@
-#!./perl
-#
 # mib.t - Tests for converting mib numbers back to charset names
-#
 
-use I18N::Charset;
-use Test::Simple tests => 24;
+use Test::More tests => 25;
+BEGIN { use_ok('I18N::Charset') };
 
 #================================================
 # TESTS FOR mib routine

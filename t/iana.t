@@ -1,10 +1,9 @@
 #!./perl
-#
 # iana.t - tests for Locale::Country
-#
 
-use I18N::Charset;
-use Test::More tests => 26;
+use Test::More tests => 27;
+
+BEGIN { use_ok('I18N::Charset') };
 
 #================================================
 # TESTS FOR iana routines
