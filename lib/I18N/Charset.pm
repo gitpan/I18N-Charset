@@ -7,12 +7,17 @@ conversion scheme names
 =head1 SYNOPSIS
 
   use I18N::Charset;
-  
-  $sCharset = iana_charset_name('WinCyrillic');     # $sCharset gets 'windows-1251'
-  $sCharset = map8_charset_name('windows-1251');    # $sCharset gets 'cp1251'
-  
+
+  $sCharset = iana_charset_name('WinCyrillic');
+  # $sCharset is now 'windows-1251'
+  $sCharset = map8_charset_name('windows-1251');
+  # $sCharset is now 'cp1251' which can be passed to Unicode::Map8->new()
+  $sCharset = umap_charset_name('Adobe DingBats');  # $sCharset gets ''
+  # $sCharset is now 'ADOBE-DINGBATS' which can be passed to Unicode::Map->new()
+
   I18N::Charset::add_iana_alias('my-japanese' => 'iso-2022-jp');
   I18N::Charset::add_map8_alias('my-arabic' => 'arabic7');
+  I18N::Charset::add_umap_alias('my-hebrew' => 'ISO-8859-8');
 
 =cut
 
@@ -29,14 +34,15 @@ require 5.002;
 The C<I18N::Charset> module provides access to the IANA Character Set
 Registry names for identifying character encoding schemes.  It also
 provides a mapping to the character set names used by the
-Unicode::Map8 module.
+Unicode::Map8 and Unicode::Map modules.
 
 So, for example, if you get an HTML document with a META CHARSET="..."
-tag, you can quickly determine what Unicode::Map8 conversion to use on
-it.
+tag, you can fairly quickly determine what Unicode:: module can be
+used to convert it to Unicode.
 
 If you don't have the module Unicode::Map8 installed, the map8_
-functions will always return undef.
+functions will always return undef; similarly for Unicode::Map and the
+umap_ functions.
 
 =cut
 
@@ -48,23 +54,38 @@ use Carp;
 #-----------------------------------------------------------------------
 #	Public Global Variables
 #-----------------------------------------------------------------------
-use vars qw($VERSION @ISA @EXPORT @EXPORT_OK);
-$VERSION = sprintf("%d.%02d", q$Revision: 1.5 $ =~ /(\d+)\.(\d+)/);
-@ISA       = qw(Exporter);
-@EXPORT    = qw(iana_charset_name map8_charset_name);
-@EXPORT_OK = qw(add_iana_alias add_map8_alias);
+use vars qw( $VERSION @ISA @EXPORT @EXPORT_OK );
+$VERSION = '1.06';
+@ISA       = qw( Exporter );
+@EXPORT    = qw( iana_charset_name map8_charset_name umap_charset_name );
+@EXPORT_OK = qw( add_iana_alias add_map8_alias add_umap_alias );
 
 #-----------------------------------------------------------------------
 #	Private Global Variables
 #-----------------------------------------------------------------------
-my %NAMES  = ();
-my %NAMES8 = ();
-my ($debug, $verbose);
 
+# %SHORTtoMIB is a hash of stripped names to mib.
+my %SHORTtoMIB;
+# %MIBtoLONG is a hash of mib to long name.
+my %MIBtoLONG;
+# %LONGtoMIB is a hash of long name to mib.
+my %LONGtoMIB;
+# %MIBtoMAP8 is a hash of mib to Unicode::Map8 names.  (Only valid for
+# those U::Map8 names that we can find in the IANA registry)
+my %MIBtoMAP8;
+# %MIBtoUMAP is a hash of mib to Unicode::Map names.  If a U::Map
+# encoding does not have an official IANA entry, we create a dummy mib
+# for it.
+my %MIBtoUMAP;
+
+my ($debug, $verbose);
+# $debug = 1;
+$verbose ||= $debug;
 
 =head1 CONVERSION ROUTINES
 
-There are two conversion routine: C<iana_charset_name()> and C<map8_charset_name()>.
+There are three conversion routines: C<iana_charset_name()>,
+C<map8_charset_name()>, and C<umap_charset_name()>.
 
 =over 4
 
@@ -85,33 +106,48 @@ sub iana_charset_name
   my $code = shift;
   return undef unless defined $code;
   return undef unless $code ne '';
-  my @asTry = ();
+  # print STDERR " + iana_charset_name($code)...";
+  my @asTry = ($code);
   push @asTry, &strip($code);
   push @asTry, &strip($1) if $code =~ m/^x-(.+)$/;  # try without leading x-
   push @asTry, &strip($1) if $code =~ m/^x-x-(.+)$/;  # try without leading x-x-
   foreach my $sTry (@asTry)
     {
-    if (exists $NAMES{$sTry})
+    # print STDERR "try($sTry)...";
+    my $sTemp = &short_to_long($sTry) || '';
+    if ($sTemp ne '')
       {
-      return $NAMES{$sTry};
+      # print STDERR " --> $sTemp\n";
+      return $sTemp;
       } # if
     } # while
+  # print STDERR " --> undef\n";
   return undef;
   } # iana_charset_name
+
+
+sub short_to_mib
+  {
+  return $SHORTtoMIB{shift()};
+  } # short_to_mib
+
+sub short_to_long
+  {
+  local $^W = 0;
+  return $MIBtoLONG{$SHORTtoMIB{shift()}};
+  } # short_to_long
 
 
 =item map8_charset_name()
 
 This function takes a string containing the name of a character set
-and returns a string which contains a name for the character set that
-can be used to designate a Unicode::Map8 character code map. If no
-valid character set name can be identified, then C<undef> will be
-returned.  The case and punctuation within the argument string are not
-important.
+(in almost any format) and returns a string which contains a name for
+the character set that can be used to designate a Unicode::Map8
+character code map. If no valid character set name can be identified,
+then C<undef> will be returned.  The case and punctuation within the
+argument string are not important.
 
     $sCharset = map8_charset_name('windows-1251');
-
-=back
 
 =cut
 
@@ -120,24 +156,58 @@ sub map8_charset_name
   my $code = shift;
   return undef unless defined $code;
   return undef unless $code ne '';
+  my $debug = 0 && ($code =~ m!037!);
+  print STDERR " + map8_charset_name($code)..." if $debug;
   $code = &strip($code);
-  if (exists $NAMES8{$code})
+  print STDERR "$code..." if $debug;
+  my $iMIB = $SHORTtoMIB{$code} || 'undef';
+  print STDERR "$iMIB..." if $debug;
+  if ($iMIB ne 'undef')
     {
-    my $sTemp = &strip($NAMES8{$code});
-    # Try one more level of indirection:
-    if (exists $NAMES8{$sTemp})
-      {
-      return $NAMES8{$sTemp};
-      }
-    return $NAMES8{$code};
+    print STDERR "$MIBtoMAP8{$iMIB}\n" if $debug;
+    return $MIBtoMAP8{$iMIB};
     } # if
-  my $sTemp = &iana_charset_name($code);
-  if (defined($sTemp) and exists $NAMES8{$sTemp})
-    {
-    return $NAMES8{$sTemp};
-    } # if
+  print STDERR "undef\n" if $debug;
   return undef;
   } # map8_charset_name
+
+=item umap_charset_name()
+
+This function takes a string containing the name of a character set
+(in almost any format) and returns a string which contains a name for
+the character set that can be used to designate a Unicode::Map
+character code mapping. If no valid character set name can be
+identified, then C<undef> will be returned.  The case and punctuation
+within the argument string are not important.
+
+    $sCharset = umap_charset_name('hebrew');
+
+=back
+
+=cut
+
+sub umap_charset_name
+  {
+  my $code = shift;
+  return undef unless defined $code;
+  return undef unless $code ne '';
+  my $debug = 0 && ($code =~ m!apple!i);
+  # print STDERR "\n + MIBtoUMAP{dummymib029} == $MIBtoUMAP{'dummymib029'}\n\n" if $debug;
+  print STDERR " + umap_charset_name($code)..." if $debug;
+  $code = &strip($code);
+  print STDERR "$code..." if $debug;
+  my $iMIB = $SHORTtoMIB{$code} || 'undef';
+  print STDERR "$iMIB..." if $debug;
+  # First, see if there is a special UMap alias (independent of the
+  # IANA registry) for the desired code:
+  if ($iMIB ne 'undef')
+    {
+    print STDERR "$MIBtoUMAP{$iMIB}\n" if $debug;
+    return $MIBtoUMAP{$iMIB};
+    } # if
+  print STDERR "undef\n" if $debug;
+  return undef;
+  } # umap_charset_name
 
 
 =head1 QUERY ROUTINES
@@ -158,25 +228,24 @@ The names are not in any particular order.
 
 sub all_iana_charset_names
   {
-  return values %NAMES;
+  return values %MIBtoLONG;
   } # all_iana_charset_names
 
 #-----------------------------------------------------------------------
 
 =head1 CHARACTER SET NAME ALIASING
 
-This module supports two semi-private routines for specifying
-character set name aliases.  In order to avoid namespace corruption,
-they are not exported.
+This module supports three semi-private routines for specifying
+character set name aliases.
 
 =over 4
 
 =item  add_iana_alias()
 
-This function takes two strings, an alias and a target IANA Character
-Set Name (or another alias).  It defines the alias to refer to that
-character set name (or to the character set name that the second alias
-refers to).
+This function takes two strings: a new alias, and a target IANA
+Character Set Name (or another alias).  It defines the new alias to
+refer to that character set name (or to the character set name to
+which the second alias refers).
 
 Returns the target character set name of the successfully installed alias.
 Returns 'undef' if the target character set name is not registered.
@@ -200,13 +269,15 @@ name referred to by the existing alias 'sjis' (which happens to be 'Shift_JIS').
 sub add_iana_alias
   {
   my ($sAlias, $sReal) = @_;
+  # print STDERR " + add_iana_alias($sAlias,$sReal)...";
   my $sName = &iana_charset_name($sReal);
   if (not defined($sName))
     {
     carp "attempt to alias \"$sAlias\" to unknown IANA character set \"$sReal\"\n" if $verbose;
     return undef;
     } # if
-  $NAMES{&strip($sAlias)} = $sName;
+  # print STDERR "$sName...", &short_to_mib(&strip($sName)), "\n";
+  $SHORTtoMIB{&strip($sAlias)} = &short_to_mib(&strip($sName));
   return $sName;
   } # add_iana_alias
 
@@ -214,14 +285,14 @@ sub add_iana_alias
 
 =item  add_map8_alias()
 
-This function takes two strings, a new alias and a target
+This function takes two strings: a new alias, and a target
 Unicode::Map8 Character Set Name (or an exising alias to a Map8 name).
 It defines the new alias to refer to that mapping name (or to the
-mapping name that the second alias refers to).
+mapping name to which the second alias refers).
 
 If the first argument is a registered IANA character set name, then
-all aliases of that character set name will end up pointing to the
-target Map8 mapping name.
+all aliases of that IANA character set name will end up pointing to
+the target Map8 mapping name.
 
 Returns the target mapping name of the successfully installed alias.
 Returns 'undef' if the target mapping name is not registered.
@@ -230,22 +301,21 @@ is not registered.
 
   I18N::Charset::add_map8_alias('normal' => 'ANSI_X3.4-1968');
 
-With this code, "normal" becomes an alias for the existing Unicode::Map
-mapping name 'ANSI_X3.4-1968'.  
+With the above statement, "normal" becomes an alias for the existing
+Unicode::Map8 mapping name 'ANSI_X3.4-1968'.
 
   I18N::Charset::add_map8_alias('normal' => 'US-ASCII');
 
-With this code, "normal" becomes an alias for the existing
+With the above statement, "normal" becomes an alias for the existing
 Unicode::Map mapping name 'ANSI_X3.4-1968' (which is what "US-ASCII"
 is an alias for).
 
   I18N::Charset::add_map8_alias('IBM297' => 'EBCDIC-CA-FR');
 
-With this code, "IBM297" becomes an alias for the existing
+With the above statement, "IBM297" becomes an alias for the existing
 Unicode::Map mapping name 'EBCDIC-CA-FR'.  As a side effect, all the
-aliases for 'IBM297' (by default, 'cp297' and 'ebcdic-cp-fr') also
-become aliases for 'EBCDIC-CA-FR'.
-
+aliases for 'IBM297' (i.e. 'cp297' and 'ebcdic-cp-fr') also become
+aliases for 'EBCDIC-CA-FR'.
 
 =cut
 
@@ -255,12 +325,44 @@ sub add_map8_alias
   {
   my ($sAlias, $sReal) = @_;
   my $sName = &map8_charset_name($sReal);
+  my $sShort = &strip($sAlias);
+  my $sShortName = &strip($sName);
   if (not defined($sName))
     {
     carp "attempt to alias \"$sAlias\" to unknown Map8 character set \"$sReal\"\n" if $verbose;
     return undef;
     } # if
-  $NAMES8{&strip($sAlias)} = $sName;
+  if (exists $SHORTtoMIB{$sShortName})
+    {
+    $SHORTtoMIB{$sShort} = $SHORTtoMIB{$sShortName};
+    } # if
+  return $sName;
+  } # add_map8_alias
+
+#-----------------------------------------------------------------------
+
+=item  add_umap_alias()
+
+This function works identically to add_map8_alias() above, but
+operates on Unicode::Map encoding tables.
+
+=cut
+
+sub add_umap_alias
+  {
+  my ($sAlias, $sReal) = @_;
+  my $sName = &umap_charset_name($sReal);
+  my $sShort = &strip($sAlias);
+  my $sShortName = &strip($sName);
+  if (not defined($sName))
+    {
+    carp "attempt to alias \"$sAlias\" to unknown U::Map character set \"$sReal\"\n" if $verbose;
+    return undef;
+    } # if
+  if (exists $SHORTtoMIB{$sShortName})
+    {
+    $SHORTtoMIB{$sShort} = $SHORTtoMIB{$sShortName};
+    } # if
   return $sName;
   } # add_map8_alias
 
@@ -280,16 +382,21 @@ If you have some specific recommendations, please email the author!
 
 =item *
 
-There are many character set names which do not have a corresponding
-mapping in the Unicode::Map8 module (or at least I have not been able
-to figure out which mapping they correspond to).
-For the most part, these are obscure encodings.
+The only character set names which have a corresponding mapping in the
+Unicode::Map8 module are the character sets that Unicode::Map8 can
+convert.
+
+Similarly, the only character set names which have a corresponding
+mapping in the Unicode::Map module are the character sets that
+Unicode::Map can convert.
 
 =item *
 
-In the current implementation, all data is read when the module is
-loaded, and then held in memory.  A lazy implementation would be more
-memory-friendly.
+In the current implementation, all tables are read in and initialized
+when the module is loaded, and then held in memory until the program
+exits.  A "lazy" implementation (or a less-portable tied hash) might
+lead to a shorter startup time.  Suggestions, patches, comments are
+always welcome!
 
 =back
 
@@ -297,18 +404,21 @@ memory-friendly.
 
 =over 4
 
+=item Unicode::Map
+
+Convert strings from various multi-byte character encodings to and from Unicode.
+
 =item Unicode::Map8
 
-Convert strings from various character encodings to Unicode.
+Convert strings from various 8-bit character encodings to and from Unicode.
 
-=item Locale::Country
+=item Jcode
 
-ISO two letter codes for identification of country (ISO 3166).
+Convert strings among various Japanese character encodings and Unicode.
 
-=item Locale::Language
+=item Unicode::MapUTF8
 
-ISO two letter codes for identification of language (ISO 639).
-(Those codes are used in the Content-Language header in HTTP.)
+A wrapper around all three of these character set conversion distributions.
 
 =back
 
@@ -319,7 +429,7 @@ Martin Thurn E<lt>MartinThurn@iname.comE<gt>
 
 =head1 COPYRIGHT
 
-Copyright (c) 1998 TASC, Inc.
+Copyright (c) 1998-2001 TASC, Inc.
 
 This module is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
@@ -337,134 +447,230 @@ sub strip
 
 # initialization code - stuff the DATA into some data structure
 
-while (1) 
+INFINITE:
+while (1)
   {
-  my $sName;
+  my @asEqualLines;
+  my ($sName, $iMIB, $sAlias);
  DATA:
-  while (<DATA>)
+  while (my $sLine = <DATA>)
     {
-    next DATA unless /\S/;
-    # print STDERR " * read DATA $_";
-    if (m/\ ===\ /)
+    unless ($sLine =~ m!\S!)
       {
-      # print STDERR " *   read equal-sign line $_";
-      my @as = split(/\ ===\ /);
-      foreach my $s (@as)
-        {
-        $NAMES{&strip($s)} = $as[0];
-        } # foreach
-      } # if ===
-    if (m/^Name:\s(\S+)/)
+      # Blank line separates entries.
+      ($sName, $iMIB, $sAlias) = ('', '', '');
+      $debug = 0;
+      next DATA;
+      } # unless
+    # print STDERR " + read DATA $_";
+    if ($sLine =~ m/\ ===\ /)
+      {
+      push @asEqualLines, $sLine;
+      }
+    elsif ($sLine =~ m/^Name:\s*(\S+)/)
       {
       $sName = $1;
-      # print STDERR " * read Name: $sName\n";
-      $NAMES{&strip($sName)} = $sName;
-      # Automatically add aliases "cp1234" for "windows-1234":
-      # if ($sName =~ m/^windows-(\d+)$/i)
-      #   {
-      #   &add_iana_alias("cp$1" => $sName);
-      #   } # if windows-1234
+      # $debug = $sName =~ m!jis!i;
+      print STDERR " +   read Name: $sName\n" if $debug;
       } # if Name
-    if (m/^Alias:\s(\S+)/)
+    elsif ($sLine =~ m!^MIBenum:\s*(\d+)!)
       {
-      # print STDERR " * read Alias: $1\n";
-      &add_iana_alias($1 => $sName);
+      $iMIB = $1;
+      # $debug = ($iMIB == 2028);
+      print STDERR " +   found mib: $iMIB, sName = $sName\n" if $debug;
+      $MIBtoLONG{$iMIB} = $sName;
+      $LONGtoMIB{$sName} = $iMIB;
+      $SHORTtoMIB{&strip($sName)} = $iMIB;
+      } # MIBenum line
+    elsif ($sLine =~ m/^Alias:\s*(\S+)/)
+      {
+      $sAlias = $1;
+      print STDERR " +   map Alias ($sAlias) to mib $iMIB\n" if $debug;
+      $SHORTtoMIB{&strip($sAlias)} = $iMIB;
       } # if Alias
     } # while <DATA>
 
-  # last;
+  # last INFINITE;
 
-  if (eval "require Unicode::Map8") 
+  # Not that we have all the standard definitions, process the special
+  # === directives:
+ EQUAL_LINE:
+  foreach my $sLine (@asEqualLines)
     {
-    print STDERR " * found Unicode::Map8 installed, will build map8 tables..." if $debug;
+    # print STDERR " +   equal-sign line $sLine...";
+    my @as = split(/\ ===\ /, $sLine);
+    my $iMIB = $SHORTtoMIB{&strip($as[0])} || '';
+    unless ($iMIB ne '')
+      {
+      print STDERR " --- can not find IANA entry for equal-sign directive $as[0]\n";
+      next EQUAL_LINE;
+      } # unless
+    foreach my $s (@as)
+      {
+      $SHORTtoMIB{&strip($s)} = $iMIB;
+      } # foreach
+    } # foreach
+
+  # last INFINITE;
+
+  my $sFakeMIB = 'dummymib001';
+
+  if (eval "require Unicode::Map8")
+    {
+    print STDERR " + found Unicode::Map8 installed, will build map8 tables..." if $debug;
     my $sMapFile = "$Unicode::Map8::MAPS_DIR/aliases";
     if (open MAPS, $sMapFile)
       {
       while (defined (my $sLine = <MAPS>))
         {
+        # $debug = ($sLine =~ m!IBM037!);
         my @as = split(/\s/, $sLine);
         my $sFound = '';
-        # Try to find an alias of this map8 which is in the IANA table:
+        my $iMIB = '';
+        # The "master" Map8 name is in $as[0].  Try to find the
+        # official IANA name for this encoding:
+        my $sMap8 = $as[$[];
+ MAP8ITEM:
         foreach my $s (@as)
           {
-          # print STDERR " *      looking for $s in iana table...\n";
+          print STDERR " +      looking for $s in iana table...\n" if $debug;
           if (defined (my $sTemp = &iana_charset_name($s)))
             {
             $sFound = $sTemp;
-            last;
+            last MAP8ITEM;
             } # if
           } # foreach
         if ($sFound eq '')
           {
-          print STDERR " *** did not find IANA name for Map8 entry $as[0]\n" if $debug;
+          print STDERR " --- did not find IANA name for Map8 entry $sMap8\n" if $debug;
+          $iMIB = $sFakeMIB++;
+          $LONGtoMIB{$sMap8} = $iMIB;
           } # unless
         else
           {
-          # print STDERR " *   found IANA name $sFound for Map8 entry $as[0]\n";
-          # Make this IANA name map to this Map8 name:
-          $NAMES8{$sFound} = $as[0];
+          print STDERR " +   found IANA name $sFound for Map8 entry $sMap8\n" if $debug;
+          $iMIB = $LONGtoMIB{$sFound};
           }
-        # Build up the map8 table:
+        # $debug = ($iMIB eq 2028);
+        # Make this IANA mib map to this Map8 name:
+        print STDERR " +      map $iMIB to $sMap8 in MIBtoMAP8...\n" if $debug;
+        $MIBtoMAP8{$iMIB} = $sMap8;
+        # Map ALL the Map8 aliases to this Map8 master name:
         foreach my $s (@as)
           {
-          # print STDERR " *      map $s to $as[0] in NAMES8...\n";
-          $NAMES8{&strip($s)} = $as[0];
-          # If an IANA entry was matched, make all these Map8 aliases point to it:
-          if ($sFound ne '')
-            {
-            # print STDERR " *      map $s to $sFound in IANA...\n";
-            &add_iana_alias($s => $sFound);
-            } # if
+          $s = &strip($s);
+          print STDERR " +      map $s to $iMIB in SHORTtoMIB...\n" if $debug;
+          $SHORTtoMIB{$s} = $iMIB;
           } # foreach
         } # while
       close MAPS;
       } # if open
     else
       {
-      carp " *** couldn't open $sMapFile for read" if $verbose;
+      carp " --- couldn't open $sMapFile for read" if $verbose;
       }
     # If there are special cases for Unicode::Map8, add them here:
     # &add_map8_alias("new-name", "existing-name");
     print STDERR "done.\n" if $debug;
     } # if Unicode::Map8 installed
 
-  last;
+  # $debug = 1;
+  if (eval "require Unicode::Map")
+    {
+    print STDERR " + found Unicode::Map installed, will build tables..." if $debug;
+    my $MAP_Path = $INC{'Unicode/Map.pm'};
+    $MAP_Path =~ s/\.pm//;
+    my $sMapFile = "$MAP_Path/REGISTRY";
+    if (open MAPS, $sMapFile)
+      {
+      $/ = "\n\n";
+      while (defined (my $sEntry = <MAPS>))
+        {
+        $debug = 0;
+        # print STDERR " + working on Umap entry >>>>>$sEntry<<<<<...\n";
+        my ($sName, $iMIB) = ('', '');
+        next unless $sEntry =~ m!^name:\s+(\S+)!mi;
+        $sName = $1;
+        # $debug = ($sName =~ m!apple!i);
+        print STDERR " +   UMAP sName is $sName\n" if $debug;
+        $iMIB = $1 if $sEntry =~ m!^#mib:\s+(\d+)!mi;
+        $iMIB ||= $SHORTtoMIB{&strip($sName)};
+        $iMIB ||= $sFakeMIB++;
+        # $debug = ($iMIB eq '17');
+        print STDERR " +   UMAP mib is $iMIB\n" if $debug;
+        $MIBtoUMAP{$iMIB} = $sName;
+        # Set the long IANA name, IF it is empty so far:
+        $MIBtoLONG{$iMIB} ||= $sName;
+        $SHORTtoMIB{&strip($sName)} ||= $iMIB;
+        while ($sEntry =~ m!^alias:\s+(.+)$!mgi)
+          {
+          print STDERR " +   UMAP alias $1\n" if $debug;
+          $SHORTtoMIB{&strip($1)} = $iMIB;
+          } # while
+        } # while
+      close MAPS;
+      # print STDERR "\n + MIBtoUMAP{dummymib029} == $MIBtoUMAP{'dummymib029'}\n\n";
+      } # if open
+    else
+      {
+      carp " --- couldn't open $sMapFile for read" if $verbose;
+      }
+    # If there are special cases for Unicode::Map, add them here:
+    # &add_umap_alias("new-name", "existing-name");
+    print STDERR "done.\n" if $debug;
+    } # if Unicode::Map installed
 
-  print STDERR " * the following IANA names do *not* have entries in the Map8 table:\n";
+  last INFINITE;
+
+  print STDERR " + the following IANA names do *not* have entries in the Map8 table:\n";
   my %hiTried = ();
-  foreach my $sIANA (sort values %NAMES)
+  foreach my $sIANA (sort values %MIBtoLONG)
     {
     next if $hiTried{$sIANA};
     print "$sIANA\n" unless defined &map8_charset_name($sIANA);
     $hiTried{$sIANA}++;
     } # foreach
 
-  last;
+  # last INFINITE;
 
   # debugging: selective dump:
-  print STDERR " * after init, iana_charset_name returns:\n";
+  print STDERR " + after init, iana_charset_name returns:\n";
   foreach my $key (qw(cp1251 windows-1251 WinCyrillic sjis x-sjis Shift_JIS ASCII US-ASCII us-ascii iso-2022-jp iso-8859-1 Unicode-2-0-utf-8 EUC-KR big5 x-x-big5))
     {
-    print STDERR " *   $key => ", &iana_charset_name($key), "\n";
+    print STDERR " +   $key => ", &iana_charset_name($key) || 'undef', "\n";
     } # foreach
 
-  print STDERR " * after init, map8_charset_name() returns:\n";
+  # exit 88;
+
+  print STDERR " + after init, map8_charset_name() returns:\n";
   foreach my $key (qw(cp1251 windows-1251 WinCyrillic sjis x-sjis Shift_JIS ASCII US-ASCII us-ascii iso-2022-jp iso-8859-1 Unicode-2-0-utf-8 EUC-KR big5 x-x-big5))
     {
-    print STDERR " *   $key => ", &map8_charset_name($key), "\n";
+    print STDERR " +   $key => ", &map8_charset_name($key) || 'undef', "\n";
     } # foreach
-  
-  last;
+
+  last INFINITE;
 
   # debugging: huge dump:
-  print STDERR " * after initialization, NAMES is:\n";
-  foreach my $key (keys %NAMES)
+  # &dumpHash('MIBtoLONG', \%MIBtoLONG);
+  # &dumpHash('LONGtoMIB', \%LONGtoMIB);
+  # &dumpHash('SHORTtoMIB', \%SHORTtoMIB);
+  foreach (keys %SHORTtoMIB)
     {
-    print STDERR " *   $key => $NAMES{$key}\n";
+    print STDERR " + short_to_long($_) == ", &short_to_long($_) || 'undef', "\n";
     } # foreach
 
-  last;
+  last INFINITE;
   } # while
+
+sub dumpHash
+  {
+  my ($sName, $rh) = @_;
+  print STDERR " + after initialization, $sName is:\n";
+  foreach my $key (keys %$rh)
+    {
+    print STDERR " +   $key => $$rh{$key}\n";
+    } # foreach
+  } # dumpHash
 
 1;
 

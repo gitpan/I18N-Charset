@@ -1,3 +1,11 @@
+2001-03-06  Kingpin  <mthurn@tasc.com>
+
+	* 1.06 released
+
+2001-03-05  Kingpin  <mthurn@tasc.com>
+
+	* lib/I18N/Charset.pm: added support for Unicode::Map
+
 2001-01-08  Kingpin  <mthurn@tasc.com>
 
 	* 1.05 released (fixed pod)

@@ -50,10 +50,11 @@ unless (eval "require Unicode::Map8")
  'I18N::Charset::add_map8_alias("alias3" => "iso-ir-85") eq "ES2"',
  'map8_charset_name("alias3") eq "ES2"',
 
- 'I18N::Charset::add_map8_alias("IBM297" => "IBM037") eq "IBM037"',
- 'map8_charset_name("IBM297")       eq "IBM037"',
- 'map8_charset_name("cp297")        eq "IBM037"',
- 'map8_charset_name("ebcdic_cp_fr") eq "IBM037"',
+ 'map8_charset_name("Ebcdic cp FI")       eq "IBM278"',
+ 'map8_charset_name("IBM278")             eq "IBM278"',
+ 'I18N::Charset::add_map8_alias("my278" => "IBM278") eq "IBM278"',
+ 'map8_charset_name("My 278")         eq "IBM278"',
+ 'map8_charset_name("cp278")          eq "IBM278"',
 
 );
 

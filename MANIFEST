@@ -5,3 +5,5 @@ README
 lib/I18N/Charset.pm
 t/iana.t
 t/map8.t
+t/maputf8.t
+t/umap.t

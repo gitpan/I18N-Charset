@@ -26,7 +26,9 @@ use I18N::Charset;
  #---- some successful examples -----------------------------------------
  'iana_charset_name("Windows-1-2-5-1")   eq "windows-1251"',
  'iana_charset_name("Shift_JIS")         eq "Shift_JIS"',
- 'iana_charset_name("x-x-big5")          eq "Big5"',
+ 'iana_charset_name("sjis")         eq "Shift_JIS"',
+ 'iana_charset_name("x-sjis")         eq "Shift_JIS"',
+ 'iana_charset_name("x-x-sjis")         eq "Shift_JIS"',
  'iana_charset_name("Unicode-2-0-utf-8") eq "UTF-8"',
 
  #---- some aliasing examples -----------------------------------------
