@@ -9,9 +9,8 @@
 use ExtUtils::MakeMaker;
 
 &WriteMakefile(
-               NAME          => 'I18N',
-               DISTNAME      => 'I18N-Charset',
-               VERSION_FROM  => 'I18N/Charset.pm',
+               NAME          => 'I18N::Charset',
+               VERSION_FROM  => 'lib/I18N/Charset.pm',
                dist          => {COMPRESS => 'gzip', SUFFIX => 'gz'},
               );
  

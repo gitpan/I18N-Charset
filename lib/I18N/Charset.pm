@@ -49,7 +49,7 @@ use Carp;
 #	Public Global Variables
 #-----------------------------------------------------------------------
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK);
-$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.3 $ =~ /(\d+)\.(\d+)/);
 @ISA       = qw(Exporter);
 @EXPORT    = qw(iana_charset_name map8_charset_name);
 @EXPORT_OK = qw(add_iana_alias add_map8_alias);
@@ -429,6 +429,8 @@ while (1)
       {
       carp " *** couldn't open $sMapFile for read" if $verbose;
       }
+    # If there are special cases for Unicode::Map8, add them here:
+    # &add_map8_alias("new-name", "existing-name");
     print STDERR "done.\n" if $debug;
     } # if Unicode::Map8 installed
 
@@ -480,7 +482,7 @@ canonical IANA name and BBB and CCC are aliases.  Note that
 capitalization and punctuation of aliases are meaningless (but
 whitespace is not allowed).
 
-Shift_JIS === sjis === sjis
+Shift_JIS === sjis
 windows-1250 === winlatin2
 windows-1251 === wincyrillic
 windows-1252 === winlatin1
