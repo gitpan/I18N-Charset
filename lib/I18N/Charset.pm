@@ -1,5 +1,5 @@
 
-# $rcs = ' $Id: Charset.pm,v 1.35 2004/01/15 12:00:04 Daddy Exp $ ' ;
+# $rcs = ' $Id: Charset.pm,v 1.36 2004/01/25 02:43:24 Daddy Exp $ ' ;
 
 =head1 NAME
 
@@ -76,7 +76,7 @@ use strict;
 #	Public Global Variables
 #-----------------------------------------------------------------------
 use vars qw( $VERSION @ISA @EXPORT @EXPORT_OK );
-$VERSION = sprintf("%d.%02d", q$Revision: 1.35 $ =~ /(\d+)\.(\d+)/o);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.36 $ =~ /(\d+)\.(\d+)/o);
 @ISA       = qw( Exporter );
 @EXPORT    = qw( iana_charset_name
 map8_charset_name
@@ -1263,7 +1263,7 @@ sub _init_data
 ===================================================================
 CHARACTER SETS
 
-(last updated 2003-09-19)
+(last updated 2004-01-23)
 
 These are the official names for character sets that may be used in
 the Internet and may be referred to in Internet documentation.  These
@@ -2558,6 +2558,20 @@ Alias: PT154
 Alias: CP154
 Alias: Cyrillic-Asian
 
+Name:  Amiga-1251
+MIBenum:  2104
+Source:  See (http://www.amiga.ultranet.ru/Amiga-1251.html)
+Alias:  Ami1251
+Alias:  Amiga1251
+Alias:  Ami-1251
+(Aliases are provided for historical reasons and should not be used)
+                                                              [Malyshev]
+															  
+Name:  KO17-Switched
+MIBenum:  2105
+Source:  See <http://www.iana.org/assignments/charset-reg/KO17-switched>
+Aliases:  None
+
 Name: UNICODE-1-1                                              [RFC1641]
 MIBenum: 1010
 Source: RFC 1641
@@ -2667,6 +2681,24 @@ MIBenum: 114
 Source: Chinese IT Standardization Technical Committee
         Please see: <http://www.iana.org/assignments/charset-reg/GB18030>
 Alias: None
+
+Name:  OSD_EBCDIC_DF04_15
+MIBenum:  115
+Source:  Fujitsu-Siemens standard mainframe EBCDIC encoding
+         Please see: <http://www.iana.org/assignments/charset-reg/OSD-EBCDIC-DF04-15>
+Alias:   None
+
+Name:  OSD_EBCDIC_DF03_IRV
+MIBenum:  116
+Source:  Fujitsu-Siemens standard mainframe EBCDIC encoding
+         Please see: <http://www.iana.org/assignments/charset-reg/OSD-EBCDIC-DF03-IRV>
+Alias:  None
+
+Name:  OSD_EBCDIC_DF04_1
+MIBenum:  117
+Source:  Fujitsu-Siemens standard mainframe EBCDIC encoding
+         Please see: <http://www.iana.org/assignments/charset-reg/OSD-EBCDIC-DF04-1>
+Alias:  None   
 
 Name: JIS_Encoding
 MIBenum: 16
@@ -3049,6 +3081,8 @@ PEOPLE
 [Lazhintseva] Katya Lazhintseva, <katyal@MICROSOFT.com>, May 1996.
 
 [Mahdi] Tamer Mahdi, <tamer@ca.ibm.com>, August 2000.
+
+[Malyshev] Michael Malyshev, <michael_malyshev@mail.ru>, January 2004
 
 [Murai] Jun Murai <jun@wide.ad.jp>
 

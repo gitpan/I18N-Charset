@@ -1,6 +1,10 @@
+2004-01-24  Kingpin  <mthurn@verizon.net>
+
+	* lib/I18N/Charset.pm (_init_data): 5 new charsets in IANA document
+
 2004-01-15  Kingpin  <mthurn@verizon.net>
 
-	* lib/I18N/Charset.pm (enco_charset_name): encoding names were not initialized sometimes
+	* lib/I18N/Charset.pm (enco_charset_name): BUGFIX: encoding names were not initialized sometimes
 
 2003-03-28  Kingpin  <mthurn@megapipe.net>
 
