@@ -58,7 +58,7 @@ use IO::String;
 #	Public Global Variables
 #-----------------------------------------------------------------------
 use vars qw( $VERSION @ISA @EXPORT @EXPORT_OK );
-$VERSION = '1.19';
+$VERSION = '1.21';
 @ISA       = qw( Exporter );
 @EXPORT    = qw( iana_charset_name map8_charset_name umap_charset_name
 umu8_charset_name mib_charset_name mime_charset_name
@@ -178,7 +178,7 @@ character set identified. If no valid character set name can be
 identified, then C<undef> will be returned.  The case and punctuation
 within the string are not important.
 
-    $sCharset = iana_charset_mime_name('Extended_UNIX_Code_Packed_Format_for_Japanese');
+    $sCharset = mime_charset_name('Extended_UNIX_Code_Packed_Format_for_Japanese');
 
 =cut
 
@@ -607,8 +607,12 @@ while (1)
       $debug = 0;
       next DATA;
       } # unless
-    # print STDERR " + read DATA $_";
-    $mimename = ($sLine =~ m/\(preferred\s*MIME\s*name\)/);
+    # print STDERR " + read DATA $_" if $debug;
+
+    # If this line indicates the MIME name, remember this fact; but if
+    # it doesn't, keep the previous setting (in case the MIME name is
+    # specified before we find the MIB of this entry):
+    $mimename = 1 if ($sLine =~ m/\(preferred\s*MIME\s*name\)/);
     if ($sLine =~ m/^Name:\s*(\S+)/)
       {
       $sName = $1;
@@ -627,6 +631,9 @@ while (1)
         {
         print STDERR " +   found mime: mib=$iMIB, mime=$sName\n" if $debug;
 	$MIBtoMIME{$iMIB} = $sName;
+        # We've got the MIME name for this entry, don't look for more
+        # until next entry:
+        $mimename = 0;
         } # preferred MIME name
       } # MIBenum line
     elsif ($sLine =~ m/^Alias:\s*(\S+)/)
@@ -640,6 +647,9 @@ while (1)
 	  {
           print STDERR " +   found mime: mib=$iMIB, mime=$sAlias\n" if $debug;
 	  $MIBtoMIME{$iMIB} = $sAlias;
+          # We've got the MIME name for this entry, don't look for
+          # more until next entry:
+          $mimename = 0;
 	  } # preferred MIME name
         } # if not "None"
       } # if Alias
