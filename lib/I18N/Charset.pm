@@ -55,7 +55,7 @@ use Carp;
 #	Public Global Variables
 #-----------------------------------------------------------------------
 use vars qw( $VERSION @ISA @EXPORT @EXPORT_OK );
-$VERSION = '1.07';
+$VERSION = '1.08';
 @ISA       = qw( Exporter );
 @EXPORT    = qw( iana_charset_name map8_charset_name umap_charset_name );
 @EXPORT_OK = qw( add_iana_alias add_map8_alias add_umap_alias );
@@ -702,10 +702,6 @@ EBCDIC-US === ebcdic-cp-us
 EBCDIC-FI-SE === ebcdic-cp-fi
 UTF-7 === Unicode-2-0-utf-7
 UTF-8 === Unicode-2-0-utf-8
-ISO-8859-1-Windows-3.0-Latin-1 === iso-8859-1
-ISO-8859-1-Windows-3.1-Latin-1 === iso-8859-1
-ISO-8859-2-Windows-Latin-2 === iso-8859-2
-ISO-8859-9-Windows-Latin-5 === iso-8859-9
 Extended_UNIX_Code_Packed_Format_for_Japanese === euc === euc-jp
 
 The rest of the DATA is the original document from

@@ -1,3 +1,7 @@
+2001-04-19  Kingpin  <mthurn@tasc.com>
+
+	* lib/I18N/Charset.pm: removed some incorrect aliases (thanks to Liam Quinn)
+
 2001-03-08  Kingpin  <mthurn@tasc.com>
 
 	* 1.07 released
