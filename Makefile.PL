@@ -1,3 +1,6 @@
+
+# $Id: Makefile.PL,v 1.14 2005/11/13 03:02:31 Daddy Exp $
+
 use inc::Module::Install;
 
 name('I18N-Charset');
@@ -7,18 +10,17 @@ author('Martin Thurn <mthurn@cpan.org>');
 license('perl');
 
 requires( perl => '5.004' );
-build_requires('IO::Capture::ErrorMessages' => 0);
-requires('IO::String');
 recommends('App::Info::Lib::Iconv');
 recommends('Encode');
+build_requires('IO::Capture::Stderr' => 0);
+requires('IO::String');
 recommends('Unicode::Map');
 recommends('Unicode::Map8');
 recommends('Unicode::MapUTF8');
 # Test::More is needed for `make test`:
 build_requires('Test::More');
 
-check_nmake();      # check and download nmake.exe for Win32
-&Makefile->write;
+&WriteAll;
 
 sub MY::postamble
   {
@@ -30,3 +32,6 @@ coverage_slave : test
 PART0
   return $ret;
   } # MY::postamble
+
+__END__
+

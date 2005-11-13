@@ -1,11 +1,12 @@
-# $Revision: 1.6 $
 # umap.t - tests for Unicode::Map functionality of I18N::Charset
+
+# $Id: umap.t,v 1.8 2005/11/12 14:45:09 Daddy Exp $
 
 use I18N::Charset;
 use Test::More no_plan;
 
-use IO::Capture::ErrorMessages;
-my $oICE =  IO::Capture::ErrorMessages->new;
+use IO::Capture::Stderr;
+my $oICE =  IO::Capture::Stderr->new;
 
 use strict;
 

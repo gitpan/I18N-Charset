@@ -1,3 +1,6 @@
+
+# $Id: bug1.t,v 1.5 2005/11/12 14:36:17 Daddy Exp $
+
 use ExtUtils::testlib;
 use Test::More;
 unless (eval "require Encode")
@@ -14,3 +17,4 @@ is(enco_charset_name("gb2312"),
    'test literal -- big5');
 
 __END__
+

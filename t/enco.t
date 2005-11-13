@@ -1,10 +1,12 @@
 # enco.t - tests for "preferred ENCO name" functionality of I18N::Charset
 
+# $Id: enco.t,v 1.5 2005/11/12 14:45:08 Daddy Exp $
+
 use ExtUtils::testlib;
 use Test::More no_plan;
 
-use IO::Capture::ErrorMessages;
-my $oICE =  IO::Capture::ErrorMessages->new;
+use IO::Capture::Stderr;
+my $oICE =  IO::Capture::Stderr->new;
 
 use strict;
 
@@ -68,3 +70,4 @@ SKIP:
 exit 0;
 
 __END__
+

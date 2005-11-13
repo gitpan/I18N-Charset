@@ -1,10 +1,11 @@
-# $Revision: 1.9 $
+# $Revision: 1.11 $
 # iana.t - tests for Locale::Country
 
+use ExtUtils::testlib;
 use Test::More tests => 27;
 
-use IO::Capture::ErrorMessages;
-my $oICE =  IO::Capture::ErrorMessages->new;
+use IO::Capture::Stderr;
+my $oICE =  IO::Capture::Stderr->new;
 
 use strict;
 
@@ -58,3 +59,4 @@ diag("There are $iAll IANA charset names registered");
 exit 0;
 
 __END__
+

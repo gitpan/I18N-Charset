@@ -1,10 +1,11 @@
-# $Revision: 1.9 $
 # map8.t - tests for Unicode::Map8 functionality of I18N::Charset
+
+# $Id: map8.t,v 1.12 2005/11/12 14:45:09 Daddy Exp $
 
 use Test::More no_plan;
 
-use IO::Capture::ErrorMessages;
-my $oICE =  IO::Capture::ErrorMessages->new;
+use IO::Capture::Stderr;
+my $oICE =  IO::Capture::Stderr->new;
 
 use strict;
 
@@ -58,3 +59,4 @@ SKIP:
 exit 0;
 
 __END__
+

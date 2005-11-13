@@ -1,4 +1,4 @@
-# $Revision: 1.3 $
+# $Id: mime.t,v 1.5 2005/09/01 03:09:45 Daddy Exp $
 # mime.t - tests for "preferred MIME name" functionality of I18N::Charset
 
 use Test::More tests => 14;
@@ -31,3 +31,5 @@ ok(mime_charset_name("Big5") eq "Big5", 'Name is preferred, try Name');
 exit 0;
 
 __END__
+
+

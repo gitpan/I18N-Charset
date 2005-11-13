@@ -1,0 +1,21 @@
+name: I18N-Charset
+version: 1.379
+author: Martin Thurn <mthurn@cpan.org>
+license: perl
+distribution_type: module
+build_requires:
+  IO::Capture::Stderr: 0
+  Test::More: 0
+requires:
+  perl: 5.004
+  IO::String: 0
+recommends:
+  App::Info::Lib::Iconv: 0
+  Encode: 0
+  Unicode::Map: 0
+  Unicode::Map8: 0
+  Unicode::MapUTF8: 0
+no_index:
+  directory:
+    - inc
+generated_by: Module::Install version 0.37
