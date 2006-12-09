@@ -1,5 +1,5 @@
 
-# $rcs = ' $Id: Charset.pm,v 1.379 2005/09/02 21:32:04 Daddy Exp $ ' ;
+# $rcs = ' $Id: Charset.pm,v 1.382 2006/12/09 01:38:07 Daddy Exp $ ' ;
 
 package I18N::Charset;
 
@@ -68,7 +68,7 @@ functions will always return undef.
 #	Public Global Variables
 #-----------------------------------------------------------------------
 use vars qw( $VERSION @ISA @EXPORT @EXPORT_OK );
-$VERSION = do { my @r = (q$Revision: 1.379 $ =~ /\d+/g); sprintf "%d."."%03d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 1.382 $ =~ /\d+/g); sprintf "%d."."%03d" x $#r, @r };
 @ISA       = qw( Exporter );
 @EXPORT    = qw( iana_charset_name
 map8_charset_name
@@ -850,14 +850,13 @@ A wrapper around all three of these character set conversion distributions.
 
 =back
 
-
 =head1 AUTHOR
 
-Martin Thurn E<lt>mthurn@cpan.orgE<gt>
+Martin Thurn, C<mthurn@cpan.org>, L<http://tinyurl.com/nn67z>.
 
 =head1 COPYRIGHT
 
-Copyright (c) 1998-2001 TASC, Inc.
+Copyright (c) 1998-2006 Martin Thurn
 
 This module is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
@@ -1297,10 +1296,11 @@ sub _init_data
   # This big piece of data is the original document from
   # http://www.iana.org/assignments/character-sets
   return <<'EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE';
+
 ===================================================================
 CHARACTER SETS
 
-(last updated 28 January 2005)
+(last updated 07 December 2006)
 
 These are the official names for character sets that may be used in
 the Internet and may be referred to in Internet documentation.  These
@@ -1335,7 +1335,7 @@ intended for vendor specific coded character sets.
 
 The aliases that start with "cs" have been added for use with the
 IANA-CHARSET-MIB as originally defined in RFC3808, and as currently
-maintained by IANA at http://www/iana.org/assignments/ianacharset-mib.
+maintained by IANA at http://www.iana.org/assignments/ianacharset-mib.
 Note that the ianacharset-mib needs to be kept in sync with this
 registry.  These aliases that start with "cs" contain the standard 
 numbers along with suggestive names in order to facilitate applications 
@@ -3025,11 +3025,30 @@ Alias: None
 
 Name: TIS-620
 MIBenum: 2259
-Source: Thai Industrial Standards Institute (TISI)	     [Tantsetthi]
+Source: Thai Industrial Standards Institute (TISI)                             [Tantsetthi]
 
 Name: HZ-GB-2312
 MIBenum: 2085
-Source: RFC 1842, RFC 1843                              [RFC1842, RFC1843]
+Source: RFC 1842, RFC 1843                                               [RFC1842, RFC1843]
+
+Name: ISO-11548-1
+MIBenum: 118 
+Source: See <http://www.iana.org/assignments/charset-reg/ISO-11548-1>            [Thibault]
+Alias: ISO_11548-1
+Alias: ISO_TR_11548-1
+Alias: csISO115481
+
+Name: KZ-1048
+MIBenum: 119 
+Source: See <http://www.iana.org/assignments/charset-reg/KZ-1048>      [Veremeev, Kikkarin]
+Alias: STRK1048-2002
+Alias: RK1048
+Alias: csKZ1048
+
+Name: BRF
+MIBenum: 2106
+Source: See <http://www.iana.org/assignments/charset-reg/BRF>                    [Thibault]
+Alias: csBRF
 
 
 REFERENCES
@@ -3123,6 +3142,8 @@ PEOPLE
 
 [Davis] Mark Davis, <mark@unicode.org>, April 2002.
 
+[Kikkarin] Sairan M. Kikkarin, <sairan@sci.kz>, 7 December 2006.
+
 [Lazhintseva] Katya Lazhintseva, <katyal@MICROSOFT.com>, May 1996.
 
 [Mahdi] Tamer Mahdi, <tamer@ca.ibm.com>, August 2000.
@@ -3148,9 +3169,13 @@ PEOPLE
 
 [Tantsetthi] Trin Tantsetthi, <trin@mozart.inet.co.th>, September 1998.
 
+[Thibault] Samuel Thibault, <samuel.thibault@ens-lyon.org>, 7 December 2006.
+
 [Tumasonis] Vladas Tumasonis, <vladas.tumasonis@maf.vu.lt>, August 2000.
 
 [Uskov] Alexander Uskov, <auskov@idc.kz>, September 2002.
+
+[Veremeev] Alexei Veremeev, <Alexey.Veremeev@oracle.com>, 7 December 2006.
 
 [Wendt] Chris Wendt, <christw@microsoft.com>, December 1999.
 
