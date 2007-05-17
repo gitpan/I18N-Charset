@@ -20,5 +20,7 @@ t/libi.t
 t/map8.t
 t/mib.t
 t/mime.t
+t/pod-coverage.t
+t/pod.t
 t/umap.t
 t/utf8.t

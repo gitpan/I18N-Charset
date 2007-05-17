@@ -1,5 +1,5 @@
 
-# $rcs = ' $Id: Charset.pm,v 1.383 2007/05/17 23:48:49 Daddy Exp $ ' ;
+# $rcs = ' $Id: Charset.pm,v 1.385 2007/05/17 23:58:14 Daddy Exp $ ' ;
 
 package I18N::Charset;
 
@@ -68,7 +68,7 @@ functions will always return undef.
 #	Public Global Variables
 #-----------------------------------------------------------------------
 use vars qw( $VERSION @ISA @EXPORT @EXPORT_OK );
-$VERSION = do { my @r = (q$Revision: 1.383 $ =~ /\d+/g); sprintf "%d."."%03d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 1.385 $ =~ /\d+/g); sprintf "%d."."%03d" x $#r, @r };
 @ISA       = qw( Exporter );
 @EXPORT    = qw( iana_charset_name
 map8_charset_name
@@ -414,11 +414,6 @@ then C<undef> will be returned.
 
 =cut
 
-sub mib_charset_name
-  {
-  mib_to_charset_name(@_);
-  } # mib_charset_name
-
 sub mib_to_charset_name
   {
   my $code = shift;
@@ -427,6 +422,18 @@ sub mib_to_charset_name
   local $^W = 0;
   return $hsLongnameOfMIB{$code};
   } # mib_to_charset_name
+
+
+=item mib_charset_name
+
+This is a synonum for mib_to_charset_name
+
+=cut
+
+sub mib_charset_name
+  {
+  mib_to_charset_name(@_);
+  } # mib_charset_name
 
 
 =item charset_name_to_mib
