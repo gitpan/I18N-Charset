@@ -1,5 +1,5 @@
 
-# $rcs = ' $Id: Charset.pm,v 1.382 2006/12/09 01:38:07 Daddy Exp $ ' ;
+# $rcs = ' $Id: Charset.pm,v 1.383 2007/05/17 23:48:49 Daddy Exp $ ' ;
 
 package I18N::Charset;
 
@@ -68,7 +68,7 @@ functions will always return undef.
 #	Public Global Variables
 #-----------------------------------------------------------------------
 use vars qw( $VERSION @ISA @EXPORT @EXPORT_OK );
-$VERSION = do { my @r = (q$Revision: 1.382 $ =~ /\d+/g); sprintf "%d."."%03d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 1.383 $ =~ /\d+/g); sprintf "%d."."%03d" x $#r, @r };
 @ISA       = qw( Exporter );
 @EXPORT    = qw( iana_charset_name
 map8_charset_name
@@ -1300,7 +1300,7 @@ sub _init_data
 ===================================================================
 CHARACTER SETS
 
-(last updated 07 December 2006)
+(last updated 2007-05-14)
 
 These are the official names for character sets that may be used in
 the Internet and may be referred to in Internet documentation.  These
@@ -1372,6 +1372,227 @@ Alias: IBM367
 Alias: cp367
 Alias: csASCII
 
+Name: ISO_8859-1:1987                                    [RFC1345,KXS2]
+MIBenum: 4
+Source: ECMA registry
+Alias: iso-ir-100
+Alias: ISO_8859-1
+Alias: ISO-8859-1 (preferred MIME name)
+Alias: latin1
+Alias: l1
+Alias: IBM819
+Alias: CP819
+Alias: csISOLatin1
+
+Name: ISO_8859-2:1987                                    [RFC1345,KXS2]
+MIBenum: 5
+Source: ECMA registry
+Alias: iso-ir-101
+Alias: ISO_8859-2
+Alias: ISO-8859-2 (preferred MIME name)
+Alias: latin2
+Alias: l2
+Alias: csISOLatin2
+
+Name: ISO_8859-3:1988                                    [RFC1345,KXS2]
+MIBenum: 6
+Source: ECMA registry
+Alias: iso-ir-109
+Alias: ISO_8859-3
+Alias: ISO-8859-3 (preferred MIME name)
+Alias: latin3
+Alias: l3
+Alias: csISOLatin3
+
+Name: ISO_8859-4:1988                                    [RFC1345,KXS2]
+MIBenum: 7
+Source: ECMA registry
+Alias: iso-ir-110
+Alias: ISO_8859-4
+Alias: ISO-8859-4 (preferred MIME name)
+Alias: latin4
+Alias: l4
+Alias: csISOLatin4
+
+Name: ISO_8859-5:1988                                     [RFC1345,KXS2]
+MIBenum: 8
+Source: ECMA registry
+Alias: iso-ir-144
+Alias: ISO_8859-5
+Alias: ISO-8859-5 (preferred MIME name)
+Alias: cyrillic
+Alias: csISOLatinCyrillic
+
+Name: ISO_8859-6:1987                                    [RFC1345,KXS2]
+MIBenum: 9
+Source: ECMA registry
+Alias: iso-ir-127
+Alias: ISO_8859-6
+Alias: ISO-8859-6 (preferred MIME name)
+Alias: ECMA-114
+Alias: ASMO-708
+Alias: arabic
+Alias: csISOLatinArabic
+
+Name: ISO_8859-7:1987                            [RFC1947,RFC1345,KXS2]
+MIBenum: 10
+Source: ECMA registry
+Alias: iso-ir-126
+Alias: ISO_8859-7
+Alias: ISO-8859-7 (preferred MIME name)
+Alias: ELOT_928
+Alias: ECMA-118
+Alias: greek
+Alias: greek8
+Alias: csISOLatinGreek
+
+Name: ISO_8859-8:1988                                     [RFC1345,KXS2]
+MIBenum: 11
+Source: ECMA registry
+Alias: iso-ir-138
+Alias: ISO_8859-8
+Alias: ISO-8859-8 (preferred MIME name)
+Alias: hebrew
+Alias: csISOLatinHebrew
+
+Name: ISO_8859-9:1989                                     [RFC1345,KXS2]
+MIBenum: 12
+Source: ECMA registry
+Alias: iso-ir-148
+Alias: ISO_8859-9
+Alias: ISO-8859-9 (preferred MIME name)
+Alias: latin5
+Alias: l5
+Alias: csISOLatin5
+
+Name: ISO-8859-10 (preferred MIME name)			  [RFC1345,KXS2]
+MIBenum: 13
+Source: ECMA registry
+Alias: iso-ir-157
+Alias: l6
+Alias: ISO_8859-10:1992
+Alias: csISOLatin6
+Alias: latin6
+
+Name: ISO_6937-2-add                                      [RFC1345,KXS2]
+MIBenum: 14
+Source: ECMA registry and ISO 6937-2:1983
+Alias: iso-ir-142
+Alias: csISOTextComm
+
+Name: JIS_X0201                                           [RFC1345,KXS2]
+MIBenum: 15
+Source: JIS X 0201-1976.   One byte only, this is equivalent to 
+        JIS/Roman (similar to ASCII) plus eight-bit half-width 
+        Katakana
+Alias: X0201
+Alias: csHalfWidthKatakana
+
+Name: JIS_Encoding
+MIBenum: 16
+Source: JIS X 0202-1991.  Uses ISO 2022 escape sequences to
+        shift code sets as documented in JIS X 0202-1991.
+Alias: csJISEncoding
+
+Name: Shift_JIS  (preferred MIME name)
+MIBenum: 17
+Source: This charset is an extension of csHalfWidthKatakana by
+        adding graphic characters in JIS X 0208.  The CCS's are
+        JIS X0201:1997 and JIS X0208:1997.  The
+        complete definition is shown in Appendix 1 of JIS
+        X0208:1997.
+        This charset can be used for the top-level media type "text".
+Alias: MS_Kanji 
+Alias: csShiftJIS
+
+Name: Extended_UNIX_Code_Packed_Format_for_Japanese
+MIBenum: 18
+Source: Standardized by OSF, UNIX International, and UNIX Systems
+        Laboratories Pacific.  Uses ISO 2022 rules to select
+               code set 0: US-ASCII (a single 7-bit byte set)
+               code set 1: JIS X0208-1990 (a double 8-bit byte set)
+                           restricted to A0-FF in both bytes
+               code set 2: Half Width Katakana (a single 7-bit byte set)
+                           requiring SS2 as the character prefix
+               code set 3: JIS X0212-1990 (a double 7-bit byte set)
+                           restricted to A0-FF in both bytes
+                           requiring SS3 as the character prefix
+Alias: csEUCPkdFmtJapanese
+Alias: EUC-JP  (preferred MIME name)
+
+Name: Extended_UNIX_Code_Fixed_Width_for_Japanese
+MIBenum: 19
+Source: Used in Japan.  Each character is 2 octets.
+                code set 0: US-ASCII (a single 7-bit byte set)
+                              1st byte = 00
+                              2nd byte = 20-7E
+                code set 1: JIS X0208-1990 (a double 7-bit byte set)
+                            restricted  to A0-FF in both bytes 
+                code set 2: Half Width Katakana (a single 7-bit byte set)
+                              1st byte = 00
+                              2nd byte = A0-FF
+                code set 3: JIS X0212-1990 (a double 7-bit byte set)
+                            restricted to A0-FF in 
+                            the first byte
+                and 21-7E in the second byte
+Alias: csEUCFixWidJapanese
+
+Name: BS_4730                                           [RFC1345,KXS2]
+MIBenum: 20
+Source: ECMA registry
+Alias: iso-ir-4
+Alias: ISO646-GB
+Alias: gb
+Alias: uk
+Alias: csISO4UnitedKingdom
+
+Name: SEN_850200_C                                      [RFC1345,KXS2]
+MIBenum: 21
+Source: ECMA registry
+Alias: iso-ir-11
+Alias: ISO646-SE2
+Alias: se2
+Alias: csISO11SwedishForNames
+
+Name: IT                                                [RFC1345,KXS2]
+MIBenum: 22
+Source: ECMA registry
+Alias: iso-ir-15
+Alias: ISO646-IT
+Alias: csISO15Italian
+
+Name: ES                                                [RFC1345,KXS2]
+MIBenum: 23
+Source: ECMA registry
+Alias: iso-ir-17
+Alias: ISO646-ES
+Alias: csISO17Spanish
+
+Name: DIN_66003                                         [RFC1345,KXS2]
+MIBenum: 24
+Source: ECMA registry
+Alias: iso-ir-21
+Alias: de
+Alias: ISO646-DE
+Alias: csISO21German
+
+Name: NS_4551-1                                         [RFC1345,KXS2]
+MIBenum: 25
+Source: ECMA registry
+Alias: iso-ir-60
+Alias: ISO646-NO
+Alias: no
+Alias: csISO60DanishNorwegian
+Alias: csISO60Norwegian1
+
+Name: NF_Z_62-010                                        [RFC1345,KXS2]
+MIBenum: 26
+Source: ECMA registry
+Alias: iso-ir-69
+Alias: ISO646-FR
+Alias: fr
+Alias: csISO69French
+
 Name: ISO-10646-UTF-1
 MIBenum: 27
 Source: Universal Transfer Format (1), this is the multibyte
@@ -1395,15 +1616,6 @@ Source: ECMA registry
 Alias: iso-ir-2
 Alias: irv
 Alias: csISO2IntlRefVersion
-
-Name: BS_4730                                           [RFC1345,KXS2]
-MIBenum: 20
-Source: ECMA registry
-Alias: iso-ir-4
-Alias: ISO646-GB
-Alias: gb
-Alias: uk
-Alias: csISO4UnitedKingdom
 
 Name: NATS-SEFI                                         [RFC1345,KXS2]
 MIBenum: 31
@@ -1439,14 +1651,6 @@ Alias: ISO646-SE
 Alias: se
 Alias: csISO10Swedish
 
-Name: SEN_850200_C                                      [RFC1345,KXS2]
-MIBenum: 21
-Source: ECMA registry
-Alias: iso-ir-11
-Alias: ISO646-SE2
-Alias: se2
-Alias: csISO11SwedishForNames
-
 Name: KS_C_5601-1987                                    [RFC1345,KXS2]
 MIBenum: 36
 Source: ECMA registry
@@ -1476,14 +1680,6 @@ MIBenum: 40
 Source: RFC-1554
 Alias: csISO2022JP2
 
-Name: ISO-2022-CN                                            [RFC1922]
-MIBenum: 104
-Source: RFC-1922
-
-Name: ISO-2022-CN-EXT                                        [RFC1922]
-MIBenum: 105
-Source: RFC-1922
-
 Name: JIS_C6220-1969-jp                                 [RFC1345,KXS2]
 MIBenum: 41
 Source: ECMA registry
@@ -1501,26 +1697,12 @@ Alias: jp
 Alias: ISO646-JP
 Alias: csISO14JISC6220ro
 
-Name: IT                                                [RFC1345,KXS2]
-MIBenum: 22
-Source: ECMA registry
-Alias: iso-ir-15
-Alias: ISO646-IT
-Alias: csISO15Italian
-
 Name: PT                                                [RFC1345,KXS2]
 MIBenum: 43
 Source: ECMA registry
 Alias: iso-ir-16
 Alias: ISO646-PT
 Alias: csISO16Portuguese
-
-Name: ES                                                [RFC1345,KXS2]
-MIBenum: 23
-Source: ECMA registry
-Alias: iso-ir-17
-Alias: ISO646-ES
-Alias: csISO17Spanish
 
 Name: greek7-old                                        [RFC1345,KXS2]
 MIBenum: 44
@@ -1533,14 +1715,6 @@ MIBenum: 45
 Source: ECMA registry
 Alias: iso-ir-19
 Alias: csISO19LatinGreek
-
-Name: DIN_66003                                         [RFC1345,KXS2]
-MIBenum: 24
-Source: ECMA registry
-Alias: iso-ir-21
-Alias: de
-Alias: ISO646-DE
-Alias: csISO21German
 
 Name: NF_Z_62-010_(1973)                                [RFC1345,KXS2]
 MIBenum: 46
@@ -1618,15 +1792,6 @@ Alias: iso-ir-58
 Alias: chinese
 Alias: csISO58GB231280
 
-Name: NS_4551-1                                         [RFC1345,KXS2]
-MIBenum: 25
-Source: ECMA registry
-Alias: iso-ir-60
-Alias: ISO646-NO
-Alias: no
-Alias: csISO60DanishNorwegian
-Alias: csISO60Norwegian1
-
 Name: NS_4551-2                                          [RFC1345,KXS2]
 MIBenum: 58
 Source: ECMA registry
@@ -1634,14 +1799,6 @@ Alias: ISO646-NO2
 Alias: iso-ir-61
 Alias: no2
 Alias: csISO61Norwegian2
-
-Name: NF_Z_62-010                                        [RFC1345,KXS2]
-MIBenum: 26
-Source: ECMA registry
-Alias: iso-ir-69
-Alias: ISO646-FR
-Alias: fr
-Alias: csISO69French
 
 Name: videotex-suppl                                     [RFC1345,KXS2]
 MIBenum: 59
@@ -1755,28 +1912,6 @@ Alias: CSA_T500-1983
 Alias: NAPLPS
 Alias: csISO99NAPLPS
 
-Name: ISO_8859-1:1987                                    [RFC1345,KXS2]
-MIBenum: 4
-Source: ECMA registry
-Alias: iso-ir-100
-Alias: ISO_8859-1
-Alias: ISO-8859-1 (preferred MIME name)
-Alias: latin1
-Alias: l1
-Alias: IBM819
-Alias: CP819
-Alias: csISOLatin1
-
-Name: ISO_8859-2:1987                                    [RFC1345,KXS2]
-MIBenum: 5
-Source: ECMA registry
-Alias: iso-ir-101
-Alias: ISO_8859-2
-Alias: ISO-8859-2 (preferred MIME name)
-Alias: latin2
-Alias: l2
-Alias: csISOLatin2
-
 Name: T.61-7bit                                          [RFC1345,KXS2]
 MIBenum: 75
 Source: ECMA registry
@@ -1789,26 +1924,6 @@ Alias: T.61
 Source: ECMA registry
 Alias: iso-ir-103
 Alias: csISO103T618bit
-
-Name: ISO_8859-3:1988                                    [RFC1345,KXS2]
-MIBenum: 6
-Source: ECMA registry
-Alias: iso-ir-109
-Alias: ISO_8859-3
-Alias: ISO-8859-3 (preferred MIME name)
-Alias: latin3
-Alias: l3
-Alias: csISOLatin3
-
-Name: ISO_8859-4:1988                                    [RFC1345,KXS2]
-MIBenum: 7
-Source: ECMA registry
-Alias: iso-ir-110
-Alias: ISO_8859-4
-Alias: ISO-8859-4 (preferred MIME name)
-Alias: latin4
-Alias: l4
-Alias: csISOLatin4
 
 Name: ECMA-cyrillic                                     
 MIBenum: 77
@@ -1841,17 +1956,6 @@ Source: ECMA registry
 Alias: iso-ir-123
 Alias: csISO123CSAZ24341985gr
 
-Name: ISO_8859-6:1987                                    [RFC1345,KXS2]
-MIBenum: 9
-Source: ECMA registry
-Alias: iso-ir-127
-Alias: ISO_8859-6
-Alias: ISO-8859-6 (preferred MIME name)
-Alias: ECMA-114
-Alias: ASMO-708
-Alias: arabic
-Alias: csISOLatinArabic
-
 Name: ISO_8859-6-E                                       [RFC1556,IANA]
 MIBenum: 81
 Source: RFC1556
@@ -1864,32 +1968,11 @@ Source: RFC1556
 Alias: csISO88596I
 Alias: ISO-8859-6-I (preferred MIME name)
 
-Name: ISO_8859-7:1987                            [RFC1947,RFC1345,KXS2]
-MIBenum: 10
-Source: ECMA registry
-Alias: iso-ir-126
-Alias: ISO_8859-7
-Alias: ISO-8859-7 (preferred MIME name)
-Alias: ELOT_928
-Alias: ECMA-118
-Alias: greek
-Alias: greek8
-Alias: csISOLatinGreek
-
 Name: T.101-G2                                            [RFC1345,KXS2]
 MIBenum: 83
 Source: ECMA registry
 Alias: iso-ir-128
 Alias: csISO128T101G2
-
-Name: ISO_8859-8:1988                                     [RFC1345,KXS2]
-MIBenum: 11
-Source: ECMA registry
-Alias: iso-ir-138
-Alias: ISO_8859-8
-Alias: ISO-8859-8 (preferred MIME name)
-Alias: hebrew
-Alias: csISOLatinHebrew
 
 Name: ISO_8859-8-E                                  [RFC1556,Nussbacher]
 MIBenum: 84
@@ -1918,26 +2001,11 @@ Alias: js
 Alias: yu
 Alias: csISO141JUSIB1002
 
-Name: ISO_6937-2-add                                      [RFC1345,KXS2]
-MIBenum: 14
-Source: ECMA registry and ISO 6937-2:1983
-Alias: iso-ir-142
-Alias: csISOTextComm
-
 Name: IEC_P27-1                                           [RFC1345,KXS2]
 MIBenum: 88
 Source: ECMA registry
 Alias: iso-ir-143
 Alias: csISO143IECP271
-
-Name: ISO_8859-5:1988                                     [RFC1345,KXS2]
-MIBenum: 8
-Source: ECMA registry
-Alias: iso-ir-144
-Alias: ISO_8859-5
-Alias: ISO-8859-5 (preferred MIME name)
-Alias: cyrillic
-Alias: csISOLatinCyrillic
 
 Name: JUS_I.B1.003-serb                                   [RFC1345,KXS2]
 MIBenum: 89
@@ -1952,16 +2020,6 @@ Source: ECMA registry
 Alias: macedonian
 Alias: iso-ir-147
 Alias: csISO147Macedonian
-
-Name: ISO_8859-9:1989                                     [RFC1345,KXS2]
-MIBenum: 12
-Source: ECMA registry
-Alias: iso-ir-148
-Alias: ISO_8859-9
-Alias: ISO-8859-9 (preferred MIME name)
-Alias: latin5
-Alias: l5
-Alias: csISOLatin5
 
 Name: greek-ccitt                                         [RFC1345,KXS2]
 MIBenum: 91
@@ -2004,15 +2062,6 @@ Source: ECMA registry
 Alias: iso-ir-155
 Alias: csISO10367Box
 
-Name: ISO-8859-10 (preferred MIME name)			  [RFC1345,KXS2]
-MIBenum: 13
-Source: ECMA registry
-Alias: iso-ir-157
-Alias: l6
-Alias: ISO_8859-10:1992
-Alias: csISOLatin6
-Alias: latin6
-
 Name: latin-lap                                           [RFC1345,KXS2]
 MIBenum: 97
 Source: ECMA registry
@@ -2043,18 +2092,105 @@ Name: dk-us                                               [RFC1345,KXS2]
 MIBenum: 101
 Alias: csDKUS
 
-Name: JIS_X0201                                           [RFC1345,KXS2]
-MIBenum: 15
-Source: JIS X 0201-1976.   One byte only, this is equivalent to 
-        JIS/Roman (similar to ASCII) plus eight-bit half-width 
-        Katakana
-Alias: X0201
-Alias: csHalfWidthKatakana
-
 Name: KSC5636                                             [RFC1345,KXS2]
 MIBenum: 102
 Alias: ISO646-KR
 Alias: csKSC5636
+
+Name: UNICODE-1-1-UTF-7                                        [RFC1642]
+MIBenum: 103
+Source: RFC 1642
+Alias: csUnicode11UTF7
+
+Name: ISO-2022-CN                                            [RFC1922]
+MIBenum: 104
+Source: RFC-1922
+
+Name: ISO-2022-CN-EXT                                        [RFC1922]
+MIBenum: 105
+Source: RFC-1922
+
+Name: UTF-8                                                    [RFC3629]
+MIBenum: 106
+Source: RFC 3629
+Alias: None 
+
+Name: ISO-8859-13
+MIBenum: 109
+Source: ISO See (http://www.iana.org/assignments/charset-reg/ISO-8859-13)[Tumasonis] 
+Alias: None
+
+Name: ISO-8859-14
+MIBenum: 110
+Source: ISO See (http://www.iana.org/assignments/charset-reg/ISO-8859-14) [Simonsen]
+Alias: iso-ir-199
+Alias: ISO_8859-14:1998
+Alias: ISO_8859-14
+Alias: latin8
+Alias: iso-celtic
+Alias: l8
+
+Name: ISO-8859-15
+MIBenum: 111
+Source: ISO 
+        Please see: <http://www.iana.org/assignments/charset-reg/ISO-8859-15>
+Alias: ISO_8859-15
+Alias: Latin-9
+
+Name: ISO-8859-16
+MIBenum: 112
+Source: ISO
+Alias: iso-ir-226
+Alias: ISO_8859-16:2001
+Alias: ISO_8859-16
+Alias: latin10
+Alias: l10 
+
+Name: GBK                                                 
+MIBenum: 113
+Source: Chinese IT Standardization Technical Committee  
+        Please see: <http://www.iana.org/assignments/charset-reg/GBK>
+Alias: CP936
+Alias: MS936
+Alias: windows-936
+
+Name: GB18030
+MIBenum: 114
+Source: Chinese IT Standardization Technical Committee
+        Please see: <http://www.iana.org/assignments/charset-reg/GB18030>
+Alias: None
+
+Name:  OSD_EBCDIC_DF04_15
+MIBenum:  115
+Source:  Fujitsu-Siemens standard mainframe EBCDIC encoding
+         Please see: <http://www.iana.org/assignments/charset-reg/OSD-EBCDIC-DF04-15>
+Alias:   None
+
+Name:  OSD_EBCDIC_DF03_IRV
+MIBenum:  116
+Source:  Fujitsu-Siemens standard mainframe EBCDIC encoding
+         Please see: <http://www.iana.org/assignments/charset-reg/OSD-EBCDIC-DF03-IRV>
+Alias:  None
+
+Name:  OSD_EBCDIC_DF04_1
+MIBenum:  117
+Source:  Fujitsu-Siemens standard mainframe EBCDIC encoding
+         Please see: <http://www.iana.org/assignments/charset-reg/OSD-EBCDIC-DF04-1>
+Alias:  None   
+
+Name: ISO-11548-1
+MIBenum: 118 
+Source: See <http://www.iana.org/assignments/charset-reg/ISO-11548-1>            [Thibault]
+Alias: ISO_11548-1
+Alias: ISO_TR_11548-1
+Alias: csISO115481
+
+Name: KZ-1048
+MIBenum: 119 
+Source: See <http://www.iana.org/assignments/charset-reg/KZ-1048>      [Veremeev, Kikkarin]
+Alias: STRK1048-2002
+Alias: RK1048
+Alias: csKZ1048
 
 Name: ISO-10646-UCS-2
 MIBenum: 1000
@@ -2069,12 +2205,126 @@ Source: the full code space. (same comment about byte order,
         these are 31-bit numbers.
 Alias: csUCS4
 
-Name: DEC-MCS                                             [RFC1345,KXS2]
-MIBenum: 2008
-Source: VAX/VMS User's Manual, 
-        Order Number: AI-Y517A-TE, April 1986.
-Alias: dec
-Alias: csDECMCS
+Name: ISO-10646-UCS-Basic
+MIBenum: 1002
+Source: ASCII subset of Unicode.  Basic Latin = collection 1
+        See ISO 10646, Appendix A
+Alias: csUnicodeASCII
+
+Name: ISO-10646-Unicode-Latin1
+MIBenum: 1003
+Source: ISO Latin-1 subset of Unicode. Basic Latin and Latin-1 
+         Supplement  = collections 1 and 2.  See ISO 10646, 
+         Appendix A.  See RFC 1815.
+Alias: csUnicodeLatin1
+Alias: ISO-10646
+
+Name: ISO-10646-J-1
+Source: ISO 10646 Japanese, see RFC 1815.
+
+Name: ISO-Unicode-IBM-1261
+MIBenum: 1005
+Source: IBM Latin-2, -3, -5, Extended Presentation Set, GCSGID: 1261
+Alias: csUnicodeIBM1261
+
+Name: ISO-Unicode-IBM-1268
+MIBenum: 1006
+Source: IBM Latin-4 Extended Presentation Set, GCSGID: 1268
+Alias: csUnicodeIBM1268
+
+Name: ISO-Unicode-IBM-1276
+MIBenum: 1007
+Source: IBM Cyrillic Greek Extended Presentation Set, GCSGID: 1276
+Alias: csUnicodeIBM1276
+
+Name: ISO-Unicode-IBM-1264
+MIBenum: 1008
+Source: IBM Arabic Presentation Set, GCSGID: 1264
+Alias: csUnicodeIBM1264
+
+Name: ISO-Unicode-IBM-1265
+MIBenum: 1009
+Source: IBM Hebrew Presentation Set, GCSGID: 1265
+Alias: csUnicodeIBM1265
+
+Name: UNICODE-1-1                                              [RFC1641]
+MIBenum: 1010
+Source: RFC 1641
+Alias: csUnicode11
+
+Name: SCSU
+MIBenum: 1011
+Source: SCSU See (http://www.iana.org/assignments/charset-reg/SCSU)     [Scherer]
+Alias: None 
+
+Name: UTF-7                                                    [RFC2152]
+MIBenum: 1012
+Source: RFC 2152
+Alias: None
+
+Name: UTF-16BE                                                 [RFC2781]
+MIBenum: 1013
+Source: RFC 2781
+Alias: None
+
+Name: UTF-16LE                                                 [RFC2781]
+MIBenum: 1014
+Source: RFC 2781
+Alias: None
+
+Name: UTF-16                                                   [RFC2781]
+MIBenum: 1015
+Source: RFC 2781
+Alias: None
+
+Name: CESU-8                                                    [Phipps]
+MIBenum: 1016
+Source: <http://www.unicode.org/unicode/reports/tr26>
+Alias: csCESU-8
+
+Name: UTF-32                                                     [Davis] 
+MIBenum: 1017
+Source: <http://www.unicode.org/unicode/reports/tr19/>
+Alias: None
+
+Name: UTF-32BE                                                   [Davis]
+MIBenum: 1018
+Source: <http://www.unicode.org/unicode/reports/tr19/>
+Alias: None
+
+Name: UTF-32LE                                                   [Davis]
+MIBenum: 1019
+Source: <http://www.unicode.org/unicode/reports/tr19/>
+Alias: None
+
+Name: BOCU-1                                                   [Scherer]
+MIBenum: 1020
+Source: http://www.unicode.org/notes/tn6/
+Alias: csBOCU-1
+
+Name: ISO-8859-1-Windows-3.0-Latin-1                           [HP-PCL5] 
+MIBenum: 2000
+Source: Extended ISO 8859-1 Latin-1 for Windows 3.0.  
+        PCL Symbol Set id: 9U
+Alias: csWindows30Latin1
+
+Name: ISO-8859-1-Windows-3.1-Latin-1                           [HP-PCL5] 
+MIBenum: 2001
+Source: Extended ISO 8859-1 Latin-1 for Windows 3.1.  
+        PCL Symbol Set id: 19U
+Alias: csWindows31Latin1
+
+Name: ISO-8859-2-Windows-Latin-2                               [HP-PCL5] 
+MIBenum: 2002
+Source: Extended ISO 8859-2.  Latin-2 for Windows 3.1.
+        PCL Symbol Set id: 9E
+Alias: csWindows31Latin2
+
+Name: ISO-8859-9-Windows-Latin-5                               [HP-PCL5] 
+MIBenum: 2003
+Source: Extended ISO 8859-9.  Latin-5 for Windows 3.1
+        PCL Symbol Set id: 5T
+Alias: csWindows31Latin5
 
 Name: hp-roman8                                  [HP-PCL5,RFC1345,KXS2]
 MIBenum: 2004
@@ -2083,6 +2333,147 @@ Source: LaserJet IIP Printer User's Manual,
 Alias: roman8
 Alias: r8
 Alias: csHPRoman8
+
+Name: Adobe-Standard-Encoding                                    [Adobe]
+MIBenum: 2005
+Source: PostScript Language Reference Manual
+        PCL Symbol Set id: 10J
+Alias: csAdobeStandardEncoding
+
+Name: Ventura-US                                               [HP-PCL5]
+MIBenum: 2006
+Source: Ventura US.  ASCII plus characters typically used in 
+        publishing, like pilcrow, copyright, registered, trade mark, 
+        section, dagger, and double dagger in the range A0 (hex) 
+        to FF (hex).  
+        PCL Symbol Set id: 14J
+Alias: csVenturaUS  
+
+Name: Ventura-International                                    [HP-PCL5]
+MIBenum: 2007
+Source: Ventura International.  ASCII plus coded characters similar 
+        to Roman8.
+        PCL Symbol Set id: 13J
+Alias: csVenturaInternational
+
+Name: DEC-MCS                                             [RFC1345,KXS2]
+MIBenum: 2008
+Source: VAX/VMS User's Manual, 
+        Order Number: AI-Y517A-TE, April 1986.
+Alias: dec
+Alias: csDECMCS
+
+Name: IBM850                                              [RFC1345,KXS2]
+MIBenum: 2009
+Source: IBM NLS RM Vol2 SE09-8002-01, March 1990
+Alias: cp850
+Alias: 850
+Alias: csPC850Multilingual
+
+Name: PC8-Danish-Norwegian                                     [HP-PCL5]
+MIBenum: 2012
+Source: PC Danish Norwegian
+        8-bit PC set for Danish Norwegian
+        PCL Symbol Set id: 11U
+Alias: csPC8DanishNorwegian
+
+Name: IBM862                                              [RFC1345,KXS2]
+MIBenum: 2013
+Source: IBM NLS RM Vol2 SE09-8002-01, March 1990
+Alias: cp862
+Alias: 862
+Alias: csPC862LatinHebrew
+
+Name: PC8-Turkish                                              [HP-PCL5]
+MIBenum: 2014
+Source: PC Latin Turkish.  PCL Symbol Set id: 9T
+Alias: csPC8Turkish
+
+Name: IBM-Symbols                                             [IBM-CIDT] 
+MIBenum: 2015
+Source: Presentation Set, CPGID: 259
+Alias: csIBMSymbols
+
+Name: IBM-Thai                                                [IBM-CIDT] 
+MIBenum: 2016
+Source: Presentation Set, CPGID: 838
+Alias: csIBMThai
+
+Name: HP-Legal                                                 [HP-PCL5]
+MIBenum: 2017
+Source: PCL 5 Comparison Guide, Hewlett-Packard,
+        HP part number 5961-0510, October 1992
+        PCL Symbol Set id: 1U
+Alias: csHPLegal
+
+Name: HP-Pi-font                                               [HP-PCL5]
+MIBenum: 2018
+Source: PCL 5 Comparison Guide, Hewlett-Packard,
+        HP part number 5961-0510, October 1992
+        PCL Symbol Set id: 15U
+Alias: csHPPiFont
+
+Name: HP-Math8                                                 [HP-PCL5]
+MIBenum: 2019
+Source: PCL 5 Comparison Guide, Hewlett-Packard,
+        HP part number 5961-0510, October 1992
+        PCL Symbol Set id: 8M
+Alias: csHPMath8
+
+Name: Adobe-Symbol-Encoding                                      [Adobe]
+MIBenum: 2020
+Source: PostScript Language Reference Manual
+        PCL Symbol Set id: 5M
+Alias: csHPPSMath
+
+Name: HP-DeskTop                                               [HP-PCL5]
+MIBenum: 2021
+Source: PCL 5 Comparison Guide, Hewlett-Packard,
+        HP part number 5961-0510, October 1992
+        PCL Symbol Set id: 7J
+Alias: csHPDesktop
+
+Name: Ventura-Math                                             [HP-PCL5]
+MIBenum: 2022
+Source: PCL 5 Comparison Guide, Hewlett-Packard,
+        HP part number 5961-0510, October 1992
+        PCL Symbol Set id: 6M
+Alias: csVenturaMath
+
+Name: Microsoft-Publishing                                     [HP-PCL5]
+MIBenum: 2023
+Source: PCL 5 Comparison Guide, Hewlett-Packard,
+        HP part number 5961-0510, October 1992
+        PCL Symbol Set id: 6J
+Alias: csMicrosoftPublishing
+
+Name: Windows-31J
+MIBenum: 2024
+Source: Windows Japanese.  A further extension of Shift_JIS
+        to include NEC special characters (Row 13), NEC
+        selection of IBM extensions (Rows 89 to 92), and IBM
+        extensions (Rows 115 to 119).  The CCS's are
+        JIS X0201:1997, JIS X0208:1997, and these extensions.
+        This charset can be used for the top-level media type "text",
+        but it is of limited or specialized use (see RFC2278).
+        PCL Symbol Set id: 19K
+Alias: csWindows31J
+
+Name: GB2312  (preferred MIME name)
+MIBenum: 2025
+Source: Chinese for People's Republic of China (PRC) mixed one byte, 
+        two byte set: 
+          20-7E = one byte ASCII 
+          A1-FE = two byte PRC Kanji 
+        See GB 2312-80 
+        PCL Symbol Set Id: 18C
+Alias: csGB2312
+
+Name: Big5  (preferred MIME name)
+MIBenum: 2026
+Source: Chinese for Taiwan Multi-byte set.
+        PCL Symbol Set Id: 18T
+Alias: csBig5
 
 Name: macintosh                                           [RFC1345,KXS2]
 MIBenum: 2027
@@ -2221,19 +2612,6 @@ Alias: ebcdic-cp-be
 Alias: ebcdic-cp-ch
 Alias: csIBM500
 
-Name: IBM775                                                   [HP-PCL5]
-MIBenum: 2087
-Source: HP PCL 5 Comparison Guide (P/N 5021-0329) pp B-13, 1996
-Alias: cp775
-Alias: csPC775Baltic
-
-Name: IBM850                                              [RFC1345,KXS2]
-MIBenum: 2009
-Source: IBM NLS RM Vol2 SE09-8002-01, March 1990
-Alias: cp850
-Alias: 850
-Alias: csPC850Multilingual
-
 Name: IBM851                                              [RFC1345,KXS2]
 MIBenum: 2045
 Source: IBM NLS RM Vol2 SE09-8002-01, March 1990
@@ -2277,13 +2655,6 @@ Alias: 861
 Alias: cp-is
 Alias: csIBM861
 
-Name: IBM862                                              [RFC1345,KXS2]
-MIBenum: 2013
-Source: IBM NLS RM Vol2 SE09-8002-01, March 1990
-Alias: cp862
-Alias: 862
-Alias: csPC862LatinHebrew
-
 Name: IBM863                                              [RFC1345,KXS2]
 MIBenum: 2050
 Source: IBM Keyboard layouts and code pages, PN 07G4586 June 1991
@@ -2303,13 +2674,6 @@ Source: IBM DOS 3.3 Ref (Abridged), 94X9575 (Feb 1987)
 Alias: cp865
 Alias: 865
 Alias: csIBM865
-
-Name: IBM866                                                     [Pond]
-MIBenum: 2086
-Source: IBM NLDG Volume 2 (SE09-8002-03) August 1994
-Alias: cp866
-Alias: 866
-Alias: csIBM866
 
 Name: IBM868                                              [RFC1345,KXS2]
 MIBenum: 2053
@@ -2492,6 +2856,23 @@ Source: RFC 1489, based on GOST-19768-74, ISO-6937/8,
         INIS-Cyrillic, ISO-5427.
 Alias: csKOI8R
 
+Name: HZ-GB-2312
+MIBenum: 2085
+Source: RFC 1842, RFC 1843                                               [RFC1842, RFC1843]
+
+Name: IBM866                                                     [Pond]
+MIBenum: 2086
+Source: IBM NLDG Volume 2 (SE09-8002-03) August 1994
+Alias: cp866
+Alias: 866
+Alias: csIBM866
+
+Name: IBM775                                                   [HP-PCL5]
+MIBenum: 2087
+Source: HP PCL 5 Comparison Guide (P/N 5021-0329) pp B-13, 1996
+Alias: cp775
+Alias: csPC775Baltic
+
 Name: KOI8-U                                                   [RFC2319]
 MIBenum: 2088
 Source: RFC 2319
@@ -2615,368 +2996,15 @@ MIBenum:  2105
 Source:  See <http://www.iana.org/assignments/charset-reg/KOI7-switched>
 Aliases:  None
 
-Name: UNICODE-1-1                                              [RFC1641]
-MIBenum: 1010
-Source: RFC 1641
-Alias: csUnicode11
+Name: BRF
+MIBenum: 2106
+Source: See <http://www.iana.org/assignments/charset-reg/BRF>                    [Thibault]
+Alias: csBRF
 
-Name: SCSU
-MIBenum: 1011
-Source: SCSU See (http://www.iana.org/assignments/charset-reg/SCSU)     [Scherer]
-Alias: None 
-
-Name: UTF-7                                                    [RFC2152]
-MIBenum: 1012
-Source: RFC 2152
-Alias: None
-
-Name: UTF-16BE                                                 [RFC2781]
-MIBenum: 1013
-Source: RFC 2781
-Alias: None
-
-Name: UTF-16LE                                                 [RFC2781]
-MIBenum: 1014
-Source: RFC 2781
-Alias: None
-
-Name: UTF-16                                                   [RFC2781]
-MIBenum: 1015
-Source: RFC 2781
-Alias: None
-
-Name: CESU-8                                                    [Phipps]
-MIBenum: 1016
-Source: <http://www.unicode.org/unicode/reports/tr26>
-Alias: csCESU-8
-
-Name: UTF-32                                                     [Davis] 
-MIBenum: 1017
-Source: <http://www.unicode.org/unicode/reports/tr19/>
-Alias: None
-
-Name: UTF-32BE                                                   [Davis]
-MIBenum: 1018
-Source: <http://www.unicode.org/unicode/reports/tr19/>
-Alias: None
-
-Name: UTF-32LE                                                   [Davis]
-MIBenum: 1019
-Source: <http://www.unicode.org/unicode/reports/tr19/>
-Alias: None
-
-Name: BOCU-1                                                   [Scherer]
-MIBenum: 1020
-Source: http://www.unicode.org/notes/tn6/
-Alias: csBOCU-1
-
-Name: UNICODE-1-1-UTF-7                                        [RFC1642]
-MIBenum: 103
-Source: RFC 1642
-Alias: csUnicode11UTF7
-
-Name: UTF-8                                                    [RFC3629]
-MIBenum: 106
-Source: RFC 3629
-Alias: None 
-
-Name: ISO-8859-13
-MIBenum: 109
-Source: ISO See (http://www.iana.org/assignments/charset-reg/iso-8859-13)[Tumasonis] 
-Alias: None
-
-Name: ISO-8859-14
-MIBenum: 110
-Source: ISO See (http://www.iana.org/assignments/charset-reg/iso-8859-14) [Simonsen]
-Alias: iso-ir-199
-Alias: ISO_8859-14:1998
-Alias: ISO_8859-14
-Alias: latin8
-Alias: iso-celtic
-Alias: l8
-
-Name: ISO-8859-15
-MIBenum: 111
-Source: ISO 
-        Please see: <http://www.iana.org/assignments/charset-reg/ISO-8859-15>
-Alias: ISO_8859-15
-Alias: Latin-9
-
-Name: ISO-8859-16
-MIBenum: 112
-Source: ISO
-Alias: iso-ir-226
-Alias: ISO_8859-16:2001
-Alias: ISO_8859-16
-Alias: latin10
-Alias: l10 
-
-Name: GBK                                                 
-MIBenum: 113
-Source: Chinese IT Standardization Technical Committee  
-        Please see: <http://www.iana.org/assignments/charset-reg/GBK>
-Alias: CP936
-Alias: MS936
-Alias: windows-936
-
-Name: GB18030
-MIBenum: 114
-Source: Chinese IT Standardization Technical Committee
-        Please see: <http://www.iana.org/assignments/charset-reg/GB18030>
-Alias: None
-
-Name:  OSD_EBCDIC_DF04_15
-MIBenum:  115
-Source:  Fujitsu-Siemens standard mainframe EBCDIC encoding
-         Please see: <http://www.iana.org/assignments/charset-reg/OSD-EBCDIC-DF04-15>
-Alias:   None
-
-Name:  OSD_EBCDIC_DF03_IRV
-MIBenum:  116
-Source:  Fujitsu-Siemens standard mainframe EBCDIC encoding
-         Please see: <http://www.iana.org/assignments/charset-reg/OSD-EBCDIC-DF03-IRV>
-Alias:  None
-
-Name:  OSD_EBCDIC_DF04_1
-MIBenum:  117
-Source:  Fujitsu-Siemens standard mainframe EBCDIC encoding
-         Please see: <http://www.iana.org/assignments/charset-reg/OSD-EBCDIC-DF04-1>
-Alias:  None   
-
-Name: JIS_Encoding
-MIBenum: 16
-Source: JIS X 0202-1991.  Uses ISO 2022 escape sequences to
-        shift code sets as documented in JIS X 0202-1991.
-Alias: csJISEncoding
-
-Name: Shift_JIS  (preferred MIME name)
-MIBenum: 17
-Source: This charset is an extension of csHalfWidthKatakana by
-        adding graphic characters in JIS X 0208.  The CCS's are
-        JIS X0201:1997 and JIS X0208:1997.  The
-        complete definition is shown in Appendix 1 of JIS
-        X0208:1997.
-        This charset can be used for the top-level media type "text".
-Alias: MS_Kanji 
-Alias: csShiftJIS
-
-Name: Extended_UNIX_Code_Packed_Format_for_Japanese
-MIBenum: 18
-Source: Standardized by OSF, UNIX International, and UNIX Systems
-        Laboratories Pacific.  Uses ISO 2022 rules to select
-               code set 0: US-ASCII (a single 7-bit byte set)
-               code set 1: JIS X0208-1990 (a double 8-bit byte set)
-                           restricted to A0-FF in both bytes
-               code set 2: Half Width Katakana (a single 7-bit byte set)
-                           requiring SS2 as the character prefix
-               code set 3: JIS X0212-1990 (a double 7-bit byte set)
-                           restricted to A0-FF in both bytes
-                           requiring SS3 as the character prefix
-Alias: csEUCPkdFmtJapanese
-Alias: EUC-JP  (preferred MIME name)
-
-Name: Extended_UNIX_Code_Fixed_Width_for_Japanese
-MIBenum: 19
-Source: Used in Japan.  Each character is 2 octets.
-                code set 0: US-ASCII (a single 7-bit byte set)
-                              1st byte = 00
-                              2nd byte = 20-7E
-                code set 1: JIS X0208-1990 (a double 7-bit byte set)
-                            restricted  to A0-FF in both bytes 
-                code set 2: Half Width Katakana (a single 7-bit byte set)
-                              1st byte = 00
-                              2nd byte = A0-FF
-                code set 3: JIS X0212-1990 (a double 7-bit byte set)
-                            restricted to A0-FF in 
-                            the first byte
-                and 21-7E in the second byte
-Alias: csEUCFixWidJapanese
-
-Name: ISO-10646-UCS-Basic
-MIBenum: 1002
-Source: ASCII subset of Unicode.  Basic Latin = collection 1
-        See ISO 10646, Appendix A
-Alias: csUnicodeASCII
-
-Name: ISO-10646-Unicode-Latin1
-MIBenum: 1003
-Source: ISO Latin-1 subset of Unicode. Basic Latin and Latin-1 
-         Supplement  = collections 1 and 2.  See ISO 10646, 
-         Appendix A.  See RFC 1815.
-Alias: csUnicodeLatin1
-Alias: ISO-10646
-
-Name: ISO-10646-J-1
-Source: ISO 10646 Japanese, see RFC 1815.
-
-Name: ISO-Unicode-IBM-1261
-MIBenum: 1005
-Source: IBM Latin-2, -3, -5, Extended Presentation Set, GCSGID: 1261
-Alias: csUnicodeIBM1261
-
-Name: ISO-Unicode-IBM-1268
-MIBenum: 1006
-Source: IBM Latin-4 Extended Presentation Set, GCSGID: 1268
-Alias: csUnicodeIBM1268
-
-Name: ISO-Unicode-IBM-1276
-MIBenum: 1007
-Source: IBM Cyrillic Greek Extended Presentation Set, GCSGID: 1276
-Alias: csUnicodeIBM1276
-
-Name: ISO-Unicode-IBM-1264
-MIBenum: 1008
-Source: IBM Arabic Presentation Set, GCSGID: 1264
-Alias: csUnicodeIBM1264
-
-Name: ISO-Unicode-IBM-1265
-MIBenum: 1009
-Source: IBM Hebrew Presentation Set, GCSGID: 1265
-Alias: csUnicodeIBM1265
-
-Name: ISO-8859-1-Windows-3.0-Latin-1                           [HP-PCL5] 
-MIBenum: 2000
-Source: Extended ISO 8859-1 Latin-1 for Windows 3.0.  
-        PCL Symbol Set id: 9U
-Alias: csWindows30Latin1
-
-Name: ISO-8859-1-Windows-3.1-Latin-1                           [HP-PCL5] 
-MIBenum: 2001
-Source: Extended ISO 8859-1 Latin-1 for Windows 3.1.  
-        PCL Symbol Set id: 19U
-Alias: csWindows31Latin1
-
-Name: ISO-8859-2-Windows-Latin-2                               [HP-PCL5] 
-MIBenum: 2002
-Source: Extended ISO 8859-2.  Latin-2 for Windows 3.1.
-        PCL Symbol Set id: 9E
-Alias: csWindows31Latin2
-
-Name: ISO-8859-9-Windows-Latin-5                               [HP-PCL5] 
-MIBenum: 2003
-Source: Extended ISO 8859-9.  Latin-5 for Windows 3.1
-        PCL Symbol Set id: 5T
-Alias: csWindows31Latin5
-
-Name: Adobe-Standard-Encoding                                    [Adobe]
-MIBenum: 2005
-Source: PostScript Language Reference Manual
-        PCL Symbol Set id: 10J
-Alias: csAdobeStandardEncoding
-
-Name: Ventura-US                                               [HP-PCL5]
-MIBenum: 2006
-Source: Ventura US.  ASCII plus characters typically used in 
-        publishing, like pilcrow, copyright, registered, trade mark, 
-        section, dagger, and double dagger in the range A0 (hex) 
-        to FF (hex).  
-        PCL Symbol Set id: 14J
-Alias: csVenturaUS  
-
-Name: Ventura-International                                    [HP-PCL5]
-MIBenum: 2007
-Source: Ventura International.  ASCII plus coded characters similar 
-        to Roman8.
-        PCL Symbol Set id: 13J
-Alias: csVenturaInternational
-
-Name: PC8-Danish-Norwegian                                     [HP-PCL5]
-MIBenum: 2012
-Source: PC Danish Norwegian
-        8-bit PC set for Danish Norwegian
-        PCL Symbol Set id: 11U
-Alias: csPC8DanishNorwegian
-
-Name: PC8-Turkish                                              [HP-PCL5]
-MIBenum: 2014
-Source: PC Latin Turkish.  PCL Symbol Set id: 9T
-Alias: csPC8Turkish
-
-Name: IBM-Symbols                                             [IBM-CIDT] 
-MIBenum: 2015
-Source: Presentation Set, CPGID: 259
-Alias: csIBMSymbols
-
-Name: IBM-Thai                                                [IBM-CIDT] 
-MIBenum: 2016
-Source: Presentation Set, CPGID: 838
-Alias: csIBMThai
-
-Name: HP-Legal                                                 [HP-PCL5]
-MIBenum: 2017
-Source: PCL 5 Comparison Guide, Hewlett-Packard,
-        HP part number 5961-0510, October 1992
-        PCL Symbol Set id: 1U
-Alias: csHPLegal
-
-Name: HP-Pi-font                                               [HP-PCL5]
-MIBenum: 2018
-Source: PCL 5 Comparison Guide, Hewlett-Packard,
-        HP part number 5961-0510, October 1992
-        PCL Symbol Set id: 15U
-Alias: csHPPiFont
-
-Name: HP-Math8                                                 [HP-PCL5]
-MIBenum: 2019
-Source: PCL 5 Comparison Guide, Hewlett-Packard,
-        HP part number 5961-0510, October 1992
-        PCL Symbol Set id: 8M
-Alias: csHPMath8
-
-Name: Adobe-Symbol-Encoding                                      [Adobe]
-MIBenum: 2020
-Source: PostScript Language Reference Manual
-        PCL Symbol Set id: 5M
-Alias: csHPPSMath
-
-Name: HP-DeskTop                                               [HP-PCL5]
-MIBenum: 2021
-Source: PCL 5 Comparison Guide, Hewlett-Packard,
-        HP part number 5961-0510, October 1992
-        PCL Symbol Set id: 7J
-Alias: csHPDesktop
-
-Name: Ventura-Math                                             [HP-PCL5]
-MIBenum: 2022
-Source: PCL 5 Comparison Guide, Hewlett-Packard,
-        HP part number 5961-0510, October 1992
-        PCL Symbol Set id: 6M
-Alias: csVenturaMath
-
-Name: Microsoft-Publishing                                     [HP-PCL5]
-MIBenum: 2023
-Source: PCL 5 Comparison Guide, Hewlett-Packard,
-        HP part number 5961-0510, October 1992
-        PCL Symbol Set id: 6J
-Alias: csMicrosoftPublishing
-
-Name: Windows-31J
-MIBenum: 2024
-Source: Windows Japanese.  A further extension of Shift_JIS
-        to include NEC special characters (Row 13), NEC
-        selection of IBM extensions (Rows 89 to 92), and IBM
-        extensions (Rows 115 to 119).  The CCS's are
-        JIS X0201:1997, JIS X0208:1997, and these extensions.
-        This charset can be used for the top-level media type "text",
-        but it is of limited or specialized use (see RFC2278).
-        PCL Symbol Set id: 19K
-Alias: csWindows31J
-
-Name: GB2312  (preferred MIME name)
-MIBenum: 2025
-Source: Chinese for People's Republic of China (PRC) mixed one byte, 
-        two byte set: 
-          20-7E = one byte ASCII 
-          A1-FE = two byte PRC Kanji 
-        See GB 2312-80 
-        PCL Symbol Set Id: 18C
-Alias: csGB2312
-
-Name: Big5  (preferred MIME name)
-MIBenum: 2026
-Source: Chinese for Taiwan Multi-byte set.
-        PCL Symbol Set Id: 18T
-Alias: csBig5
+Name: TSCII
+MIBenum: 2107
+Source: See <http://www.iana.org/assignments/charset-reg/TSCII>           [Kalyanasundaram]
+Alias: csTSCII
 
 Name: windows-1250
 MIBenum: 2250
@@ -3026,29 +3054,6 @@ Alias: None
 Name: TIS-620
 MIBenum: 2259
 Source: Thai Industrial Standards Institute (TISI)                             [Tantsetthi]
-
-Name: HZ-GB-2312
-MIBenum: 2085
-Source: RFC 1842, RFC 1843                                               [RFC1842, RFC1843]
-
-Name: ISO-11548-1
-MIBenum: 118 
-Source: See <http://www.iana.org/assignments/charset-reg/ISO-11548-1>            [Thibault]
-Alias: ISO_11548-1
-Alias: ISO_TR_11548-1
-Alias: csISO115481
-
-Name: KZ-1048
-MIBenum: 119 
-Source: See <http://www.iana.org/assignments/charset-reg/KZ-1048>      [Veremeev, Kikkarin]
-Alias: STRK1048-2002
-Alias: RK1048
-Alias: csKZ1048
-
-Name: BRF
-MIBenum: 2106
-Source: See <http://www.iana.org/assignments/charset-reg/BRF>                    [Thibault]
-Alias: csBRF
 
 
 REFERENCES
@@ -3136,50 +3141,52 @@ REFERENCES
 PEOPLE
 ------
 
-[KXS2] Keld Simonsen <Keld.Simonsen@dkuug.dk>
+[KXS2] Keld Simonsen <Keld.Simonsen&dkuug.dk>
 
-[Choi] Woohyong Choi <whchoi@cosmos.kaist.ac.kr>
+[Choi] Woohyong Choi <whchoi&cosmos.kaist.ac.kr>
 
-[Davis] Mark Davis, <mark@unicode.org>, April 2002.
+[Davis] Mark Davis, <mark&unicode.org>, April 2002.
 
-[Kikkarin] Sairan M. Kikkarin, <sairan@sci.kz>, 7 December 2006.
+[Kalyanasundaram] Kuppuswamy Kalyanasundaram, <kalyan.geo@yahoo. com>, 14 May 2007.
 
-[Lazhintseva] Katya Lazhintseva, <katyal@MICROSOFT.com>, May 1996.
+[Kikkarin] Sairan M. Kikkarin, <sairan&sci.kz>, 7 December 2006.
 
-[Mahdi] Tamer Mahdi, <tamer@ca.ibm.com>, August 2000.
+[Lazhintseva] Katya Lazhintseva, <katyal&MICROSOFT.com>, May 1996.
 
-[Malyshev] Michael Malyshev, <michael_malyshev@mail.ru>, January 2004
+[Mahdi] Tamer Mahdi, <tamer&ca.ibm.com>, August 2000.
 
-[Murai] Jun Murai <jun@wide.ad.jp>
+[Malyshev] Michael Malyshev, <michael_malyshev&mail.ru>, January 2004
 
-[Nussbacher] Hank Nussbacher, <hank@vm.tau.ac.il>
+[Murai] Jun Murai <jun&wide.ad.jp>
 
-[Ohta] Masataka Ohta, <mohta@cc.titech.ac.jp>, July 1995.
+[Nussbacher] Hank Nussbacher, <hank&vm.tau.ac.il>
 
-[Phipps] Toby Phipps, <tphipps@peoplesoft.com>, March 2002.
+[Ohta] Masataka Ohta, <mohta&cc.titech.ac.jp>, July 1995.
 
-[Pond] Rick Pond, <rickpond@vnet.ibm.com>, March 1997.
+[Phipps] Toby Phipps, <tphipps&peoplesoft.com>, March 2002.
 
-[Robrigado] Reuel Robrigado, <reuelr@ca.ibm.com>, September 2002.
+[Pond] Rick Pond, <rickpond&vnet.ibm.com>, March 1997.
 
-[Scherer] Markus Scherer, <markus.scherer@jtcsv.com>, August 2000, 
+[Robrigado] Reuel Robrigado, <reuelr&ca.ibm.com>, September 2002.
+
+[Scherer] Markus Scherer, <markus.scherer&jtcsv.com>, August 2000, 
           September 2002.
 
-[Simonsen] Keld Simonsen, <Keld.Simonsen@rap.dk>, August 2000.
+[Simonsen] Keld Simonsen, <Keld.Simonsen&rap.dk>, August 2000.
 
-[Tantsetthi] Trin Tantsetthi, <trin@mozart.inet.co.th>, September 1998.
+[Tantsetthi] Trin Tantsetthi, <trin&mozart.inet.co.th>, September 1998.
 
-[Thibault] Samuel Thibault, <samuel.thibault@ens-lyon.org>, 7 December 2006.
+[Thibault] Samuel Thibault, <samuel.thibault&ens-lyon.org>, 7 December 2006.
 
-[Tumasonis] Vladas Tumasonis, <vladas.tumasonis@maf.vu.lt>, August 2000.
+[Tumasonis] Vladas Tumasonis, <vladas.tumasonis&maf.vu.lt>, August 2000.
 
-[Uskov] Alexander Uskov, <auskov@idc.kz>, September 2002.
+[Uskov] Alexander Uskov, <auskov&idc.kz>, September 2002.
 
-[Veremeev] Alexei Veremeev, <Alexey.Veremeev@oracle.com>, 7 December 2006.
+[Veremeev] Alexei Veremeev, <Alexey.Veremeev&oracle.com>, 7 December 2006.
 
-[Wendt] Chris Wendt, <christw@microsoft.com>, December 1999.
+[Wendt] Chris Wendt, <christw&microsoft.com>, December 1999.
 
-[Yick] Nicky Yick, <cliac@itsd.gcn.gov.hk>, October 2000.
+[Yick] Nicky Yick, <cliac&itsd.gcn.gov.hk>, October 2000.
 
 []
 
