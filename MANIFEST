@@ -22,5 +22,6 @@ t/mib.t
 t/mime.t
 t/pod-coverage.t
 t/pod.t
+t/rt33087.t
 t/umap.t
 t/utf8.t

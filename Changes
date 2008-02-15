@@ -1,3 +1,7 @@
+2008-02-15    <Daddy@C-3PO>
+
+	* lib/I18N/Charset.pm: initialize also from Unicode::Map8 .bin files
+
 2007-05-18    <Daddy@C-3PO>
 
 	* lib/I18N/Charset.pm (mib_charset_name): added pod

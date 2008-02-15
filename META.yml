@@ -1,10 +1,11 @@
 --- 
-author: Martin Thurn <mthurn@cpan.org>
+author: 
+  - Martin Thurn <mthurn@cpan.org>
 build_requires: 
   IO::Capture::Stderr: 0
   Test::More: 0
 distribution_type: module
-generated_by: Module::Install version 0.67
+generated_by: Module::Install version 0.68
 license: perl
 meta-spec: 
   url: http://module-build.sourceforge.net/META-spec-v1.3.html
@@ -17,10 +18,13 @@ no_index:
 recommends: 
   App::Info::Lib::Iconv: 0
   Encode: 0
+  Jcode: 0
+  Test::Pod: 0
+  Test::Pod::Coverage: 0
   Unicode::Map: 0
   Unicode::Map8: 0
   Unicode::MapUTF8: 0
 requires: 
   IO::String: 0
   perl: 5.004
-version: 1.385
+version: 1.386

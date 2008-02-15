@@ -1,16 +1,16 @@
 
-# $rcs = ' $Id: Charset.pm,v 1.385 2007/05/17 23:58:14 Daddy Exp $ ' ;
+# $rcs = ' $Id: Charset.pm,v 1.386 2008/02/15 23:14:24 Daddy Exp $ ' ;
 
 package I18N::Charset;
+
+use strict;
+use warnings;
 
 require 5.002;
 
 require Exporter;
 use Carp;
 use IO::String;
-
-# Don't leave home without it:
-use strict;
 
 =head1 NAME
 
@@ -68,7 +68,7 @@ functions will always return undef.
 #	Public Global Variables
 #-----------------------------------------------------------------------
 use vars qw( $VERSION @ISA @EXPORT @EXPORT_OK );
-$VERSION = do { my @r = (q$Revision: 1.385 $ =~ /\d+/g); sprintf "%d."."%03d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 1.386 $ =~ /\d+/g); sprintf "%d."."%03d" x $#r, @r };
 @ISA       = qw( Exporter );
 @EXPORT    = qw( iana_charset_name
 map8_charset_name
@@ -466,10 +466,12 @@ sub charset_name_to_mib
 
 This function takes a string containing the name of a character set
 (in almost any format) and returns a string which contains a name for
-the character set that can be passed to Unicode::Map8::new(). If no
-valid character set name can be identified, then C<undef> will be
-returned.  The case and punctuation within the argument string are not
-important.
+the character set that can be passed to Unicode::Map8::new().
+Note: the returned string will be capitalized just like
+the name of the .bin file in the Unicode::Map8::MAPS_DIR directory.
+If no valid character set name can be identified,
+then C<undef> will be returned.
+The case and punctuation within the argument string are not important.
 
     $sCharset = map8_charset_name('windows-1251');
 
@@ -494,6 +496,7 @@ sub map8_charset_name
   # print STDERR "undef\n" if $iDebug;
   return undef;
   } # map8_charset_name
+
 
 =item umap_charset_name()
 
@@ -986,8 +989,9 @@ while (1)
   if (eval "require Unicode::Map8")
     {
     # $iDebug = 1;
-    print STDERR " + found Unicode::Map8 installed, will build map8 tables..." if $iDebug;
-    my $sMapFile = "$Unicode::Map8::MAPS_DIR/aliases";
+    my $sDir = $Unicode::Map8::MAPS_DIR;
+    my $sMapFile = "$sDir/aliases";
+    print STDERR " + found Unicode::Map8 installed, will build map8 tables based on $sMapFile...\n" if $iDebug;
     if (open MAPS, $sMapFile)
       {
       while (defined (my $sLine = <MAPS>))
@@ -1034,11 +1038,47 @@ while (1)
           } # foreach
         # $iDebug = 0;
         } # while
-      close MAPS;
+      close MAPS or warn;
       } # if open
     else
       {
       carp " --- couldn't open $sMapFile for read" if $iDebug;
+      }
+    print STDERR " + found Unicode::Map8 installed, will build map8 tables based on .bin files in $sDir...\n" if $iDebug;
+    if (opendir MAPSDIR, $sDir)
+      {
+    MAP8_FILE:
+      while (my $sFname = readdir MAPSDIR)
+        {
+        next MAP8_FILE if ($sFname !~ s/.bin$//);
+        my $sIANA = '';
+        my $iMIB;
+        if (defined (my $sTemp = &iana_charset_name($sFname)))
+          {
+          $sIANA = $sTemp;
+          } # if
+        if ($sIANA eq '')
+          {
+          # $iDebug = 1;
+          $iMIB = $sFakeMIB++;
+          print STDERR " +   had to use a dummy mib ($iMIB) for Map8 entry=$sFname=\n" if $iDebug;
+          $hsMIBofLongname{$sFname} = $iMIB;
+          } # unless
+        else
+          {
+          $iMIB = $hsMIBofLongname{$sIANA};
+          print STDERR " +   found IANA name $sIANA ($iMIB) for Map8 entry=$sFname=\n" if $iDebug;
+          }
+        # $iDebug = ($iMIB =~ m!225[23]!);
+        # Make this IANA mib map to this Map8 name:
+        print STDERR " +      map $iMIB to $sFname in MIBtoMAP8...\n" if $iDebug;
+        $MIBtoMAP8{$iMIB} = $sFname;
+        } # while MAP8_FILE
+      closedir MAPSDIR or warn;
+      }
+    else
+      {
+      carp " --- couldn't open $sDir for read: $!" if $iDebug;
       }
     # If there are special cases for Unicode::Map8, add them here:
     # &add_map8_alias("new-name", "existing-name");

@@ -1,5 +1,5 @@
 
-# $Id: Makefile.PL,v 1.14 2005/11/13 03:02:31 Daddy Exp $
+# $Id: Makefile.PL,v 1.15 2007/11/24 03:10:48 Daddy Exp $
 
 use inc::Module::Install;
 
@@ -14,11 +14,14 @@ recommends('App::Info::Lib::Iconv');
 recommends('Encode');
 build_requires('IO::Capture::Stderr' => 0);
 requires('IO::String');
+recommends('Jcode');
 recommends('Unicode::Map');
 recommends('Unicode::Map8');
 recommends('Unicode::MapUTF8');
 # Test::More is needed for `make test`:
 build_requires('Test::More');
+recommends('Test::Pod');
+recommends('Test::Pod::Coverage');
 
 &WriteAll;
 
