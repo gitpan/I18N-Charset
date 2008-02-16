@@ -38,7 +38,7 @@ SKIP:
       {
       skip 'iconv is not installed', 16 unless $oAILI->installed;
       my $iLibiVersion = $oAILI->version || 0.0;
-      # print STDERR " + libiconv version is $iLibiVersion\n";
+      diag "libiconv version is $iLibiVersion\n";
  SKIP:
         {
         skip 'iconv version is too old(?)', 16 if ($iLibiVersion < 1.8);

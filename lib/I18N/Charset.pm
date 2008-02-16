@@ -1,5 +1,5 @@
 
-# $rcs = ' $Id: Charset.pm,v 1.386 2008/02/15 23:14:24 Daddy Exp $ ' ;
+# $rcs = ' $Id: Charset.pm,v 1.387 2008/02/16 18:59:04 Daddy Exp $ ' ;
 
 package I18N::Charset;
 
@@ -8,7 +8,8 @@ use warnings;
 
 require 5.002;
 
-require Exporter;
+use Exporter;
+use base 'Exporter';
 use Carp;
 use IO::String;
 
@@ -67,10 +68,9 @@ functions will always return undef.
 #-----------------------------------------------------------------------
 #	Public Global Variables
 #-----------------------------------------------------------------------
-use vars qw( $VERSION @ISA @EXPORT @EXPORT_OK );
-$VERSION = do { my @r = (q$Revision: 1.386 $ =~ /\d+/g); sprintf "%d."."%03d" x $#r, @r };
-@ISA       = qw( Exporter );
-@EXPORT    = qw( iana_charset_name
+our
+$VERSION = do { my @r = (q$Revision: 1.387 $ =~ /\d+/g); sprintf "%d."."%03d" x $#r, @r };
+our @EXPORT = qw( iana_charset_name
 map8_charset_name
 umap_charset_name
 umu8_charset_name
@@ -80,7 +80,7 @@ libi_charset_name
 enco_charset_name
 mib_to_charset_name charset_name_to_mib
  );
-@EXPORT_OK = qw( add_iana_alias add_map8_alias add_umap_alias add_libi_alias add_enco_alias );
+our @EXPORT_OK = qw( add_iana_alias add_map8_alias add_umap_alias add_libi_alias add_enco_alias );
 
 #-----------------------------------------------------------------------
 #	Private Global Variables
