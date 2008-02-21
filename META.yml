@@ -27,4 +27,4 @@ recommends:
 requires: 
   IO::String: 0
   perl: 5.004
-version: 1.387
+version: 1.388

@@ -1,6 +1,6 @@
 # libi.t - tests for "preferred LIBI name" functionality of I18N::Charset
 
-# $Id: libi.t,v 1.10 2005/11/12 14:45:08 Daddy Exp $
+# $Id: libi.t,v 1.11 2008/02/21 03:30:13 Daddy Exp $
 
 use Test::More no_plan;
 

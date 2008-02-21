@@ -1,5 +1,5 @@
 
-# $rcs = ' $Id: Charset.pm,v 1.387 2008/02/16 18:59:04 Daddy Exp $ ' ;
+# $rcs = ' $Id: Charset.pm,v 1.388 2008/02/21 03:30:55 Daddy Exp $ ' ;
 
 package I18N::Charset;
 
@@ -69,7 +69,7 @@ functions will always return undef.
 #	Public Global Variables
 #-----------------------------------------------------------------------
 our
-$VERSION = do { my @r = (q$Revision: 1.387 $ =~ /\d+/g); sprintf "%d."."%03d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 1.388 $ =~ /\d+/g); sprintf "%d."."%03d" x $#r, @r };
 our @EXPORT = qw( iana_charset_name
 map8_charset_name
 umap_charset_name
@@ -866,7 +866,7 @@ Martin Thurn, C<mthurn@cpan.org>, L<http://tinyurl.com/nn67z>.
 
 =head1 COPYRIGHT
 
-Copyright (c) 1998-2006 Martin Thurn
+Copyright (c) 1998-2008 Martin Thurn
 
 This module is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
@@ -886,8 +886,7 @@ sub _strip
 
 # The only reason this is a while loop is so that I can bail out
 # (e.g. for debugging) without using goto ;-)
-INFINITE:
-while (1)
+INITIALIZATION:
   {
   my ($sName, $iMIB, $sAlias, $mimename);
   my $iDebug = 0;
@@ -954,7 +953,7 @@ while (1)
       } # if Alias
     } # while <$io>
 
-  # last INFINITE;
+  # last;  # for debugging
 
   # Not that we have all the standard definitions, process the special
   # === directives:
@@ -984,7 +983,7 @@ while (1)
       } # foreach
     } # foreach
 
-  # last INFINITE;
+  # last;  # for debugging
 
   if (eval "require Unicode::Map8")
     {
@@ -1085,7 +1084,7 @@ while (1)
     print STDERR "done.\n" if $iDebug;
     } # if Unicode::Map8 installed
 
-  # last INFINITE;
+  # last;  # for debugging
 
   # $iDebug = 1;
   if (eval "require Unicode::Map")
@@ -1207,8 +1206,8 @@ UMU8_NAME:
     print STDERR "done.\n" if $iDebug;
     } # if Unicode::MapUTF8 installed
 
-  last INFINITE;
-
+  # Initialization is all finished:
+  last;
   # Below here is debugging code:
 
   print STDERR " + the following IANA names do *not* have entries in the Map8 table:\n";
@@ -1220,7 +1219,7 @@ UMU8_NAME:
     $hiTried{$sIANA}++;
     } # foreach
 
-  # last INFINITE;
+  # last;  # for debugging
 
   # debugging: selective dump:
   print STDERR " + after init, iana_charset_name returns:\n";
@@ -1237,7 +1236,7 @@ UMU8_NAME:
     print STDERR " +   $key => ", &map8_charset_name($key) || 'undef', "\n";
     } # foreach
 
-  last INFINITE;
+  last;
 
   # debugging: huge dump:
   # &_dump_hash('hsLongnameOfMIB', \%hsLongnameOfMIB);
@@ -1248,8 +1247,7 @@ UMU8_NAME:
     print STDERR " + _short_to_long($_) == ", &_short_to_long($_) || 'undef', "\n";
     } # foreach
 
-  last INFINITE;
-  } # while
+  } # end of INITIALIZATION block
 
 sub _dump_hash
   {
