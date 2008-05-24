@@ -1,11 +1,17 @@
-# $Id: utf8.t,v 1.10 2008/02/21 03:33:06 Daddy Exp $
+# $Id: utf8.t,v 1.11 2008/05/24 18:57:39 Martin Exp $
 # utf8.t - tests for Unicode::MapUTF8 functionality of I18N::Charset
 
 use strict;
 
+use IO::Capture::Stderr;
 use Test::More 'no_plan';
 
-BEGIN { use_ok('I18N::Charset') };
+BEGIN
+  {
+  use_ok('I18N::Charset');
+  }
+
+my $oICS = new IO::Capture::Stderr;
 
 # These should fail gracefully:
 my @aa;
@@ -45,8 +51,28 @@ SKIP:
       isnt(umu8_charset_name('windows-1252'), 'cp1253', 'windows-1252 ne');
       is(umu8_charset_name('windows-1253'), 'cp1253', 'windows-1253');
       # Unicode::Map8 names with dummy mib:
-      is(umu8_charset_name('Adobe Zapf Ding Bats'), 'Adobe-Zapf-Dingbats', 'Adobe Zapf Ding Bats');
-      is(umu8_charset_name(' c p 1 0 0 7 9 '), 'cp10079', ' c p 1 0 0 7 9 ');
+      my $sInput = 'Adobe Zapf Ding Bats';
+      my $sExpect = 'Adobe-Zapf-Dingbats';
+      $oICS->start;
+      my $sActual = umu8_charset_name($sInput);
+      $oICS->stop;
+      if (! is($sActual, $sExpect, $sInput))
+        {
+        diag(@I18N::Charset::asMap8Debug);
+        my @as = $oICS->read;
+        diag(@as);
+        } # if
+      $sInput = ' c p 1 0 0 7 9 ';
+      $sExpect = 'cp10079';
+      $oICS->start;
+      $sActual = umu8_charset_name($sInput);
+      $oICS->stop;
+      if (! is($sActual, $sExpect, $sInput))
+        {
+        diag(@I18N::Charset::asMap8Debug);
+        my @as = $oICS->read;
+        diag(@as);
+        } # if
       } # SKIP block for Unicode::Map8 module
  SKIP:
       {

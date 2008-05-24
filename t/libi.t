@@ -1,8 +1,8 @@
 # libi.t - tests for "preferred LIBI name" functionality of I18N::Charset
 
-# $Id: libi.t,v 1.11 2008/02/21 03:30:13 Daddy Exp $
+# $Id: libi.t,v 1.12 2008/05/24 18:17:07 Martin Exp $
 
-use Test::More no_plan;
+use Test::More tests => 25;
 
 use IO::Capture::Stderr;
 my $oICE =  IO::Capture::Stderr->new;
@@ -29,19 +29,35 @@ $oICE->stop;
 
 SKIP:
   {
-  skip 'App::Info::Lib::Iconv is not installed', 16 unless eval "require App::Info::Lib::Iconv";
+  if (! eval "require App::Info::Lib::Iconv")
+    {
+    diag 'App::Info::Lib::Iconv is not installed';
+    skip 'App::Info::Lib::Iconv is not installed', 16;
+    } # if
   my $oAILI = new App::Info::Lib::Iconv;
  SKIP:
     {
-    skip 'can not determine iconv version (not installed?)', 16 unless ref $oAILI;
+    if (! ref $oAILI)
+      {
+      diag('can not determine iconv version (not installed?)');
+      skip('can not determine iconv version (not installed?)', 16);
+      } # if
  SKIP:
       {
-      skip 'iconv is not installed', 16 unless $oAILI->installed;
+      if (! $oAILI->installed)
+        {
+        diag('iconv is not installed');
+        skip('iconv is not installed', 16);
+        } # if
       my $iLibiVersion = $oAILI->version || 0.0;
       diag "libiconv version is $iLibiVersion\n";
  SKIP:
         {
-        skip 'iconv version is too old(?)', 16 if ($iLibiVersion < 1.8);
+        if ($iLibiVersion < 1.8)
+          {
+          diag 'iconv version is too old(?)';
+          skip 'iconv version is too old(?)', 16;
+          } # if
 
         #---- some successful examples -----------------------------------------
         is(libi_charset_name("x-x-sjis"), libi_charset_name("MS_KANJI"), 'x-x-sjis');
@@ -61,10 +77,11 @@ SKIP:
         ok(I18N::Charset::add_libi_alias('my-japanese' => 'x-x-sjis'));
         is(libi_charset_name("my-japanese"), 'MS_KANJI', 'alias literal -- my-japanese');
         is(libi_charset_name("my-japanese"), libi_charset_name('Shift_JIS'), 'alias equal -- my-japanese');
-        }
-      }
-    }
-  }
+        } # end of SKIP block
+      } # end of SKIP block
+    } # end of SKIP block
+  } # end of SKIP block
+pass;
 
 exit 0;
 

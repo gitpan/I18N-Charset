@@ -1,5 +1,5 @@
 
-# $Id: Makefile.PL,v 1.15 2007/11/24 03:10:48 Daddy Exp $
+# $Id: Makefile.PL,v 1.16 2008/05/24 18:10:37 Martin Exp $
 
 use inc::Module::Install;
 
@@ -12,18 +12,18 @@ license('perl');
 requires( perl => '5.004' );
 recommends('App::Info::Lib::Iconv');
 recommends('Encode');
-build_requires('IO::Capture::Stderr' => 0);
+test_requires('IO::Capture::Stderr' => 0);
 requires('IO::String');
 recommends('Jcode');
 recommends('Unicode::Map');
 recommends('Unicode::Map8');
 recommends('Unicode::MapUTF8');
 # Test::More is needed for `make test`:
-build_requires('Test::More');
-recommends('Test::Pod');
-recommends('Test::Pod::Coverage');
+test_requires('Test::More');
+test_recommends('Test::Pod');
+test_recommends('Test::Pod::Coverage');
 
-&WriteAll;
+WriteAll();
 
 sub MY::postamble
   {

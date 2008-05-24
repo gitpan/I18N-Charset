@@ -1,5 +1,5 @@
 
-# $rcs = ' $Id: Charset.pm,v 1.388 2008/02/21 03:30:55 Daddy Exp $ ' ;
+# $rcs = ' $Id: Charset.pm,v 1.389 2008/05/24 18:57:17 Martin Exp $ ' ;
 
 package I18N::Charset;
 
@@ -69,7 +69,7 @@ functions will always return undef.
 #	Public Global Variables
 #-----------------------------------------------------------------------
 our
-$VERSION = do { my @r = (q$Revision: 1.388 $ =~ /\d+/g); sprintf "%d."."%03d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 1.389 $ =~ /\d+/g); sprintf "%d."."%03d" x $#r, @r };
 our @EXPORT = qw( iana_charset_name
 map8_charset_name
 umap_charset_name
@@ -454,11 +454,12 @@ sub charset_name_to_mib
   my $s = shift;
   return undef unless defined($s);
   return $hsMIBofLongname{$s} || $hsMIBofLongname{
-                                      &iana_charset_name($s) ||
-                                      &umap_charset_name($s) ||
-                                      &map8_charset_name($s) ||
-                                      &umu8_charset_name($s) ||
-                                      ''};
+                                                  iana_charset_name($s) ||
+                                                  umap_charset_name($s) ||
+                                                  map8_charset_name($s) ||
+                                                  umu8_charset_name($s) ||
+                                                  ''
+                                                 };
   } # charset_name_to_mib
 
 
@@ -530,6 +531,8 @@ sub umap_charset_name
   return undef;
   } # umap_charset_name
 
+
+my @asMap8Debug;
 
 =item umu8_charset_name()
 
@@ -990,7 +993,7 @@ INITIALIZATION:
     # $iDebug = 1;
     my $sDir = $Unicode::Map8::MAPS_DIR;
     my $sMapFile = "$sDir/aliases";
-    print STDERR " + found Unicode::Map8 installed, will build map8 tables based on $sMapFile...\n" if $iDebug;
+    push @asMap8Debug, " DDD found Unicode::Map8 installed, will build map8 tables based on $sMapFile...\n";
     if (open MAPS, $sMapFile)
       {
       while (defined (my $sLine = <MAPS>))
@@ -1005,7 +1008,7 @@ INITIALIZATION:
  MAP8ITEM:
         foreach my $s ($sMap8, @as)
           {
-          print STDERR " +      looking for $s in iana table...\n" if $iDebug;
+          push @asMap8Debug, " DDD   looking for $s in iana table...\n";
           if (defined (my $sTemp = &iana_charset_name($s)))
             {
             $sFound = $sTemp;
@@ -1016,23 +1019,23 @@ INITIALIZATION:
           {
           # $iDebug = 1;
           $iMIB = $sFakeMIB++;
-          print STDERR " +   had to use a dummy mib ($iMIB) for U::Map8==$sMap8==\n" if $iDebug;
+          push @asMap8Debug, " DDD   had to use a dummy mib ($iMIB) for U::Map8==$sMap8==\n";
           $hsMIBofLongname{$sMap8} = $iMIB;
           } # unless
         else
           {
           $iMIB = $hsMIBofLongname{$sFound};
-          print STDERR " +   found IANA name $sFound ($iMIB) for Map8 entry $sMap8\n" if $iDebug;
+          push @asMap8Debug, " DDD   found IANA name $sFound ($iMIB) for Map8 entry $sMap8\n";
           }
         # $iDebug = ($iMIB =~ m!225[23]!);
         # Make this IANA mib map to this Map8 name:
-        print STDERR " +      map $iMIB to $sMap8 in MIBtoMAP8...\n" if $iDebug;
+        push @asMap8Debug, " DDD      map $iMIB to $sMap8 in MIBtoMAP8...\n";
         $MIBtoMAP8{$iMIB} = $sMap8;
         # Map ALL the Map8 aliases to this Map8 master name:
         foreach my $s ($sMap8, @as)
           {
           $s = &_strip($s);
-          print STDERR " +      map $s to $iMIB in hsMIBofShortname...\n" if $iDebug;
+          push @asMap8Debug, " DDD      map $s to $iMIB in hsMIBofShortname...\n";
           $hsMIBofShortname{$s} = $iMIB;
           } # foreach
         # $iDebug = 0;
@@ -1041,9 +1044,9 @@ INITIALIZATION:
       } # if open
     else
       {
-      carp " --- couldn't open $sMapFile for read" if $iDebug;
+      carp " WWW couldn't open $sMapFile for read" if $iDebug;
       }
-    print STDERR " + found Unicode::Map8 installed, will build map8 tables based on .bin files in $sDir...\n" if $iDebug;
+    push @asMap8Debug, " DDD found Unicode::Map8 installed, will build map8 tables based on .bin files in $sDir...\n";
     if (opendir MAPSDIR, $sDir)
       {
     MAP8_FILE:
@@ -1060,17 +1063,17 @@ INITIALIZATION:
           {
           # $iDebug = 1;
           $iMIB = $sFakeMIB++;
-          print STDERR " +   had to use a dummy mib ($iMIB) for Map8 entry=$sFname=\n" if $iDebug;
+          push @asMap8Debug, " DDD   had to use a dummy mib ($iMIB) for Map8 entry=$sFname=\n";
           $hsMIBofLongname{$sFname} = $iMIB;
           } # unless
         else
           {
           $iMIB = $hsMIBofLongname{$sIANA};
-          print STDERR " +   found IANA name $sIANA ($iMIB) for Map8 entry=$sFname=\n" if $iDebug;
+          push @asMap8Debug, " DDD   found IANA name $sIANA ($iMIB) for Map8 entry=$sFname=\n";
           }
         # $iDebug = ($iMIB =~ m!225[23]!);
         # Make this IANA mib map to this Map8 name:
-        print STDERR " +      map $iMIB to $sFname in MIBtoMAP8...\n" if $iDebug;
+        push @asMap8Debug, " DDD      map $iMIB to $sFname in MIBtoMAP8...\n";
         $MIBtoMAP8{$iMIB} = $sFname;
         } # while MAP8_FILE
       closedir MAPSDIR or warn;
@@ -1081,7 +1084,8 @@ INITIALIZATION:
       }
     # If there are special cases for Unicode::Map8, add them here:
     # &add_map8_alias("new-name", "existing-name");
-    print STDERR "done.\n" if $iDebug;
+    push @asMap8Debug, "done.\n";
+    print STDERR @asMap8Debug if $iDebug;
     } # if Unicode::Map8 installed
 
   # last;  # for debugging
