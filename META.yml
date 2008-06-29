@@ -1,13 +1,14 @@
 ---
+abstract: 'IANA Character Set Registry names and Unicode::MapUTF8'
 author:
-  - 'Martin Thurn <mthurn@cpan.org>'
+  - 'Martin Thurn, C<mthurn@cpan.org>, L<http://tinyurl.com/nn67z>.'
 build_requires:
   IO::Capture::Stderr: 0
   Test::More: 0
   Test::Pod: 0
   Test::Pod::Coverage: 0
 distribution_type: module
-generated_by: 'Module::Install version 0.73'
+generated_by: 'Module::Install version 0.75'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.3.html
@@ -27,4 +28,4 @@ recommends:
 requires:
   IO::String: 0
   perl: 5.004
-version: 1.389
+version: 1.391

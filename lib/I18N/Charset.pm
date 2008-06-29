@@ -1,5 +1,5 @@
 
-# $rcs = ' $Id: Charset.pm,v 1.389 2008/05/24 18:57:17 Martin Exp $ ' ;
+# $rcs = ' $Id: Charset.pm,v 1.391 2008/06/29 02:11:54 Martin Exp $ ' ;
 
 package I18N::Charset;
 
@@ -69,7 +69,7 @@ functions will always return undef.
 #	Public Global Variables
 #-----------------------------------------------------------------------
 our
-$VERSION = do { my @r = (q$Revision: 1.389 $ =~ /\d+/g); sprintf "%d."."%03d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 1.391 $ =~ /\d+/g); sprintf "%d."."%03d" x $#r, @r };
 our @EXPORT = qw( iana_charset_name
 map8_charset_name
 umap_charset_name
@@ -532,7 +532,7 @@ sub umap_charset_name
   } # umap_charset_name
 
 
-my @asMap8Debug;
+our @asMap8Debug;
 
 =item umu8_charset_name()
 
@@ -867,9 +867,7 @@ A wrapper around all three of these character set conversion distributions.
 
 Martin Thurn, C<mthurn@cpan.org>, L<http://tinyurl.com/nn67z>.
 
-=head1 COPYRIGHT
-
-Copyright (c) 1998-2008 Martin Thurn
+=head1 LICENSE
 
 This module is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.

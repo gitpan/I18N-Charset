@@ -1,13 +1,10 @@
 
-# $Id: Makefile.PL,v 1.16 2008/05/24 18:10:37 Martin Exp $
+# $Id: Makefile.PL,v 1.17 2008/06/29 02:12:37 Martin Exp $
 
 use inc::Module::Install;
 
 name('I18N-Charset');
-version_from('lib/I18N/Charset.pm');
-
-author('Martin Thurn <mthurn@cpan.org>');
-license('perl');
+all_from('lib/I18N/Charset.pm');
 
 requires( perl => '5.004' );
 recommends('App::Info::Lib::Iconv');
