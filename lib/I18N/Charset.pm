@@ -1,5 +1,5 @@
 
-# $rcs = ' $Id: Charset.pm,v 1.391 2008/06/29 02:11:54 Martin Exp $ ' ;
+# $rcs = ' $Id: Charset.pm,v 1.392 2008/07/05 16:55:26 Martin Exp $ ' ;
 
 package I18N::Charset;
 
@@ -69,7 +69,7 @@ functions will always return undef.
 #	Public Global Variables
 #-----------------------------------------------------------------------
 our
-$VERSION = do { my @r = (q$Revision: 1.391 $ =~ /\d+/g); sprintf "%d."."%03d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 1.392 $ =~ /\d+/g); sprintf "%d."."%03d" x $#r, @r };
 our @EXPORT = qw( iana_charset_name
 map8_charset_name
 umap_charset_name
@@ -990,96 +990,57 @@ INITIALIZATION:
     {
     # $iDebug = 1;
     my $sDir = $Unicode::Map8::MAPS_DIR;
-    my $sMapFile = "$sDir/aliases";
-    push @asMap8Debug, " DDD found Unicode::Map8 installed, will build map8 tables based on $sMapFile...\n";
-    if (open MAPS, $sMapFile)
+    my $sAliasesFname = "$sDir/aliases";
+    # Ah, how to get all the Unicode::Map8 supported charsets...  It
+    # sure ain't easy!  The aliases file in the MAPS_DIR has a nice
+    # set of aliases, but since some charsets have no aliases, they're
+    # not listed in the aliases file!  Ergo, we have to read the
+    # aliases file *and* all the file names in the MAPS_DIR!
+    push @asMap8Debug, " DDD found Unicode::Map8 installed, will build map8 tables based on $sAliasesFname and files in that directory...\n";
+    # First, read all the files in the MAPS_DIR folder and register in our local data structures:
+    if (opendir(DIR, $sDir))
       {
-      while (defined (my $sLine = <MAPS>))
+      my @asFname = grep(!/^\.\.?$/, readdir(DIR));
+      foreach my $sLong (@asFname)
         {
-        # $iDebug = ($sLine =~ m!866!);
-        my @as = split(/\s/, $sLine);
+        next unless -f "$Unicode::Map8::MAPS_DIR/$sLong";
+        $sLong =~ s/\.(?:bin|txt)$//;
+        # Try to find the official IANA name for this encoding:
+        push @asMap8Debug, " DDD   looking for $sLong in iana table...\n";
         my $sFound = '';
-        my $iMIB = '';
-        # The "master" Map8 name is in $as[0].  Try to find the
-        # official IANA name for this encoding:
-        my $sMap8 = shift @as;
- MAP8ITEM:
-        foreach my $s ($sMap8, @as)
+        if (defined (my $sTemp = &iana_charset_name($sLong)))
           {
-          push @asMap8Debug, " DDD   looking for $s in iana table...\n";
-          if (defined (my $sTemp = &iana_charset_name($s)))
-            {
-            $sFound = $sTemp;
-            last MAP8ITEM;
-            } # if
-          } # foreach
+          $sFound = $sTemp;
+          } # if
         if ($sFound eq '')
           {
           # $iDebug = 1;
           $iMIB = $sFakeMIB++;
-          push @asMap8Debug, " DDD   had to use a dummy mib ($iMIB) for U::Map8==$sMap8==\n";
-          $hsMIBofLongname{$sMap8} = $iMIB;
+          push @asMap8Debug, " DDD   had to use a dummy mib ($iMIB) for U::Map8==$sLong==\n";
+          $hsMIBofLongname{$sLong} = $iMIB;
           } # unless
         else
           {
           $iMIB = $hsMIBofLongname{$sFound};
-          push @asMap8Debug, " DDD   found IANA name $sFound ($iMIB) for Map8 entry $sMap8\n";
+          push @asMap8Debug, " DDD   found IANA name $sFound ($iMIB) for Map8 entry $sLong\n";
           }
-        # $iDebug = ($iMIB =~ m!225[23]!);
         # Make this IANA mib map to this Map8 name:
-        push @asMap8Debug, " DDD      map $iMIB to $sMap8 in MIBtoMAP8...\n";
-        $MIBtoMAP8{$iMIB} = $sMap8;
-        # Map ALL the Map8 aliases to this Map8 master name:
-        foreach my $s ($sMap8, @as)
-          {
-          $s = &_strip($s);
-          push @asMap8Debug, " DDD      map $s to $iMIB in hsMIBofShortname...\n";
-          $hsMIBofShortname{$s} = $iMIB;
-          } # foreach
-        # $iDebug = 0;
-        } # while
-      close MAPS or warn;
-      } # if open
-    else
+        push @asMap8Debug, " DDD      map $iMIB to $sLong in MIBtoMAP8...\n";
+        $MIBtoMAP8{$iMIB} = $sLong;
+        my $s = &_strip($sLong);
+        push @asMap8Debug, " DDD      map $s to $iMIB in hsMIBofShortname...\n";
+        $hsMIBofShortname{$s} = $iMIB;
+        } # foreach
+      } # if
+    # Now, go through the Unicode::Map8 aliases hash and process the aliases:
+    my $avoid_warning = keys %Unicode::Map8::ALIASES;
+    while (my ($alias, $charset) = each %Unicode::Map8::ALIASES)
       {
-      carp " WWW couldn't open $sMapFile for read" if $iDebug;
-      }
-    push @asMap8Debug, " DDD found Unicode::Map8 installed, will build map8 tables based on .bin files in $sDir...\n";
-    if (opendir MAPSDIR, $sDir)
-      {
-    MAP8_FILE:
-      while (my $sFname = readdir MAPSDIR)
-        {
-        next MAP8_FILE if ($sFname !~ s/.bin$//);
-        my $sIANA = '';
-        my $iMIB;
-        if (defined (my $sTemp = &iana_charset_name($sFname)))
-          {
-          $sIANA = $sTemp;
-          } # if
-        if ($sIANA eq '')
-          {
-          # $iDebug = 1;
-          $iMIB = $sFakeMIB++;
-          push @asMap8Debug, " DDD   had to use a dummy mib ($iMIB) for Map8 entry=$sFname=\n";
-          $hsMIBofLongname{$sFname} = $iMIB;
-          } # unless
-        else
-          {
-          $iMIB = $hsMIBofLongname{$sIANA};
-          push @asMap8Debug, " DDD   found IANA name $sIANA ($iMIB) for Map8 entry=$sFname=\n";
-          }
-        # $iDebug = ($iMIB =~ m!225[23]!);
-        # Make this IANA mib map to this Map8 name:
-        push @asMap8Debug, " DDD      map $iMIB to $sFname in MIBtoMAP8...\n";
-        $MIBtoMAP8{$iMIB} = $sFname;
-        } # while MAP8_FILE
-      closedir MAPSDIR or warn;
-      }
-    else
-      {
-      carp " --- couldn't open $sDir for read: $!" if $iDebug;
-      }
+      my $iMIB = charset_name_to_mib($charset); # qqq
+      my $s = &_strip($alias);
+      push @asMap8Debug, " DDD      map $s to $iMIB in hsMIBofShortname...\n";
+      $hsMIBofShortname{$s} = $iMIB;
+      } # while
     # If there are special cases for Unicode::Map8, add them here:
     # &add_map8_alias("new-name", "existing-name");
     push @asMap8Debug, "done.\n";

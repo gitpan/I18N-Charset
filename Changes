@@ -1,3 +1,7 @@
+2008-07-05  Kingpin  <Martin@BLUEMAX>
+
+	* lib/I18N/Charset.pm: overhauled the U::Map8 initialization
+
 2008-02-15    <Daddy@C-3PO>
 
 	* lib/I18N/Charset.pm: initialize also from Unicode::Map8 .bin files
