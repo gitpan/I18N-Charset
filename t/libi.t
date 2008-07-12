@@ -1,7 +1,8 @@
 # libi.t - tests for "preferred LIBI name" functionality of I18N::Charset
 
-# $Id: libi.t,v 1.12 2008/05/24 18:17:07 Martin Exp $
+# $Id: libi.t,v 1.14 2008/07/12 03:27:12 Martin Exp $
 
+use blib;
 use Test::More tests => 25;
 
 use IO::Capture::Stderr;
@@ -53,7 +54,9 @@ SKIP:
       diag "libiconv version is $iLibiVersion\n";
  SKIP:
         {
-        if ($iLibiVersion < 1.8)
+        # Convert "n.m" into an actual floating point number so we can compare it:
+        my $fLibiVersion = do { my @r = ($iLibiVersion =~ /\d+/g); sprintf "%d."."%03d" x $#r, @r };
+        if ($fLibiVersion < 1.008)
           {
           diag 'iconv version is too old(?)';
           skip 'iconv version is too old(?)', 16;
@@ -77,6 +80,8 @@ SKIP:
         ok(I18N::Charset::add_libi_alias('my-japanese' => 'x-x-sjis'));
         is(libi_charset_name("my-japanese"), 'MS_KANJI', 'alias literal -- my-japanese');
         is(libi_charset_name("my-japanese"), libi_charset_name('Shift_JIS'), 'alias equal -- my-japanese');
+        pass; # I miscounted but I don't feel like going back and
+              # changing all the 16 to 15 8-)
         } # end of SKIP block
       } # end of SKIP block
     } # end of SKIP block

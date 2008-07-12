@@ -28,4 +28,4 @@ recommends:
 requires:
   IO::String: 0
   perl: 5.004
-version: 1.392
+version: 1.394

@@ -1,6 +1,7 @@
 2008-07-05  Kingpin  <Martin@BLUEMAX>
 
 	* lib/I18N/Charset.pm: overhauled the U::Map8 initialization
+	(_init_data_extra): added aliases listed in RT#18802
 
 2008-02-15    <Daddy@C-3PO>
 

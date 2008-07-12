@@ -1,5 +1,5 @@
 
-# $rcs = ' $Id: Charset.pm,v 1.392 2008/07/05 16:55:26 Martin Exp $ ' ;
+# $rcs = ' $Id: Charset.pm,v 1.394 2008/07/12 03:29:09 Martin Exp $ ' ;
 
 package I18N::Charset;
 
@@ -33,7 +33,7 @@ I18N::Charset - IANA Character Set Registry names and Unicode::MapUTF8
   $sCharset = libi_charset_name('x-sjis');
   # $sCharset is now 'MS_KANJI' which can be passed to `iconv -f $sCharset ...`
   $sCharset = enco_charset_name('Shift-JIS');
-  # $sCharset is now 'shiftjis' which can be passed to `Encode::from_to()`
+  # $sCharset is now 'shiftjis' which can be passed to Encode::from_to()
 
   I18N::Charset::add_iana_alias('my-japanese' => 'iso-2022-jp');
   I18N::Charset::add_map8_alias('my-arabic' => 'arabic7');
@@ -69,7 +69,7 @@ functions will always return undef.
 #	Public Global Variables
 #-----------------------------------------------------------------------
 our
-$VERSION = do { my @r = (q$Revision: 1.392 $ =~ /\d+/g); sprintf "%d."."%03d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 1.394 $ =~ /\d+/g); sprintf "%d."."%03d" x $#r, @r };
 our @EXPORT = qw( iana_charset_name
 map8_charset_name
 umap_charset_name
@@ -1042,7 +1042,17 @@ INITIALIZATION:
       $hsMIBofShortname{$s} = $iMIB;
       } # while
     # If there are special cases for Unicode::Map8, add them here:
-    # &add_map8_alias("new-name", "existing-name");
+    &add_map8_alias('ISO_8859-13:1998', 'ISO_8859-13');
+    &add_map8_alias('L 7', 'ISO_8859-13');
+    &add_map8_alias('Latin 7', 'ISO_8859-13');
+    &add_map8_alias('ISO_8859-15:1998', 'ISO_8859-15');
+    &add_map8_alias('L 0', 'ISO_8859-15');
+    &add_map8_alias('Latin 0', 'ISO_8859-15');
+    &add_map8_alias('L 9', 'ISO_8859-15');
+    &add_map8_alias('Latin 9', 'ISO_8859-15');
+    &add_map8_alias('ISO-8859-1-Windows-3.1-Latin-1', 'cp1252');
+    &add_map8_alias('csWindows31Latin1', 'cp1252');
+    # Above aliases were described in RT#18802
     push @asMap8Debug, "done.\n";
     print STDERR @asMap8Debug if $iDebug;
     } # if Unicode::Map8 installed
@@ -1154,7 +1164,7 @@ UMU8_NAME:
         $MIBtoUMU8{charset_name_to_mib($s)} = $sName;
         next UMU8_NAME;
         } # if maps to U::Map
-      # print STDERR " +   UmapUTF8 entry ===$sName=== has no U::Map entry\n" if $iDebug;
+      # print STDERR " +   UmapUTF8 entry ==$sName== has no U::Map entry\n" if $iDebug;
       $s = map8_charset_name($sName) || '';
       if ($s ne '')
         {
@@ -1162,7 +1172,7 @@ UMU8_NAME:
         $MIBtoUMU8{charset_name_to_mib($s)} = $sName;
         next UMU8_NAME;
         } # if maps to U::Map8
-      print STDERR " +   UmapUTF8 entry ===$sName=== has no entries at all\n" if $iDebug;
+      print STDERR " +   UmapUTF8 entry ==$sName== has no entries at all\n" if $iDebug;
       } # foreach
     # If there are special cases for Unicode::MapUTF8, add them here:
     # &add_umap_alias("new-name", "existing-name");
@@ -1295,6 +1305,12 @@ koi8-r === cp878
 # ??? === dingbats
 # ??? === nextstep
 # ??? === posix-bc
+# The following aliases are listed in RT#18802:
+ISO-8859-10 === 8859-10 === ISO_8859-10:1993
+# TCVN-5712 x-viet-tcvn viet-tcvn VN-1 TCVN-5712:1993
+TIS-620 === TIS_620-2553 === TIS_620-2553:1990
+# VPS x-viet-vps viet-vps
+# The above aliases are listed in RT#18802
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
   } # _init_data_extra
 
