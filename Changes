@@ -1,3 +1,7 @@
+2010-09-17  Kingpin  <Martin@BLUEMAX>
+
+	* lib/I18N/Charset.pm (_init_data): new IANA charset list (one new charset defined)
+
 2008-07-05  Kingpin  <Martin@BLUEMAX>
 
 	* lib/I18N/Charset.pm: overhauled the U::Map8 initialization

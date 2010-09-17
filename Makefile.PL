@@ -1,9 +1,8 @@
 
-# $Id: Makefile.PL,v 1.17 2008/06/29 02:12:37 Martin Exp $
+# $Id: Makefile.PL,v 1.18 2010-09-17 12:27:20 Martin Exp $
 
 use inc::Module::Install;
 
-name('I18N-Charset');
 all_from('lib/I18N/Charset.pm');
 
 requires( perl => '5.004' );
@@ -17,8 +16,8 @@ recommends('Unicode::Map8');
 recommends('Unicode::MapUTF8');
 # Test::More is needed for `make test`:
 test_requires('Test::More');
-test_recommends('Test::Pod');
-test_recommends('Test::Pod::Coverage');
+recommends('Test::Pod');
+recommends('Test::Pod::Coverage');
 
 WriteAll();
 
