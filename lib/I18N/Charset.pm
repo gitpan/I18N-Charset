@@ -1,5 +1,5 @@
 
-# $rcs = ' $Id: Charset.pm,v 1.395 2010-09-17 12:25:24 Martin Exp $ ' ;
+# $rcs = ' $Id: Charset.pm,v 1.396 2010-11-06 12:57:08 Martin Exp $ ' ;
 
 package I18N::Charset;
 
@@ -68,7 +68,7 @@ functions will always return undef.
 #	Public Global Variables
 #-----------------------------------------------------------------------
 our
-$VERSION = do { my @r = (q$Revision: 1.395 $ =~ /\d+/g); sprintf "%d."."%03d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 1.396 $ =~ /\d+/g); sprintf "%d."."%03d" x $#r, @r };
 our @EXPORT = qw( iana_charset_name
 map8_charset_name
 umap_charset_name
@@ -1324,7 +1324,7 @@ sub _init_data
 
 CHARACTER SETS
 
-(last updated 2010-09-15)
+(last updated 2010-11-04)
 
 These are the official names for character sets that may be used in
 the Internet and may be referred to in Internet documentation.  These
@@ -3035,6 +3035,11 @@ MIBenum: 2108
 Source: See <http://www.iana.org/assignments/charset-reg/CP51932>                  [Naruse]
 Alias: csCP51932
 
+Name: windows-874
+MIBenum: 2109
+Source: See <http://www.iana.org/assignments/charset-reg/windows-874>              [Steele]
+Alias: None
+
 Name: windows-1250
 MIBenum: 2250
 Source: Microsoft  (http://www.iana.org/assignments/charset-reg/windows-1250) [Lazhintseva]
@@ -3204,6 +3209,8 @@ PEOPLE
           September 2002.
 
 [Simonsen] Keld Simonsen, <Keld.Simonsen&rap.dk>, August 2000.
+
+[Steele] Shawn Steele, <Shawn.Steele&microsoft.com>, 4 November 2010.
 
 [Tantsetthi] Trin Tantsetthi, <trin&mozart.inet.co.th>, September 1998.
 
