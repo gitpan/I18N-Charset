@@ -1,5 +1,5 @@
 
-# $rcs = ' $Id: Charset.pm,v 1.396 2010-11-06 12:57:08 Martin Exp $ ' ;
+# $rcs = ' $Id: Charset.pm,v 1.397 2011-09-25 15:22:59 Martin Exp $ ' ;
 
 package I18N::Charset;
 
@@ -68,7 +68,7 @@ functions will always return undef.
 #	Public Global Variables
 #-----------------------------------------------------------------------
 our
-$VERSION = do { my @r = (q$Revision: 1.396 $ =~ /\d+/g); sprintf "%d."."%03d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 1.397 $ =~ /\d+/g); sprintf "%d."."%03d" x $#r, @r };
 our @EXPORT = qw( iana_charset_name
 map8_charset_name
 umap_charset_name
@@ -1321,10 +1321,9 @@ sub _init_data
   return <<'EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE';
 
 ===================================================================
-
 CHARACTER SETS
 
-(last updated 2010-11-04)
+(last updated 2011-09-23)
 
 These are the official names for character sets that may be used in
 the Internet and may be referred to in Internet documentation.  These
@@ -3089,6 +3088,11 @@ Name: TIS-620
 MIBenum: 2259
 Source: Thai Industrial Standards Institute (TISI)                             [Tantsetthi]
 
+Name: CP50220
+MIBenum: 2260
+Source: See <http://www.iana.org/assignments/charset-reg/CP50220>                  [Naruse]
+Alias: csCP50220
+
 
 REFERENCES
 ----------
@@ -3193,7 +3197,7 @@ PEOPLE
 
 [Murai] Jun Murai <jun&wide.ad.jp>
 
-[Naruse] Yui Naruse, <naruse&airemix.jp>, 15 September 2010. 
+[Naruse] Yui Naruse, <naruse&airemix.jp>, 15 September 2010, 23 September 2011. 
 
 [Nussbacher] Hank Nussbacher, <hank&vm.tau.ac.il>
 
