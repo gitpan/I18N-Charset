@@ -1,5 +1,5 @@
 
-# $rcs = ' $Id: Charset.pm,v 1.397 2011-09-25 15:22:59 Martin Exp $ ' ;
+# $rcs = ' $Id: Charset.pm,v 1.401 2011-11-01 01:02:03 Martin Exp $ ' ;
 
 package I18N::Charset;
 
@@ -68,7 +68,7 @@ functions will always return undef.
 #	Public Global Variables
 #-----------------------------------------------------------------------
 our
-$VERSION = do { my @r = (q$Revision: 1.397 $ =~ /\d+/g); sprintf "%d."."%03d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 1.401 $ =~ /\d+/g); sprintf "%d."."%03d" x $#r, @r };
 our @EXPORT = qw( iana_charset_name
 map8_charset_name
 umap_charset_name
@@ -1320,10 +1320,9 @@ sub _init_data
   # http://www.iana.org/assignments/character-sets
   return <<'EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE';
 
-===================================================================
 CHARACTER SETS
 
-(last updated 2011-09-23)
+(last updated 2011-10-30)
 
 These are the official names for character sets that may be used in
 the Internet and may be referred to in Internet documentation.  These
@@ -1365,7 +1364,7 @@ numbers along with suggestive names in order to facilitate applications
 that want to display the names in user interfaces.  The "cs" stands 
 for character set and is provided for applications that need a lower 
 case first letter but want to use mixed case thereafter that cannot 
-contain any special characters, such as underbar ("_") and dash ("-").  
+contain any special characters, such as underbar ("_") and dash ("-").
 
 If the character set is from an ISO standard, its cs alias is the ISO
 standard number or name.  If the character set is not from an ISO
@@ -1962,6 +1961,7 @@ Source: ECMA registry
 Alias: iso-ir-121
 Alias: ISO646-CA
 Alias: csa7-1
+Alias: csa71
 Alias: ca
 Alias: csISO121Canadian1
 
@@ -1971,6 +1971,7 @@ Source: ECMA registry
 Alias: iso-ir-122
 Alias: ISO646-CA2
 Alias: csa7-2
+Alias: csa72
 Alias: csISO122Canadian2
 
 Name: CSA_Z243.4-1985-gr                                 [RFC1345,KXS2]
@@ -2243,7 +2244,9 @@ Alias: csUnicodeLatin1
 Alias: ISO-10646
 
 Name: ISO-10646-J-1
+MIBenum: 1004
 Source: ISO 10646 Japanese, see RFC 1815.
+Alias: csUnicodeJapanese
 
 Name: ISO-Unicode-IBM-1261
 MIBenum: 1005
@@ -3231,6 +3234,7 @@ PEOPLE
 [Yick] Nicky Yick, <cliac&itsd.gcn.gov.hk>, October 2000.
 
 []
+
 
 
 

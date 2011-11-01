@@ -1,9 +1,10 @@
 
-# $Id: Makefile.PL,v 1.18 2010-09-17 12:27:20 Martin Exp $
+# $Id: Makefile.PL,v 1.19 2011-11-01 01:08:56 Martin Exp $
 
 use inc::Module::Install;
 
-all_from('lib/I18N/Charset.pm');
+my $sFnamePM = q{lib/I18N/Charset.pm};
+all_from($sFnamePM);
 
 requires( perl => '5.004' );
 recommends('App::Info::Lib::Iconv');
@@ -29,6 +30,20 @@ coverage :
 coverage_slave : test
 	cover
 PART0
+  my $sFnameIANA = q{IANA-docs/character-sets};
+  if (-f $sFnameIANA)
+    {
+    # This must be the author's environment
+    $ret .= <<"PART1";
+
+CHARSETPM = $sFnamePM
+IANA = $sFnameIANA
+
+prep : \$(CHARSETPM)
+\$(CHARSETPM) : \$(IANA)
+	\$(FULLPERL) prep.pl \$(IANA) \$@
+PART1
+    } # if
   return $ret;
   } # MY::postamble
 

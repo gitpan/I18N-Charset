@@ -8,13 +8,12 @@ build_requires:
   Test::More: 0
 configure_requires:
   ExtUtils::MakeMaker: 6.42
-distribution_type: module
-generated_by: 'Module::Install version 1.02'
+dynamic_config: 0
+generated_by: 'Module::Install version 1.02, CPAN::Meta::Converter version 2.112621'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
   version: 1.4
-module_name: I18N::Charset
 name: I18N-Charset
 no_index:
   directory:
@@ -31,7 +30,8 @@ recommends:
   Unicode::MapUTF8: 0
 requires:
   IO::String: 0
-  perl: 5.004
+  perl: 5.005
 resources:
   license: http://dev.perl.org/licenses/
 version: 1.401
+x_module_name: I18N::Charset

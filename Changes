@@ -1,3 +1,7 @@
+2011-10-31  Kingpin  <Martin@BLUEMAX>
+
+	* lib/I18N/Charset.pm (_init_data): new IANA charset list
+
 2010-11-06  Kingpin  <Martin@BLUEMAX>
 
 	* lib/I18N/Charset.pm (_init_data): new IANA charset list (one new charset defined)
