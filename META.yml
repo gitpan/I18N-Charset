@@ -3,13 +3,14 @@ abstract: 'IANA Character Set Registry names and Unicode::MapUTF8'
 author:
   - "Martin 'Kingpin' Thurn, C<mthurn at cpan.org>, L<http://tinyurl.com/nn67z>."
 build_requires:
-  ExtUtils::MakeMaker: 6.42
+  ExtUtils::MakeMaker: 6.36
   IO::Capture::Stderr: 0
   Test::More: 0
 configure_requires:
-  ExtUtils::MakeMaker: 6.42
+  ExtUtils::MakeMaker: 6.36
 distribution_type: module
-generated_by: 'Module::Install version 1.02'
+dynamic_config: 1
+generated_by: 'Module::Install version 1.06'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -34,4 +35,4 @@ requires:
   perl: 5.004
 resources:
   license: http://dev.perl.org/licenses/
-version: 1.401
+version: 1.402
