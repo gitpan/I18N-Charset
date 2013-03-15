@@ -1,5 +1,5 @@
 
-# $rcs = ' $Id: Charset.pm,v 1.409 2013/03/13 03:53:24 martin Exp $ ' ;
+# $rcs = ' $Id: Charset.pm,v 1.411 2013/03/15 01:31:04 martin Exp $ ' ;
 
 package I18N::Charset;
 
@@ -9,6 +9,7 @@ use warnings;
 require 5.005;
 
 use base 'Exporter';
+use blib;
 use Carp;
 
 =head1 NAME
@@ -67,7 +68,7 @@ functions will always return undef.
 #	Public Global Variables
 #-----------------------------------------------------------------------
 our
-$VERSION = do { my @r = (q$Revision: 1.409 $ =~ /\d+/g); sprintf "%d."."%03d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 1.411 $ =~ /\d+/g); sprintf "%d."."%03d" x $#r, @r };
 our @EXPORT = qw( iana_charset_name
 map8_charset_name
 umap_charset_name
@@ -112,6 +113,7 @@ my %MIBtoENCO;
 
 use constant DEBUG => 0;
 use constant DEBUG_ENCO => 0;
+use constant DEBUG_LIBI => 0;
 
 =head1 CONVERSION ROUTINES
 
@@ -338,11 +340,11 @@ sub _maybe_load_libi # PRIVATE
   if (ref $oAILI)
     {
     my $iLibiVersion = $oAILI->version;
-    # print STDERR " + libiconv version is $iLibiVersion\n";
-    if ($oAILI->installed && (1.8 <= $iLibiVersion))
+    DEBUG_LIBI && warn " DDD libiconv version is $iLibiVersion\n";
+    if ($oAILI->installed && (1.08 <= $iLibiVersion))
       {
       my $sCmd = $oAILI->bin_dir . '/iconv -l';
-      # print STDERR " + iconv cmdline is $sCmd\n";
+      DEBUG_LIBI && warn " DDD iconv cmdline is $sCmd\n";
       my @asIconv = split(/\n/, `$sCmd`);
  ICONV_LINE:
       foreach my $sLine (@asIconv)
@@ -370,7 +372,7 @@ sub _maybe_load_libi # PRIVATE
         foreach my $sWord (reverse @asWord)
           {
           $MIBtoLIBI{$mib} = $sWord;
-          # print STDERR " +   mib for libi ==$sWord== is $mib\n";
+          DEBUG_LIBI && warn " +   mib for libi ==$sWord== is $mib\n";
           $hsMIBofShortname{_strip($sWord)} = $mib;
           } # foreach ADD_LIBI
         } # foreach ICONV_LINE
@@ -1295,7 +1297,7 @@ sub _init_data
   {
   # This big piece of data is the original document from
   # http://www.iana.org/assignments/character-sets
-  return <<'EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE';
+  return <<'EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE';
 <?xml version='1.0' encoding='UTF-8'?>
 <?xml-stylesheet type="text/xsl" href="character-sets.xsl"?>
 <?oxygen RNGSchema="character-sets.rng" type="xml"?>
@@ -4160,7 +4162,7 @@ INIS-Cyrillic, ISO-5427.</description>
     </person>
   </people>
 </registry>
-EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
   } # _init_data
 
 1;
