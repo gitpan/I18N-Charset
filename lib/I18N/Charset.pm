@@ -1,5 +1,5 @@
 
-# $rcs = ' $Id: Charset.pm,v 1.411 2013/03/15 01:31:04 martin Exp $ ' ;
+# $rcs = ' $Id: Charset.pm,v 1.412 2013/10/05 15:12:38 Martin Exp $ ' ;
 
 package I18N::Charset;
 
@@ -68,7 +68,7 @@ functions will always return undef.
 #	Public Global Variables
 #-----------------------------------------------------------------------
 our
-$VERSION = do { my @r = (q$Revision: 1.411 $ =~ /\d+/g); sprintf "%d."."%03d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 1.412 $ =~ /\d+/g); sprintf "%d."."%03d" x $#r, @r };
 our @EXPORT = qw( iana_charset_name
 map8_charset_name
 umap_charset_name
@@ -1302,11 +1302,12 @@ sub _init_data
 <?xml-stylesheet type="text/xsl" href="character-sets.xsl"?>
 <?oxygen RNGSchema="character-sets.rng" type="xml"?>
 <registry xmlns="http://www.iana.org/assignments" id="character-sets">
-  <updated>2013-01-23</updated>
+  <updated>2013-10-01</updated>
   <title>Character Sets</title>
+  <category>Character Sets</category>
   <xref type="rfc" data="rfc2978"/>
   <registration_rule>Expert Review</registration_rule>
-  <expert>Primary Expert Ned Freed and Secondary Expert Martin DÃ¼rst</expert>
+  <expert>Primary Expert Ned Freed and Secondary Expert Martin Dürst</expert>
   <note>These are the official names for character sets that may be used in
 the Internet and may be referred to in Internet documentation.  These
 names are expressed in ANSI_X3.4-1968 which is commonly called
@@ -4031,6 +4032,7 @@ INIS-Cyrillic, ISO-5427.</description>
       <value>2259</value>
       <description>Thai Industrial Standards Institute (TISI)                             <xref type="person" data="Trin_Tantsetthi"/></description>
       <alias>csTIS620</alias>
+      <alias>ISO-8859-11</alias>
     </record>
     <record date="2011-09-23">
       <name>CP50220</name>

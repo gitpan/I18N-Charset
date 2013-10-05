@@ -1,3 +1,9 @@
+2013-10-05  Kingpin  <martin@localhost.localdomain>
+
+	* lib/I18N/Charset.pm (_init_data): new IANA charset list
+
+	* MANIFEST.SKIP: don't ship MYMETA files
+
 2011-10-31  Kingpin  <Martin@BLUEMAX>
 
 	* lib/I18N/Charset.pm (_init_data): new IANA charset list
